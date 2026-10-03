@@ -71,7 +71,13 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .key.pause{background:linear-gradient(180deg,#f2a06a,var(--saffron));box-shadow:0 8px 0 #8a3c13,0 8px 0 4px var(--ink)}
 .key.shuffle{background:linear-gradient(180deg,#8fb8ec,#4a7fc9);box-shadow:0 8px 0 #2c4f86,0 8px 0 4px var(--ink)}
 .key.shuffle svg{display:block}
-.key:disabled{opacity:.45;cursor:not-allowed}
+.key.shuffle.cooling{opacity:.45;cursor:not-allowed}
+#unclePop{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(24px);z-index:99;display:flex;align-items:flex-end;gap:6px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;filter:sepia(.25)}
+#unclePop.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#unclePop.bye{opacity:0;transform:translateX(-50%) translateY(16px)}
+.uncle-bubble{max-width:238px;background:#f6ead0;border:3px solid #5b2d1e;border-radius:14px;padding:10px 12px;font-family:var(--f-body);font-size:14px;line-height:1.4;color:#4a2417;box-shadow:4px 4px 0 rgba(30,10,5,.3);position:relative;transform:rotate(-2deg)}
+.uncle-bubble b{color:#8a2f1d}
+.uncle-bubble:after{content:'';position:absolute;right:-15px;bottom:24px;border:9px solid transparent;border-left:11px solid #5b2d1e}
 .key[aria-pressed="true"]{transform:translateY(7px);box-shadow:0 1px 0 var(--deck-dark),0 1px 0 4px var(--ink);filter:saturate(.85) brightness(.95)}
 .key:focus-visible{outline:3px dashed var(--cream);outline-offset:4px}
 .foot{font-size:12px;color:var(--cream);opacity:.8;text-align:center;max-width:42ch;text-shadow:1px 1px 0 var(--ink);margin:0}
@@ -250,13 +256,44 @@ try{lastShuffle=parseInt(localStorage.getItem('paataShuffleTs')||'0',10)||0;}cat
 function shuffleReady(){return PLAYLIST.length>1&&(Date.now()-lastShuffle>=SHUFFLE_WAIT);}
 function paintShuffle(){
   const usable=PLAYLIST.length>1, left=SHUFFLE_WAIT-(Date.now()-lastShuffle), ready=usable&&left<=0;
-  shuffleBtn.disabled=!ready;
+  shuffleBtn.classList.toggle('cooling',!ready);
   shuffleBtn.title=!usable?'Add more songs to shuffle':(ready?'Play a different random song':'Shuffles again in '+Math.ceil(left/60000)+' min');
   clearTimeout(paintShuffle.t);
   if(usable&&left>0) paintShuffle.t=setTimeout(paintShuffle,Math.min(left,30000));
 }
+function showUncle(){
+  var pop=document.getElementById('unclePop');
+  if(!pop){
+    pop=document.createElement('div'); pop.id='unclePop';
+    pop.innerHTML='<div class="uncle-bubble">Ayyo, patience kanna! For the best radio experience, randomize works only <b>once every 10 minutes</b>. Enjoy the paatalu!</div>'
+      +'<svg viewBox="0 0 120 140" width="86" height="100" aria-hidden="true">'
+      +'<ellipse cx="48" cy="135" rx="10" ry="4.5" fill="#8a5a38"/><ellipse cx="72" cy="135" rx="10" ry="4.5" fill="#8a5a38"/>'
+      +'<rect x="35" y="90" width="50" height="42" rx="4" fill="#ece2c8"/>'
+      +'<path d="M48 90v42M60 90v42M72 90v42M35 103h50M35 117h50" stroke="#8a2f23" stroke-width="2" opacity=".5"/>'
+      +'<rect x="35" y="85" width="50" height="9" rx="3" fill="#8a2f23"/>'
+      +'<rect x="27" y="60" width="13" height="32" rx="6" fill="#c98d5f"/><rect x="80" y="60" width="13" height="32" rx="6" fill="#c98d5f"/>'
+      +'<rect x="38" y="58" width="44" height="34" rx="9" fill="#f6f2e6"/>'
+      +'<rect x="54" y="50" width="12" height="10" fill="#b57a4e"/>'
+      +'<circle cx="38" cy="36" r="5" fill="#c98d5f"/><circle cx="82" cy="36" r="5" fill="#c98d5f"/>'
+      +'<circle cx="60" cy="34" r="22" fill="#c98d5f"/>'
+      +'<path d="M40 30c-2-8 0-15 6-20" stroke="#f0ead8" stroke-width="7" fill="none" stroke-linecap="round"/>'
+      +'<path d="M80 30c2-8 0-15-6-20" stroke="#f0ead8" stroke-width="7" fill="none" stroke-linecap="round"/>'
+      +'<circle cx="60" cy="21" r="3.2" fill="#b3231b"/>'
+      +'<path d="M46 29l11-2" stroke="#f0ead8" stroke-width="3.5" stroke-linecap="round"/><path d="M74 29l-11-2" stroke="#f0ead8" stroke-width="3.5" stroke-linecap="round"/>'
+      +'<circle cx="52" cy="37" r="2.8" fill="#2b1a12"/><circle cx="68" cy="37" r="2.8" fill="#2b1a12"/>'
+      +'<path d="M60 47C50 47 41 50 37 58c7-2 14-3 23-4 9 1 16 2 23 4-4-8-13-11-23-11z" fill="#241610"/>'
+      +'<path d="M53 63q7 5 14 0" stroke="#7c4f30" stroke-width="2.5" fill="none" stroke-linecap="round"/>'
+      +'</svg>';
+    document.body.appendChild(pop);
+    requestAnimationFrame(function(){pop.classList.add('show');});
+  }
+  clearTimeout(pop._t);
+  pop.classList.remove('bye'); pop.classList.add('show');
+  pop._t=setTimeout(function(){pop.classList.add('bye'); setTimeout(function(){if(pop.parentNode)pop.parentNode.removeChild(pop);},450);},3000);
+}
 function randomize(){
-  if(!shuffleReady()) return;
+  if(PLAYLIST.length<2) return;
+  if(!shuffleReady()){showUncle(); return;}
   lastShuffle=Date.now();
   try{localStorage.setItem('paataShuffleTs',String(lastShuffle));}catch(e){}
   const cur=(audio&&order.length)?order[(oi-1+order.length)%order.length]:-1;
