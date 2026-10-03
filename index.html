@@ -244,7 +244,9 @@ function play(){ensureEngine(); if(audio){audio.muted=false; audio.play().catch(
 function pause(){if(audio) audio.muted=true; setPlaying(false);}
 playBtn.addEventListener('click',play); pauseBtn.addEventListener('click',pause);
 /* ---------- Randomize: jump to a different song, once every 10 minutes ---------- */
-let lastShuffle=0; const SHUFFLE_WAIT=10*60*1000;
+const SHUFFLE_WAIT=10*60*1000;
+let lastShuffle=0;
+try{lastShuffle=parseInt(localStorage.getItem('paataShuffleTs')||'0',10)||0;}catch(e){}
 function shuffleReady(){return PLAYLIST.length>1&&(Date.now()-lastShuffle>=SHUFFLE_WAIT);}
 function paintShuffle(){
   const usable=PLAYLIST.length>1, left=SHUFFLE_WAIT-(Date.now()-lastShuffle), ready=usable&&left<=0;
@@ -256,6 +258,7 @@ function paintShuffle(){
 function randomize(){
   if(!shuffleReady()) return;
   lastShuffle=Date.now();
+  try{localStorage.setItem('paataShuffleTs',String(lastShuffle));}catch(e){}
   const cur=(audio&&order.length)?order[(oi-1+order.length)%order.length]:-1;
   let n; do{n=Math.floor(Math.random()*PLAYLIST.length);}while(n===cur);
   order=shuffle(PLAYLIST.length);
