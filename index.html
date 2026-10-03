@@ -169,6 +169,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
              <button class="key band-key" data-band="0" aria-pressed="true">CINEMA</button>
              <button class="key band-key" data-band="1" aria-pressed="false">DEVOTIONAL</button>
              <button class="key band-key" data-band="2" aria-pressed="false">ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు</button>
+             <button class="key band-key" data-band="3" aria-pressed="false">MEE RADIO</button>
            </div>
          </div>
         </div>
@@ -243,11 +244,53 @@ const MSS_SONGS = [
   { title: "Top 10 Morning Stotram (M.S. Subbulakshmi)", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/mss-v1/Top.10.Morning.Stotram.-.M.S.Subbulakshmi.Start.Your.Day.with.Divine.Blessings.Carnatic.Music_MP3.mp3" },
   { title: "Popular Thyagaraja Keerthanalu (M.S. Subbulakshmi)", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/mss-v1/Popular.Thyagaraja.Keerthanalu.by.M.S.Subbulakshmi.Nagumomu.Hecharika.Divine.Carnatic.Music_MP3.mp3" },
 ];
+const MEE_RADIO_SONGS = [
+  { title: "Malli Malli (1986)", src: "https://aac.saavncdn.com/375/b11a168ea0ed0723343ade072db01908_160.mp4" },
+  { title: "Aakasam Eenatidho (1982)", src: "https://aac.saavncdn.com/555/efa37a75bd75b6940b57d33441828d1f_160.mp4" },
+  { title: "Keeravani (1985)", src: "https://aac.saavncdn.com/548/794eb1936b383f9e0bcfc896a7343c06_160.mp4" },
+  { title: "Acha Acha (1986)", src: "https://aac.saavncdn.com/375/20407649ee233630504917325687158f_160.mp4" },
+  { title: "Sande Poddula (1983)", src: "https://aac.saavncdn.com/357/8cc354b495a62750d924eebada374cc4_160.mp4" },
+  { title: "Jivvumani Kondagali (1989)", src: "https://aac.saavncdn.com/252/719ff84ab32426ca306c9a9f2935c8c9_160.mp4" },
+  { title: "Botany (1989)", src: "https://aac.saavncdn.com/654/8344a8aab50025b7f5f68850e7c94b63_160.mp4" },
+  { title: "Vanajallu Gillutunte (1988)", src: "https://aac.saavncdn.com/351/93bca6a3939db3c257199a4629900f4a_160.mp4" },
+  { title: "Jilibili Palukula (1984)", src: "https://aac.saavncdn.com/987/4afe841122b4f21ced94071c17a8129a_160.mp4" },
+  { title: "Maate Manthram (1981)", src: "https://aac.saavncdn.com/949/0005a90e101f9bb21248c48396f163d4_160.mp4" },
+  { title: "Kottaga (1988)", src: "https://aac.saavncdn.com/673/a6fbb4b8be8894aec4efa63862113f4b_160.mp4" },
+  { title: "Induvadana (1984)", src: "https://aac.saavncdn.com/357/08ba19dfd1022743203967dc8f55106e_160.mp4" },
+  { title: "Priya Raagale (1994)", src: "https://aac.saavncdn.com/814/d935f8487c84a01827c76a2db066ae68_160.mp4" },
+  { title: "Abbanee (1990)", src: "https://aac.saavncdn.com/414/9048d00e68a7e8f573ec72da23f93e17_160.mp4" },
+  { title: "Neekosam Neekosam (1999)", src: "https://aac.saavncdn.com/229/40035e27bcbd81cb9b31266f61a76ae1_160.mp4" },
+  { title: "Kotha Kothaga (1991)", src: "https://aac.saavncdn.com/null/25cb2ab6e4c03f81d580eef4379ca345_160.mp4" },
+  { title: "Prema O Prema (1999)", src: "https://aac.saavncdn.com/658/88f82ee8acfbbf3774db4c6c0036d932_160.mp4" },
+  { title: "Thelusa Manasa (1994)", src: "https://aac.saavncdn.com/170/76831f50fcb42408aac1d36fc75127da_160.mp4" },
+  { title: "Hayirabba (1998)", src: "https://aac.saavncdn.com/280/ebfea2e5f51012c9c1578475cb1f28e5_160.mp4" },
+  { title: "Vinaro Bhagyamu (1997)", src: "https://aac.saavncdn.com/243/cb3c3a4ffbbacd7ba2e1425109b5db92_160.mp4" },
+  { title: "Subhalekha (1990)", src: "https://aac.saavncdn.com/243/dfb261380b50008a85c5145050020e1e_160.mp4" },
+  { title: "Aunty Koothura (1998)", src: "https://aac.saavncdn.com/223/cf2e0b4a6180ad0b5f1a4af956979824_160.mp4" },
+  { title: "Naalo Unna Prema (1998)", src: "https://aac.saavncdn.com/521/8a71f30f0cd4b31165a10e56abab657e_160.mp4" },
+  { title: "Priyatama (1990)", src: "https://aac.saavncdn.com/414/b39e6de382cb4268779215ea38659b76_160.mp4" },
+  { title: "Balapam Patti (1990)", src: "https://aac.saavncdn.com/655/c5ec7dc96d6eadf7266a4f5bd9f89233_160.mp4" },
+  { title: "Hallo Guru (1991)", src: "https://aac.saavncdn.com/328/e44a3c4a8f1a293c3e8ce847b02cdacb_160.mp4" },
+  { title: "Priya Priyathama (1991)", src: "https://aac.saavncdn.com/407/c242545eebc799aa93aa767ec3948c81_160.mp4" },
+  { title: "Sundari Neeve (1992)", src: "https://aac.saavncdn.com/238/5de2b52a5b28da38eabfebc67af0cbca_160.mp4" },
+  { title: "Maate Raani (1990)", src: "https://aac.saavncdn.com/345/fa0c23ecf1ea6a7e54de3cbdfee0e9c3_160.mp4" },
+  { title: "Gum Gumainchu (1990)", src: "https://aac.saavncdn.com/245/c72535a1746e3664c2455fcf5c1e839d_160.mp4" },
+  { title: "Andhama Andhama (1994)", src: "https://aac.saavncdn.com/429/00256473ba3d93d7087d9e7c788e9042_160.mp4" },
+  { title: "Soniya Soniya (1997)", src: "https://aac.saavncdn.com/205/4c4a35cbebc4324e89bf14c7f437983b_160.mp4" },
+  { title: "Kannepettaro Kannu Kottaro (1994)", src: "https://aac.saavncdn.com/814/6805abde3e0ed4e201c7d25563c4c09a_160.mp4" },
+  { title: "Chandruni Takinadi (1997)", src: "https://aac.saavncdn.com/205/dfbc220305c955da7a0555d302c13072_160.mp4" },
+  { title: "Abba Yem Debba (1994)", src: "https://aac.saavncdn.com/814/fd2e1d71823638bc2a91a4a87dd72bf3_160.mp4" },
+  { title: "Amma Brahma Devudo (1994)", src: "https://aac.saavncdn.com/429/7bb4094c85ad5027be98810d705ee41a_160.mp4" },
+  { title: "Mila Mila (1991)", src: "https://aac.saavncdn.com/328/b674177c062f3a82a85192912701cc7d_160.mp4" },
+  { title: "Sukkesi Pakkesi (1994)", src: "https://aac.saavncdn.com/814/f403ef3a84c57c0bb4eced22b4760f7d_160.mp4" },
+  { title: "Manasichchi Ichchi (1994)", src: "https://aac.saavncdn.com/814/1a21cdd67a3f9bf953724378deca09b6_160.mp4" },
+];
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
   { id:'cinema',     label:'CINEMA',     cassette:'CINEMA',     songs: CINEMA_SONGS },
   { id:'devotional', label:'DEVOTIONAL', cassette:'DEVOTIONAL', songs: DEVOTIONAL_SONGS },
   { id:'mss',        label:'ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు', cassette:'MSS', songs: MSS_SONGS },
+  { id:'meeradio',   label:'MEE RADIO',  cassette:'MEE RADIO', songs: MEE_RADIO_SONGS },
 ];
 let bandIdx=0, playBandIdx=0; // knob position vs band actually playing
 function songs(){ return BANDS[playBandIdx].songs; }
@@ -374,7 +417,7 @@ let audio=null, playing=false, order=[], oi=0, secs=0;
 
 function setTitle(t){nowTitle.textContent=t; var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=t; if('mediaSession' in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:t,artist:'Paata Paatalu Radio'});}catch(e){}}}
 function shuffle(n){const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
-function nextTrack(){ const s=songs(); if(!s.length) return; if(oi>=order.length){order=shuffle(s.length); oi=0;} const t=s[order[oi++]]; audio.src=t.src; setTitle(t.title||'Untitled'); audio.play().catch(()=>{}); }
+function nextTrack(){ const s=songs(); if(!s.length) return; if(oi>=order.length){order=(BANDS[playBandIdx].id==='meeradio')?[...Array(s.length).keys()]:shuffle(s.length); oi=0;} const t=s[order[oi++]]; audio.src=t.src; setTitle(t.title||'Untitled'); audio.play().catch(()=>{}); }
 
 function ensureEngine(){
   if(audio) return;
@@ -430,6 +473,15 @@ function saveTs(){
 }
 function shuffleReady(){return songs().length>1&&(Date.now()-lastTs()>=bandWait());}
 function paintShuffle(){
+  const isRadio=BANDS[playBandIdx].id==='meeradio';
+  const d0=document.getElementById('shuffleTimerDigits'), b0=document.getElementById('shuffleTimerBar');
+  if(isRadio){
+    shuffleBtn.classList.add('cooling');
+    shuffleBtn.title='Shuffle is off for Mee Radio';
+    if(d0){d0.textContent='OFF';} if(b0){b0.style.width='0%';}
+    const t0=document.getElementById('shuffleTimer'); if(t0) t0.classList.remove('ready');
+    return;
+  }
   const usable=songs().length>1, left=bandWait()-(Date.now()-lastTs()), ready=usable&&left<=0;
   shuffleBtn.classList.toggle('cooling',!ready);
   shuffleBtn.title=!usable?'Add more songs to shuffle':(ready?'Play a different random song':'Shuffles again in '+Math.ceil(left/60000)+' min');
@@ -466,6 +518,7 @@ function showUncle(){
 }
 function randomize(){
   deckClick();
+  if(BANDS[playBandIdx].id==='meeradio') return; // shuffle stays off for Mee Radio
   if(songs().length<2) return;
   if(!shuffleReady()){showUncle(); return;}
   saveTs();
@@ -529,7 +582,7 @@ function emptyBlip(){
 
 function playBand(bi){
   playBandIdx=bi;
-  order=shuffle(BANDS[bi].songs.length); oi=0;
+  order=(BANDS[bi].id==='meeradio')?[...Array(BANDS[bi].songs.length).keys()]:shuffle(BANDS[bi].songs.length); oi=0;
   const hadAudio=!!audio;
   ensureEngine();
   if(hadAudio) nextTrack();
