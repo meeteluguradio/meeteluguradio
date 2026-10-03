@@ -67,6 +67,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .key{appearance:none;cursor:pointer;border:4px solid var(--ink);border-radius:14px;padding:12px 10px 10px;font-family:var(--f-te);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink);
   transition:transform .08s,box-shadow .08s;transform:translateY(0)}
 .key .sym{font-family:var(--f-body);font-size:20px}
+.key .en{font-family:var(--f-body);letter-spacing:.06em}
 .key.play{background:linear-gradient(180deg,#8fd1a8,#4f9f7a);box-shadow:0 8px 0 #2b5e47,0 8px 0 4px var(--ink)}
 .key.pause{background:linear-gradient(180deg,#f2a06a,var(--saffron));box-shadow:0 8px 0 #8a3c13,0 8px 0 4px var(--ink)}
 .key.shuffle{background:linear-gradient(180deg,#8fb8ec,#4a7fc9);box-shadow:0 8px 0 #2c4f86,0 8px 0 4px var(--ink)}
@@ -122,8 +123,8 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
             <div class="counter" id="counter" aria-label="Tape counter">000</div>
           </div>
           <div class="keys">
-            <button id="playBtn" class="key play" aria-pressed="false" aria-label="Play"><span class="sym">▶</span><span lang="te">ప్లే</span></button>
-            <button id="pauseBtn" class="key pause" aria-pressed="true" aria-label="Pause"><span class="sym">❚❚</span><span lang="te">ఆపు</span></button>
+            <button id="playBtn" class="key play" aria-pressed="false" aria-label="Play"><span class="sym">▶</span><span class="en">PLAY</span></button>
+            <button id="pauseBtn" class="key pause" aria-pressed="true" aria-label="Pause"><span class="sym">❚❚</span><span class="en">STOP</span></button>
             <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
           </div>
         </div>
