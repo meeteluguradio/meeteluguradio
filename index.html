@@ -53,7 +53,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 /* 3D band tuner knob */
 /* Vintage piano-key channel switch */
 .band-switch{display:flex;flex-direction:column;gap:10px;width:100%}
-.band-key{font-family:var(--f-type);font-size:14px;letter-spacing:.1em;padding:11px 6px;color:var(--ink);
+.band-key{font-family:var(--f-type);font-size:11px;letter-spacing:.1em;padding:11px 6px;color:var(--ink);text-align:center;
   background:linear-gradient(180deg,#efe0bd,#c9ad74);box-shadow:0 6px 0 #6b4f2a,0 6px 0 4px var(--ink)}
 .knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:var(--ink);opacity:.7;text-indent:.32em}
 .body::after{content:"";position:absolute;left:18px;top:10px;width:40%;height:10px;border-radius:10px;background:rgba(255,255,255,.45);pointer-events:none}
@@ -170,6 +170,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
            <div class="band-switch" role="group" aria-label="Channel">
              <button class="key band-key" data-band="0" aria-pressed="true">CINEMA</button>
              <button class="key band-key" data-band="1" aria-pressed="false">DEVOTIONAL</button>
+             <button class="key band-key" data-band="2" aria-pressed="false">ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు</button>
            </div>
          </div>
         </div>
@@ -237,10 +238,18 @@ const DEVOTIONAL_SONGS = [
   { title: "Jai Bajarangbali (Remove Negativity)", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/devotional-v1/He.will.Guide.You.Out.of.all.Negativity.PROTECT.You.Your.FAMILY.Remove.Evil.Jai.BajarangBali_MP3.mp3" },
   { title: "Sundara Kanda (M.S. Rama Rao) \u2014 Full", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/devotional-v1/Sundara.Kanda.by.M.S.Rama.Rao.Full.TeluguTraditions_MP3.mp3" },
 ];
+const MSS_SONGS = [
+  { title: "Sri Venkateswara Suprabhatam (M.S. Subbulakshmi)", src: "mss/mss01.mp3" },
+  { title: "Vasudeva Vasudeva (M.S. Subbulakshmi)", src: "mss/mss03.mp3" },
+  { title: "Sri Annamacharya Samkirtanas (M.S. Subbulakshmi)", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/mss-v1/Sri.Annamacharya.Samkirtanas.-.M.S.Subbulakshmi.Bhavamu.Lona.Adi.Purusha.Carnatic.Songs_MP3.mp3" },
+  { title: "Top 10 Morning Stotram (M.S. Subbulakshmi)", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/mss-v1/Top.10.Morning.Stotram.-.M.S.Subbulakshmi.Start.Your.Day.with.Divine.Blessings.Carnatic.Music_MP3.mp3" },
+  { title: "Popular Thyagaraja Keerthanalu (M.S. Subbulakshmi)", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/mss-v1/Popular.Thyagaraja.Keerthanalu.by.M.S.Subbulakshmi.Nagumomu.Hecharika.Divine.Carnatic.Music_MP3.mp3" },
+];
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
-  { id:'cinema',     label:'CINEMA',     songs: CINEMA_SONGS },
-  { id:'devotional', label:'DEVOTIONAL', songs: DEVOTIONAL_SONGS },
+  { id:'cinema',     label:'CINEMA',     cassette:'CINEMA',     songs: CINEMA_SONGS },
+  { id:'devotional', label:'DEVOTIONAL', cassette:'DEVOTIONAL', songs: DEVOTIONAL_SONGS },
+  { id:'mss',        label:'ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు', cassette:'MSS', songs: MSS_SONGS },
 ];
 let bandIdx=0, playBandIdx=0; // knob position vs band actually playing
 function songs(){ return BANDS[playBandIdx].songs; }
@@ -374,7 +383,7 @@ function play(){deckClick(); if(mode!=='stream'&&!songs().length){emptyBlip(); r
 function pause(){deckClick(); if(audio) audio.muted=true; setPlaying(false);}
 playBtn.addEventListener('click',play); pauseBtn.addEventListener('click',pause);
 /* ---------- Randomize: jump to a different song, once every 10 minutes ---------- */
-const SHUFFLE_WAITS={cinema:10*60*1000, devotional:5*60*1000};
+const SHUFFLE_WAITS={cinema:10*60*1000, devotional:5*60*1000, mss:3*60*1000};
 let shuffleTs={};
 try{
   const raw=localStorage.getItem('paataShuffleTs');
@@ -508,7 +517,7 @@ function tuneTo(bi){
     return;
   }
   if(bi===playBandIdx&&playing) return; // already tuned in
-  swapCassette(band.label).then(()=>playBand(bi));
+  swapCassette(band.cassette||band.label).then(()=>playBand(bi));
 }
 /* Cassette swap theatre: door opens, old cassette ejects, label swaps to the
    channel name, new cassette drops in, door closes. Contained in the slot. */
