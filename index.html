@@ -171,8 +171,6 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
              <button class="key band-key" data-band="0" aria-pressed="true">CINEMA</button>
              <button class="key band-key" data-band="1" aria-pressed="false">DEVOTIONAL</button>
            </div>
-           <div class="lcd" id="lcd" aria-hidden="true"><div class="lcd-band" id="lcdBand">CINEMA</div><div class="lcd-track" id="lcdTrack">STANDBY</div></div>
-           <div class="knob-caption">CHANNEL</div>
          </div>
         </div>
       </div>
@@ -440,7 +438,7 @@ shuffleBtn.addEventListener('click',randomize); paintShuffle();
 /* ---------- Band switch: vintage piano keys, CINEMA / DEVOTIONAL ---------- */
 const lcd=document.getElementById('lcd'), lcdBand=document.getElementById('lcdBand'), lcdTrack=document.getElementById('lcdTrack');
 const bandKeys=[...document.querySelectorAll('.band-key')];
-function lcdShowBand(bi){ lcdBand.textContent=BANDS[bi].label; }
+function lcdShowBand(bi){ if(lcdBand) lcdBand.textContent=BANDS[bi].label; }
 function bandSwitchSound(){
   try{
     var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
@@ -497,11 +495,11 @@ function playBand(bi){
 }
 function tuneTo(bi){
   bandIdx=bi;
-  lcd.classList.remove('tuning');
+  if(lcd) lcd.classList.remove('tuning');
   lcdShowBand(bi);
   const band=BANDS[bi];
   if(!band.songs.length){
-    lcdTrack.textContent='NO SONGS YET';
+    if(lcdTrack) lcdTrack.textContent='NO SONGS YET';
     if(audio) audio.muted=true;
     setPlaying(false);
     emptyBlip();
