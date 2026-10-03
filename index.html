@@ -76,10 +76,8 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .deck.playing .reel{animation-play-state:running}
 @keyframes spin{to{transform:rotate(360deg)}}
 .mid-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
-.vu{width:64px;height:40px;border:3px solid var(--ink);border-radius:10px 10px 6px 6px;background:radial-gradient(ellipse at 50% 120%,#fff6d8 0 55%,#f0d896 56%);position:relative;overflow:hidden}
-.vu::before{content:"";position:absolute;inset:6px 8px auto;height:20px;border-top:2px dotted var(--wine);border-radius:50% 50% 0 0}
-.vu span{position:absolute;left:5px;bottom:2px;font:9px var(--f-type);color:var(--wine)}
-.needle{position:absolute;left:50%;bottom:-4px;width:2px;height:38px;background:var(--wine);transform-origin:50% 100%;transform:rotate(-42deg);border-radius:2px}
+.eq{width:64px;height:40px;border:3px solid var(--ink);border-radius:10px 10px 6px 6px;background:#0a0f0a;position:relative;overflow:hidden;box-shadow:inset 0 0 8px rgba(0,0,0,.9)}
+.eq canvas{width:100%;height:100%;display:block}
 .now{min-width:0;background:var(--ink);border-radius:10px;padding:8px 12px;border:3px solid var(--ink);box-shadow:inset 0 0 0 2px #3a2a2c}
 .now-label{display:block;font:10px var(--f-type);letter-spacing:.16em;color:var(--saffron)}
 #nowTitle{display:block;font-family:var(--f-type);font-size:17px;color:#9ff0c8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(159,240,200,.6)}
@@ -155,7 +153,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
             </div>
           </div>
           <div class="mid-row">
-            <div class="vu" aria-hidden="true"><div class="needle" id="needle"></div><span>VU</span></div>
+            <div class="eq" aria-hidden="true"><canvas id="eqCanvas" width="64" height="40"></canvas></div>
             <div class="now" aria-live="polite"><span class="now-label">NOW PLAYING</span><span id="nowTitle">Press ▶ to start</span></div>
           </div>
           <div class="keys">
@@ -333,7 +331,42 @@ let rT; addEventListener('resize',()=>{clearTimeout(rT); rT=setTimeout(paint,120
 
 /* ---------- Player wiring ---------- */
 const deck=document.getElementById('deck'), playBtn=document.getElementById('playBtn'), pauseBtn=document.getElementById('pauseBtn'), shuffleBtn=document.getElementById('shuffleBtn');
-const nowTitle=document.getElementById('nowTitle'), needle=document.getElementById('needle');
+const nowTitle=document.getElementById('nowTitle');
+const eqCanvas=document.getElementById('eqCanvas'), eqCtx=eqCanvas.getContext('2d');
+/* Vintage LED equalizer: 10 segmented bars with peak-hold, driven by a
+   music-like procedural signal (real FFT is impossible for cross-origin
+   release tracks without breaking playback, so this simulates the bounce). */
+const EQ_N=10, eqVal=new Array(EQ_N).fill(0), eqPeak=new Array(EQ_N).fill(0);
+let eqT=0;
+function drawEQ(){
+  eqT+=0.016;
+  const W=64,H=40,bw=W/EQ_N,segs=5,segH=(H-4)/segs;
+  eqCtx.fillStyle='#0a0f0a'; eqCtx.fillRect(0,0,W,H);
+  for(let i=0;i<EQ_N;i++){
+    let target=0;
+    if(playing){
+      const beat=Math.pow(Math.max(0,Math.sin(eqT*2.4)),2)*Math.max(0,Math.sin(eqT*0.61+1.2));
+      const w1=Math.sin(eqT*(1.8+i*0.65)+i*1.7)*0.5+0.5;
+      const w2=Math.sin(eqT*(4.6+i*1.25)+i*0.9)*0.5+0.5;
+      const bass=1-i/EQ_N, treb=i/EQ_N;
+      target=Math.min(1, beat*(0.35+bass*0.9) + w1*(0.25+bass*0.45) + w2*(0.15+treb*0.5));
+    }
+    const k=target>eqVal[i]?0.45:0.07;
+    eqVal[i]+=(target-eqVal[i])*k;
+    if(eqVal[i]>eqPeak[i]) eqPeak[i]=eqVal[i]; else eqPeak[i]=Math.max(0,eqPeak[i]-0.012);
+    const lit=Math.round(eqVal[i]*segs);
+    for(let s=0;s<segs;s++){
+      const y=H-3-(s+1)*segH;
+      let col;
+      if(s<2) col='#39d353'; else if(s<4) col='#ffb000'; else col='#ff4438';
+      eqCtx.fillStyle=s<lit?col:'rgba(120,160,120,0.10)';
+      eqCtx.fillRect(i*bw+1,y+1,bw-2,segH-2);
+    }
+    const py=H-3-Math.round(eqPeak[i]*segs)*segH;
+    eqCtx.fillStyle='rgba(255,80,60,0.9)';
+    eqCtx.fillRect(i*bw+1,Math.max(1,py),bw-2,1.5);
+  }
+}
 const tapeL=document.getElementById('tapeL'), tapeR=document.getElementById('tapeR');
 const mode = STREAM_URL ? 'stream' : 'playlist';
 
@@ -559,13 +592,8 @@ if('mediaSession' in navigator){try{navigator.mediaSession.setActionHandler('pla
 
 setInterval(()=>{if(playing){secs++;}},1000);
 
-let ang=-42, buf=null;
 (function loop(){
-  let target=-42;
-  if(playing){
-    target=-20+Math.random()*50;
-  }
-  ang+= (target-ang)*.18; needle.style.transform=`rotate(${ang}deg)`;
+  drawEQ();
   let p=0; if(audio&&audio.duration&&isFinite(audio.duration)) p=audio.currentTime/audio.duration; else if(audio) p=(secs%600)/600;
   tapeL.setAttribute('r',(20+24*(1-p)).toFixed(1)); tapeR.setAttribute('r',(20+24*p).toFixed(1));
   requestAnimationFrame(loop);
