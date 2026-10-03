@@ -73,6 +73,15 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .key.shuffle{background:linear-gradient(180deg,#8fb8ec,#4a7fc9);box-shadow:0 8px 0 #2c4f86,0 8px 0 4px var(--ink)}
 .key.shuffle svg{display:block}
 .key.shuffle.cooling{opacity:.45;cursor:not-allowed}
+.shuffle-wrap{display:flex;flex-direction:column;gap:6px;min-width:0}
+.shuffle-timer{background:var(--ink);border:3px solid var(--ink);border-radius:10px;box-shadow:inset 0 0 0 2px #3a2a2c;padding:5px 8px 7px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.st-label{font:9px var(--f-type);letter-spacing:.18em;color:var(--saffron)}
+.st-digits{font:16px var(--f-type);font-variant-numeric:tabular-nums;color:var(--marigold);text-shadow:0 0 8px rgba(245,191,79,.55);letter-spacing:.08em}
+.shuffle-timer.ready .st-label{color:#9ff0c8}
+.shuffle-timer.ready .st-digits{color:#9ff0c8;text-shadow:0 0 8px rgba(159,240,200,.55)}
+.st-bar{width:100%;height:4px;border-radius:3px;background:#3a2a2c;overflow:hidden}
+.st-bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--saffron),var(--marigold));border-radius:3px;transition:width 1s linear}
+.shuffle-timer.ready .st-bar span{background:#9ff0c8}
 #unclePop{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(24px);z-index:99;display:flex;align-items:flex-end;gap:6px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;filter:sepia(.25)}
 #unclePop.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #unclePop.bye{opacity:0;transform:translateX(-50%) translateY(16px)}
@@ -126,7 +135,10 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
           <div class="keys">
             <button id="playBtn" class="key play" aria-pressed="false" aria-label="Play"><span class="sym">▶</span><span class="en">PLAY</span></button>
             <button id="pauseBtn" class="key pause" aria-pressed="true" aria-label="Pause"><span class="sym">❚❚</span><span class="en">STOP</span></button>
-            <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
+            <div class="shuffle-wrap">
+              <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
+              <div class="shuffle-timer" id="shuffleTimer" aria-hidden="true"><span class="st-label" id="shuffleTimerLabel">SHUFFLE</span><span class="st-digits" id="shuffleTimerDigits">READY</span><span class="st-bar"><span id="shuffleTimerBar"></span></span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -287,8 +299,20 @@ function paintShuffle(){
   const usable=PLAYLIST.length>1, left=SHUFFLE_WAIT-(Date.now()-lastShuffle), ready=usable&&left<=0;
   shuffleBtn.classList.toggle('cooling',!ready);
   shuffleBtn.title=!usable?'Add more songs to shuffle':(ready?'Play a different random song':'Shuffles again in '+Math.ceil(left/60000)+' min');
+  const t=document.getElementById('shuffleTimer');
+  if(t){
+    const d=document.getElementById('shuffleTimerDigits'), b=document.getElementById('shuffleTimerBar'), l=document.getElementById('shuffleTimerLabel');
+    if(!usable){t.classList.remove('ready'); l.textContent='SHUFFLE'; d.textContent='--:--'; b.style.width='0%';}
+    else if(ready){t.classList.add('ready'); l.textContent='SHUFFLE'; d.textContent='READY'; b.style.width='100%';}
+    else{
+      t.classList.remove('ready'); l.textContent='NEXT SHUFFLE';
+      const s=Math.ceil(left/1000);
+      d.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+      b.style.width=(100*(1-left/SHUFFLE_WAIT)).toFixed(1)+'%';
+    }
+  }
   clearTimeout(paintShuffle.t);
-  if(usable&&left>0) paintShuffle.t=setTimeout(paintShuffle,Math.min(left,30000));
+  if(usable&&left>0) paintShuffle.t=setTimeout(paintShuffle,1000);
 }
 var charIdx=Math.floor(Math.random()*4);
 function showUncle(){
