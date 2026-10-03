@@ -42,7 +42,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .body{position:relative;background:linear-gradient(180deg,#ead6aa 0%,var(--deck) 38%,var(--deck-shade) 100%);border:4px solid var(--ink);border-radius:30px;padding:16px;display:flex;flex-direction:row;gap:14px;
   box-shadow:0 10px 0 var(--deck-dark),0 10px 0 4px var(--ink),inset 0 4px 0 rgba(255,255,255,.55),inset 0 -6px 0 rgba(0,0,0,.12)}
 .main-col{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:12px}
-.tuner-col{flex:0 0 118px;display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 4px 14px;border-left:3px dashed rgba(29,10,16,.28)}
+.tuner-col{flex:0 0 128px;display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0 4px 14px;border-left:3px dashed rgba(29,10,16,.28)}
 /* Old-school green LCD */
 .lcd{width:100%;box-sizing:border-box;background:#0c180c;border:3px solid var(--ink);border-radius:8px;padding:7px 8px;box-shadow:inset 0 0 14px rgba(0,0,0,.9),0 2px 0 rgba(255,255,255,.35);position:relative;overflow:hidden}
 .lcd::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.28) 2px 3px);pointer-events:none}
@@ -101,15 +101,14 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .key.shuffle{background:linear-gradient(180deg,#8fb8ec,#4a7fc9);box-shadow:0 8px 0 #2c4f86,0 8px 0 4px var(--ink)}
 .key.shuffle svg{display:block}
 .key.shuffle.cooling{opacity:.45;cursor:not-allowed}
-.shuffle-wrap{display:flex;flex-direction:column;gap:6px;min-width:0}
-.shuffle-timer{background:var(--ink);border:3px solid var(--ink);border-radius:10px;box-shadow:inset 0 0 0 2px #3a2a2c;padding:5px 8px 7px;display:flex;flex-direction:column;align-items:center;gap:3px}
-.st-label{font:9px var(--f-type);letter-spacing:.18em;color:var(--saffron)}
-.st-digits{font:16px var(--f-type);font-variant-numeric:tabular-nums;color:var(--marigold);text-shadow:0 0 8px rgba(245,191,79,.55);letter-spacing:.08em}
-.shuffle-timer.ready .st-label{color:#9ff0c8}
-.shuffle-timer.ready .st-digits{color:#9ff0c8;text-shadow:0 0 8px rgba(159,240,200,.55)}
-.st-bar{width:100%;height:4px;border-radius:3px;background:#3a2a2c;overflow:hidden}
-.st-bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--saffron),var(--marigold));border-radius:3px;transition:width 1s linear}
-.shuffle-timer.ready .st-bar span{background:#9ff0c8}
+.st-strip{position:relative;display:flex;align-items:center;justify-content:space-between;background:var(--ink);border-radius:8px;padding:6px 12px 9px;box-shadow:inset 0 0 0 2px #3a2a2c;overflow:hidden}
+.st-strip-label{font:9px var(--f-type);letter-spacing:.22em;color:var(--saffron)}
+.st-strip-digits{font:14px var(--f-type);font-variant-numeric:tabular-nums;color:var(--marigold);text-shadow:0 0 8px rgba(245,191,79,.55);letter-spacing:.1em}
+.st-strip.ready .st-strip-label{color:#9ff0c8}
+.st-strip.ready .st-strip-digits{color:#9ff0c8;text-shadow:0 0 8px rgba(159,240,200,.55)}
+.st-strip-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:#3a2a2c}
+.st-strip-bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--saffron),var(--marigold));transition:width 1s linear}
+.st-strip.ready .st-strip-bar span{background:#9ff0c8}
 #unclePop{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(24px);z-index:99;display:flex;align-items:flex-end;gap:6px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;filter:sepia(.25)}
 #unclePop.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #unclePop.bye{opacity:0;transform:translateX(-50%) translateY(16px)}
@@ -164,18 +163,16 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
           <div class="keys">
             <button id="playBtn" class="key play" aria-pressed="false" aria-label="Play"><span class="sym">▶</span><span class="en">PLAY</span></button>
             <button id="pauseBtn" class="key pause" aria-pressed="true" aria-label="Pause"><span class="sym">❚❚</span><span class="en">STOP</span></button>
-            <div class="shuffle-wrap">
-              <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
-              <div class="shuffle-timer" id="shuffleTimer" aria-hidden="true"><span class="st-label" id="shuffleTimerLabel">SHUFFLE</span><span class="st-digits" id="shuffleTimerDigits">READY</span><span class="st-bar"><span id="shuffleTimerBar"></span></span></div>
-            </div>
+            <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
           </div>
+          <div class="st-strip" id="shuffleTimer" aria-hidden="true"><span class="st-strip-label" id="shuffleTimerLabel">SHUFFLE</span><span class="st-strip-digits" id="shuffleTimerDigits">READY</span><span class="st-strip-bar"><span id="shuffleTimerBar"></span></span></div>
          </div>
          <div class="tuner-col">
-           <div class="lcd" id="lcd" aria-hidden="true"><div class="lcd-band" id="lcdBand">TELUGU</div><div class="lcd-track" id="lcdTrack">STANDBY</div></div>
            <div class="knob" id="knob" role="slider" tabindex="0" aria-label="Band tuner" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" aria-valuetext="Telugu">
              <div class="knob-ticks" aria-hidden="true"><i style="--a:-135deg"></i><i style="--a:-45deg"></i><i style="--a:45deg"></i><i style="--a:135deg"></i></div>
              <div class="knob-rotor" id="knobRotor"><span class="knob-pointer"></span></div>
            </div>
+           <div class="lcd" id="lcd" aria-hidden="true"><div class="lcd-band" id="lcdBand">TELUGU</div><div class="lcd-track" id="lcdTrack">STANDBY</div></div>
            <div class="knob-caption">BAND</div>
          </div>
         </div>
