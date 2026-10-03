@@ -285,6 +285,11 @@ const MEE_RADIO_SONGS = [
   { title: "Sukkesi Pakkesi (1994)", src: "https://aac.saavncdn.com/814/f403ef3a84c57c0bb4eced22b4760f7d_160.mp4" },
   { title: "Manasichchi Ichchi (1994)", src: "https://aac.saavncdn.com/814/1a21cdd67a3f9bf953724378deca09b6_160.mp4" },
 ];
+const MEE_EPOCH=1790985600000; // station sign-on: 2026-10-03 00:00 UTC
+const MEE_DUR=[271,237,265,268,266,274,267,283,273,274,267,260,365,294,326,279,282,372,433,210,272,355,283,358,289,301,311,420,261,298,320,332,281,405,290,410,303,267,312];
+const MEE_TOTAL=MEE_DUR.reduce((a,b)=>a+b,0);
+/* Live station clock: wherever you tune in, you join the song already on air. */
+function meeNow(){let el=Math.floor((Date.now()-MEE_EPOCH)/1000)%MEE_TOTAL; if(el<0)el+=MEE_TOTAL; let acc=0; for(let i=0;i<MEE_DUR.length;i++){if(el<acc+MEE_DUR[i])return{idx:i,off:el-acc}; acc+=MEE_DUR[i];} return{idx:0,off:0};}
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
   { id:'cinema',     label:'CINEMA',     cassette:'CINEMA',     songs: CINEMA_SONGS },
@@ -417,7 +422,14 @@ let audio=null, playing=false, order=[], oi=0, secs=0;
 
 function setTitle(t){nowTitle.textContent=t; var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=t; if('mediaSession' in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:t,artist:'Paata Paatalu Radio'});}catch(e){}}}
 function shuffle(n){const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
-function nextTrack(){ const s=songs(); if(!s.length) return; if(oi>=order.length){order=(BANDS[playBandIdx].id==='meeradio')?[...Array(s.length).keys()]:shuffle(s.length); oi=0;} const t=s[order[oi++]]; audio.src=t.src; setTitle(t.title||'Untitled'); audio.play().catch(()=>{}); }
+function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
+  if(BANDS[playBandIdx].id==='meeradio'){ const pos=meeNow(); idx=pos.idx; off=pos.off; }
+  else { if(oi>=order.length){order=shuffle(s.length); oi=0;} idx=order[oi++]; }
+  const t=s[idx]; audio.src=t.src; setTitle(t.title||'Untitled');
+  if(off>1){ const h=function(){ audio.removeEventListener('loadedmetadata',h);
+    try{ if(audio.duration&&isFinite(audio.duration)&&off<audio.duration-1) audio.currentTime=off; }catch(e){} };
+    audio.addEventListener('loadedmetadata',h); }
+  audio.play().catch(()=>{}); }
 
 function ensureEngine(){
   if(audio) return;
@@ -582,7 +594,7 @@ function emptyBlip(){
 
 function playBand(bi){
   playBandIdx=bi;
-  order=(BANDS[bi].id==='meeradio')?[...Array(BANDS[bi].songs.length).keys()]:shuffle(BANDS[bi].songs.length); oi=0;
+  order=shuffle(BANDS[bi].songs.length); oi=0;
   const hadAudio=!!audio;
   ensureEngine();
   if(hadAudio) nextTrack();
