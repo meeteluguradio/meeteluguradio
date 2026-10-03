@@ -73,7 +73,13 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .top-row{display:grid;grid-template-columns:0.8fr 1.2fr;gap:12px;align-items:stretch}
 .grille{border:3px solid var(--ink);border-radius:18px;background:radial-gradient(circle,var(--ink) 0 2.4px,transparent 3px) 0 0/10px 10px,#c9ad74;box-shadow:inset 0 3px 0 rgba(0,0,0,.18);min-height:110px;position:relative}
 .grille::before{content:"STEREO";position:absolute;left:50%;bottom:-2px;transform:translate(-50%,50%);font:11px var(--f-type);letter-spacing:.2em;background:var(--ink);color:var(--marigold);padding:1px 7px;border-radius:6px}
-.cassette{border:3px solid var(--ink);border-radius:14px;background:#2a1a1f;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 3px 0 rgba(255,255,255,.08)}
+.cassette{border:3px solid var(--ink);border-radius:14px;background:#2a1a1f;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 3px 0 rgba(255,255,255,.08);transition:transform .34s cubic-bezier(.55,.06,.35,1),opacity .28s}
+.cassette.eject{transform:translateY(-104%);opacity:0}
+.cassette-slot{border-radius:14px;overflow:hidden;background:#241418;box-shadow:inset 0 4px 12px rgba(0,0,0,.45)}
+.slot-head{position:relative;height:12px;background:linear-gradient(180deg,#3a2a2c,#1c0f12);flex:none;z-index:2}
+.cassette{position:relative;z-index:1}
+.slot-door{position:absolute;inset:0;background:linear-gradient(180deg,#5a4a4f,#2c1c20);border-bottom:2px solid var(--ink);transform-origin:50% 0;transition:transform .18s ease-in}
+.slot-door.open{transform:perspective(320px) rotateX(-70deg)}
 .label{background:linear-gradient(180deg,var(--cream) 0 62%,var(--saffron) 62% 74%,var(--wine) 74%);border-radius:6px;border:2px solid var(--ink);padding:4px 8px 10px;color:var(--ink);display:flex;justify-content:space-between;align-items:baseline;gap:6px}
 .label .te{font-family:var(--f-te);font-size:20px;line-height:1}
 .label .side{font:10px var(--f-type);letter-spacing:.08em;white-space:nowrap}
@@ -101,14 +107,13 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .key.shuffle{background:linear-gradient(180deg,#8fb8ec,#4a7fc9);box-shadow:0 8px 0 #2c4f86,0 8px 0 4px var(--ink)}
 .key.shuffle svg{display:block}
 .key.shuffle.cooling{opacity:.45;cursor:not-allowed}
-.st-strip{position:relative;display:flex;align-items:center;justify-content:space-between;background:var(--ink);border-radius:8px;padding:6px 12px 9px;box-shadow:inset 0 0 0 2px #3a2a2c;overflow:hidden}
-.st-strip-label{font:9px var(--f-type);letter-spacing:.22em;color:var(--saffron)}
-.st-strip-digits{font:14px var(--f-type);font-variant-numeric:tabular-nums;color:var(--marigold);text-shadow:0 0 8px rgba(245,191,79,.55);letter-spacing:.1em}
-.st-strip.ready .st-strip-label{color:#9ff0c8}
-.st-strip.ready .st-strip-digits{color:#9ff0c8;text-shadow:0 0 8px rgba(159,240,200,.55)}
-.st-strip-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:#3a2a2c}
-.st-strip-bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--saffron),var(--marigold));transition:width 1s linear}
-.st-strip.ready .st-strip-bar span{background:#9ff0c8}
+.shuffle-col{display:flex;flex-direction:column;gap:6px;min-width:0}
+.st-mini{position:relative;background:var(--ink);border-radius:7px;box-shadow:inset 0 0 0 2px #3a2a2c;padding:6px 4px 8px;overflow:hidden;text-align:center}
+.st-mini-digits{font:13px var(--f-type);font-variant-numeric:tabular-nums;color:var(--marigold);text-shadow:0 0 8px rgba(245,191,79,.55);letter-spacing:.08em}
+.st-mini.ready .st-mini-digits{color:#9ff0c8;text-shadow:0 0 8px rgba(159,240,200,.55)}
+.st-mini-bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:#3a2a2c}
+.st-mini-bar span{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--saffron),var(--marigold));transition:width 1s linear}
+.st-mini.ready .st-mini-bar span{background:#9ff0c8}
 #unclePop{position:fixed;left:50%;bottom:16px;transform:translateX(-50%) translateY(24px);z-index:99;display:flex;align-items:flex-end;gap:6px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;filter:sepia(.25)}
 #unclePop.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #unclePop.bye{opacity:0;transform:translateX(-50%) translateY(16px)}
@@ -147,11 +152,14 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
          <div class="main-col">
           <div class="top-row">
             <div class="grille" aria-hidden="true"></div>
-            <div class="cassette" aria-hidden="true">
-              <div class="label"><span class="te" lang="te">పాత పాటలు</span><span class="side">SIDE A · Memories Unlimited</span></div>
+            <div class="cassette-slot">
+              <div class="slot-head"><div class="slot-door" id="slotDoor"></div></div>
+              <div class="cassette" id="cassetteEl" aria-hidden="true">
+              <div class="label"><span class="te" lang="te">పాత పాటలు</span><span class="side" id="cassetteSide">SIDE A · CINEMA</span></div>
               <div class="window">
                 <svg class="reel" viewBox="0 0 100 100"><circle id="tapeL" cx="50" cy="50" r="44" fill="#5a3326"/><circle cx="50" cy="50" r="18" fill="#f7e7c4" stroke="#1d0a10" stroke-width="3"/><g stroke="#1d0a10" stroke-width="5" stroke-linecap="round"><line x1="50" y1="36" x2="50" y2="44"/><line x1="62" y1="57" x2="55" y2="53"/><line x1="38" y1="57" x2="45" y2="53"/></g><circle cx="50" cy="50" r="4" fill="#1d0a10"/></svg>
                 <svg class="reel" viewBox="0 0 100 100"><circle id="tapeR" cx="50" cy="50" r="22" fill="#5a3326"/><circle cx="50" cy="50" r="18" fill="#f7e7c4" stroke="#1d0a10" stroke-width="3"/><g stroke="#1d0a10" stroke-width="5" stroke-linecap="round"><line x1="50" y1="36" x2="50" y2="44"/><line x1="62" y1="57" x2="55" y2="53"/><line x1="38" y1="57" x2="45" y2="53"/></g><circle cx="50" cy="50" r="4" fill="#1d0a10"/></svg>
+              </div>
               </div>
             </div>
           </div>
@@ -163,16 +171,18 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
           <div class="keys">
             <button id="playBtn" class="key play" aria-pressed="false" aria-label="Play"><span class="sym">▶</span><span class="en">PLAY</span></button>
             <button id="pauseBtn" class="key pause" aria-pressed="true" aria-label="Pause"><span class="sym">❚❚</span><span class="en">STOP</span></button>
-            <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
+            <div class="shuffle-col">
+              <button id="shuffleBtn" class="key shuffle" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg></button>
+              <div class="st-mini" id="shuffleTimer" aria-hidden="true"><span class="st-mini-digits" id="shuffleTimerDigits">READY</span><span class="st-mini-bar"><span id="shuffleTimerBar"></span></span></div>
+            </div>
           </div>
-          <div class="st-strip" id="shuffleTimer" aria-hidden="true"><span class="st-strip-label" id="shuffleTimerLabel">SHUFFLE</span><span class="st-strip-digits" id="shuffleTimerDigits">READY</span><span class="st-strip-bar"><span id="shuffleTimerBar"></span></span></div>
          </div>
          <div class="tuner-col">
-           <div class="knob" id="knob" role="slider" tabindex="0" aria-label="Band tuner" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0" aria-valuetext="Telugu">
-             <div class="knob-ticks" aria-hidden="true"><i style="--a:-135deg"></i><i style="--a:-45deg"></i><i style="--a:45deg"></i><i style="--a:135deg"></i></div>
+           <div class="knob" id="knob" role="slider" tabindex="0" aria-label="Band tuner" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Cinema">
+             <div class="knob-ticks" aria-hidden="true"></div>
              <div class="knob-rotor" id="knobRotor"><span class="knob-pointer"></span></div>
            </div>
-           <div class="lcd" id="lcd" aria-hidden="true"><div class="lcd-band" id="lcdBand">TELUGU</div><div class="lcd-track" id="lcdTrack">STANDBY</div></div>
+           <div class="lcd" id="lcd" aria-hidden="true"><div class="lcd-band" id="lcdBand">CINEMA</div><div class="lcd-track" id="lcdTrack">STANDBY</div></div>
            <div class="knob-caption">BAND</div>
          </div>
         </div>
@@ -185,7 +195,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 <script>
 // ================== CONFIG — put your licensed audio here ==================
 // Option A: your own licensed / royalty-free files (e.g. in a /music folder on GitHub Pages)
-const TELUGU_SONGS = [
+const CINEMA_SONGS = [
   { title: "Chiranjeevi All Time Hits — Vijayashanti Special", src: "music/chiranjeevi-hits.mp3" },
   { title: "Jallanta", src: "music/01 -  Jallanta [www.SenSongsMp3.co].mp3" },
   { title: "Jagada", src: "music/02 -  Jagada [www.SenSongsMp3.co].mp3" },
@@ -198,10 +208,8 @@ const TELUGU_SONGS = [
 ];
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
-  { id:'telugu',     label:'TELUGU',     songs: TELUGU_SONGS },
-  { id:'kannada',    label:'KANNADA',    songs: [] },
-  { id:'tamil',      label:'TAMIL',      songs: [] },
-  { id:'devotional', label:'DEVOTIONAL', songs: [ TELUGU_SONGS[7] ] },
+  { id:'cinema',     label:'CINEMA',     songs: CINEMA_SONGS },
+  { id:'devotional', label:'DEVOTIONAL', songs: [ CINEMA_SONGS[7] ] },
 ];
 let bandIdx=0, playBandIdx=0; // knob position vs band actually playing
 function songs(){ return BANDS[playBandIdx].songs; }
@@ -345,11 +353,11 @@ function paintShuffle(){
   shuffleBtn.title=!usable?'Add more songs to shuffle':(ready?'Play a different random song':'Shuffles again in '+Math.ceil(left/60000)+' min');
   const t=document.getElementById('shuffleTimer');
   if(t){
-    const d=document.getElementById('shuffleTimerDigits'), b=document.getElementById('shuffleTimerBar'), l=document.getElementById('shuffleTimerLabel');
-    if(!usable){t.classList.remove('ready'); l.textContent='SHUFFLE'; d.textContent='--:--'; b.style.width='0%';}
-    else if(ready){t.classList.add('ready'); l.textContent='SHUFFLE'; d.textContent='READY'; b.style.width='100%';}
+    const d=document.getElementById('shuffleTimerDigits'), b=document.getElementById('shuffleTimerBar');
+    if(!usable){t.classList.remove('ready'); d.textContent='--:--'; b.style.width='0%';}
+    else if(ready){t.classList.add('ready'); d.textContent='READY'; b.style.width='100%';}
     else{
-      t.classList.remove('ready'); l.textContent='NEXT SHUFFLE';
+      t.classList.remove('ready');
       const s=Math.ceil(left/1000);
       d.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
       b.style.width=(100*(1-left/SHUFFLE_WAIT)).toFixed(1)+'%';
@@ -391,23 +399,40 @@ function randomize(){
 shuffleBtn.addEventListener('click',randomize); paintShuffle();
 
 /* ---------- Band tuner knob: twist to choose a station band ---------- */
-const DETENTS=[-135,-45,45,135];
+const DETENTS=BANDS.map((_,i)=>BANDS.length<2?0:-135+i*(270/(BANDS.length-1)));
 const knob=document.getElementById('knob'), rotor=document.getElementById('knobRotor');
 const lcd=document.getElementById('lcd'), lcdBand=document.getElementById('lcdBand'), lcdTrack=document.getElementById('lcdTrack');
-let knobAngle=-135, snapRaf=0;
+let knobAngle=DETENTS[0], snapRaf=0;
 const ptrs=new Map();
 let lastSingle=null, lastPair=null;
 function renderKnob(){ rotor.style.transform='rotate('+knobAngle+'deg)'; }
 function nearestDetent(a){ let bi=0,bd=1e9; for(let i=0;i<DETENTS.length;i++){const dd=Math.abs(DETENTS[i]-a); if(dd<bd){bd=dd;bi=i;}} return bi; }
 function angDelta(a,b){ let d=a-b; if(d>180)d-=360; if(d<-180)d+=360; return d; }
-function tickSoft(){
+function knobClick(){
   try{
     var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
-    var ctx=tickSoft.c||(tickSoft.c=new AC());
+    var ctx=knobClick.c||(knobClick.c=new AC());
+    var t=ctx.currentTime, dur=0.05;
+    var buf=ctx.createBuffer(1,Math.floor(ctx.sampleRate*dur),ctx.sampleRate), d=buf.getChannelData(0);
+    for(var i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+    var src=ctx.createBufferSource(); src.buffer=buf;
+    var bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2600; bp.Q.value=1.1;
+    var g=ctx.createGain(); g.gain.setValueAtTime(0.28,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    src.connect(bp); bp.connect(g); g.connect(ctx.destination); src.start(t);
+    var o=ctx.createOscillator(), g2=ctx.createGain();
+    o.type='sine'; o.frequency.setValueAtTime(170,t); o.frequency.exponentialRampToValueAtTime(85,t+0.045);
+    g2.gain.setValueAtTime(0.2,t); g2.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+    o.connect(g2); g2.connect(ctx.destination); o.start(t); o.stop(t+0.06);
+  }catch(e){}
+}
+function thunkSoft(){
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+    var ctx=thunkSoft.c||(thunkSoft.c=new AC());
     var t=ctx.currentTime, o=ctx.createOscillator(), g=ctx.createGain();
-    o.type='square'; o.frequency.value=1900;
-    g.gain.setValueAtTime(0.05,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.03);
-    o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+0.035);
+    o.type='sine'; o.frequency.setValueAtTime(140,t); o.frequency.exponentialRampToValueAtTime(55,t+0.09);
+    g.gain.setValueAtTime(0.3,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.11);
+    o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+0.12);
   }catch(e){}
 }
 function emptyBlip(){
@@ -430,7 +455,7 @@ function turnBy(d){
   knobAngle=Math.max(-135,Math.min(135,knobAngle+d));
   renderKnob();
   const now=nearestDetent(knobAngle);
-  if(now!==prev){ tickSoft(); lcdShowBand(now); }
+  if(now!==prev){ knobClick(); lcdShowBand(now); }
 }
 function snapKnob(){
   const bi=nearestDetent(knobAngle), target=DETENTS[bi];
@@ -466,12 +491,37 @@ function tuneTo(bi){
     return;
   }
   if(bi===playBandIdx&&playing) return; // already tuned in
-  playBand(bi);
+  swapCassette(band.label).then(()=>playBand(bi));
+}
+/* Cassette swap theatre: door opens, old cassette ejects, label swaps to the
+   channel name, new cassette drops in, door closes. Contained in the slot. */
+let swapGen=0;
+const cassetteEl=document.getElementById('cassetteEl'), slotDoor=document.getElementById('slotDoor'), cassetteSide=document.getElementById('cassetteSide');
+function swapCassette(channelLabel){
+  const gen=++swapGen;
+  return new Promise(res=>{
+    const done=()=>{ if(gen===swapGen) res(); };
+    const alive=()=>gen===swapGen;
+    slotDoor.classList.add('open');
+    setTimeout(()=>{ if(!alive()) return;
+      cassetteEl.classList.add('eject');
+      setTimeout(()=>{ if(!alive()) return;
+        cassetteSide.textContent='SIDE A · '+channelLabel;
+        void cassetteEl.offsetWidth;
+        cassetteEl.classList.remove('eject');
+        setTimeout(()=>{ if(!alive()) return; thunkSoft(); },300);
+        setTimeout(()=>{ if(!alive()) return;
+          slotDoor.classList.remove('open');
+          setTimeout(done,200);
+        },380);
+      },340);
+    },180);
+  });
 }
 function stepTo(bi){
   cancelAnimationFrame(snapRaf);
   lcd.classList.remove('tuning');
-  knobAngle=DETENTS[bi]; renderKnob(); tickSoft();
+  knobAngle=DETENTS[bi]; renderKnob(); knobClick();
   tuneTo(bi);
 }
 knob.addEventListener('pointerdown',function(e){
@@ -479,7 +529,7 @@ knob.addEventListener('pointerdown',function(e){
   ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
   cancelAnimationFrame(snapRaf);
   lcd.classList.add('tuning');
-  if(ptrs.size===2){ knob.classList.add('gripped'); tickSoft(); lastPair=null; }
+  if(ptrs.size===2){ knob.classList.add('gripped'); knobClick(); lastPair=null; }
   else { lastSingle=null; }
 });
 knob.addEventListener('pointermove',function(e){
@@ -519,6 +569,8 @@ knob.addEventListener('keydown',function(e){
   if(e.key==='ArrowRight'||e.key==='ArrowUp'){ e.preventDefault(); stepTo(Math.min(BANDS.length-1,bi+1)); }
   else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){ e.preventDefault(); stepTo(Math.max(0,bi-1)); }
 });
+document.querySelector('.knob-ticks').innerHTML=DETENTS.map(a=>'<i style="--a:'+a+'deg"></i>').join('');
+knob.setAttribute('aria-valuemax',String(BANDS.length-1));
 renderKnob(); lcdShowBand(0);
 addEventListener('keydown',e=>{if(e.code==='Space'&&e.target===document.body){e.preventDefault(); playing?pause():play();}});
 if('mediaSession' in navigator){try{navigator.mediaSession.setActionHandler('play',play); navigator.mediaSession.setActionHandler('pause',pause);}catch(e){}}
