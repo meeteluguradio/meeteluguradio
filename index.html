@@ -185,20 +185,62 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 // ================== CONFIG — put your licensed audio here ==================
 // Option A: your own licensed / royalty-free files (e.g. in a /music folder on GitHub Pages)
 const CINEMA_SONGS = [
-  { title: "Chiranjeevi All Time Hits — Vijayashanti Special", src: "music/chiranjeevi-hits.mp3" },
-  { title: "Jallanta", src: "music/01 -  Jallanta [www.SenSongsMp3.co].mp3" },
-  { title: "Jagada", src: "music/02 -  Jagada [www.SenSongsMp3.co].mp3" },
-  { title: "Nandikonda", src: "music/03 -  Nandikonda [www.SenSongsMp3.co].mp3" },
-  { title: "Aamani", src: "music/04 -  Aamani [www.SenSongsMp3.co].mp3" },
-  { title: "O Papa Lali", src: "music/05 -  O Papa Lali [www.SenSongsMp3.co].mp3" },
-  { title: "O Priya", src: "music/06 -  O Priya [www.SenSongsMp3.co].mp3" },
-  { title: "Om Namaha", src: "music/07 -  Om Namaha [www.SenSongsMp3.co].mp3" },
+  { title: "Chiranjeevi All Time Hits — Vijayashanti Special", src: "cinema/chiranjeevi-hits.mp3" },
+  { title: "Jallanta", src: "cinema/01 -  Jallanta [www.SenSongsMp3.co].mp3" },
+  { title: "Jagada", src: "cinema/02 -  Jagada [www.SenSongsMp3.co].mp3" },
+  { title: "Nandikonda", src: "cinema/03 -  Nandikonda [www.SenSongsMp3.co].mp3" },
+  { title: "Aamani", src: "cinema/04 -  Aamani [www.SenSongsMp3.co].mp3" },
+  { title: "O Papa Lali", src: "cinema/05 -  O Papa Lali [www.SenSongsMp3.co].mp3" },
+  { title: "O Priya", src: "cinema/06 -  O Priya [www.SenSongsMp3.co].mp3" },
+  { title: "Om Namaha", src: "cinema/07 -  Om Namaha [www.SenSongsMp3.co].mp3" },
   { title: "80s Telugu Songs Mix", src: "https://github.com/meeteluguradio/meeteluguradio/releases/download/80s-mix-v1/80s-songs.1.mp3" },
+];
+const DEVOTIONAL_SONGS = [
+  { title: "Idigaa Dadigaa Dinniyu (Annamayya Keerthana)", src: "devotional/dev01.mp3" },
+  { title: "Rama Namamu Dorake Rarandi (Bhakti Ranjani)", src: "devotional/dev02.mp3" },
+  { title: "Govinda Govinda Yani Koluvare (Annamacharya)", src: "devotional/dev03.mp3" },
+  { title: "Govinda Govinda (Om Voices)", src: "devotional/dev04.mp3" },
+  { title: "Jagadananda Karaka", src: "devotional/dev05.mp3" },
+  { title: "Arunachala Shiva", src: "devotional/dev06.mp3" },
+  { title: "Nama Ramayanam (M.S. Subbulakshmi)", src: "devotional/dev07.mp3" },
+  { title: "Marakatha Manimaya Chela", src: "devotional/dev08.mp3" },
+  { title: "Hanuman Chalisa (M.S. Rama Rao)", src: "devotional/dev09.mp3" },
+  { title: "Om Namachivaya Om (Ghibran)", src: "devotional/dev10.mp3" },
+  { title: "Dhanvantari Mantram", src: "devotional/dev11.mp3" },
+  { title: "Naga Stuti", src: "devotional/dev12.mp3" },
+  { title: "Kana Kana Ruchi", src: "devotional/dev13.mp3" },
+  { title: "Karyasidhi Hanuman Chalisa", src: "devotional/dev14.mp3" },
+  { title: "Jaya Janaki Ramana", src: "devotional/dev15.mp3" },
+  { title: "Arunaruna Nayanambuja", src: "devotional/dev16.mp3" },
+  { title: "Adugadugo Dinaraju Choodu", src: "devotional/dev17.mp3" },
+  { title: "Nidra Mudrankitamaina Meekannula", src: "devotional/dev18.mp3" },
+  { title: "Sri Venkateswara Suprabhatam", src: "devotional/dev19.mp3" },
+  { title: "Srirama Jayarama", src: "devotional/dev20.mp3" },
+  { title: "Vasudeva Vasudeva", src: "devotional/dev21.mp3" },
+  { title: "Kodanda Rama", src: "devotional/dev22.mp3" },
+  { title: "Choodagaligenu Ramuni Sundararoopamu", src: "devotional/dev23.mp3" },
+  { title: "Sri Dakshinamurthy Stotram", src: "devotional/dev24.mp3" },
+  { title: "Kalabhairava Ashtakam", src: "devotional/dev25.mp3" },
+  { title: "Sundarakanda 48va Sarga Parayanam", src: "devotional/dev26.mp3" },
+  { title: "Enduku Kruparadu Srirama", src: "devotional/dev27.mp3" },
+  { title: "Rara Srirama Rara", src: "devotional/dev28.mp3" },
+  { title: "Bhagyada Lakshmi Baramma (Bhimsen Joshi)", src: "devotional/dev29.mp3" },
+  { title: "Saranam Bhava Karunamayi", src: "devotional/dev30.mp3" },
+  { title: "Sri Hanuman Chalisa (Ganapathy Sachchidananda)", src: "devotional/dev31.mp3" },
+  { title: "Parvati Vallabha Ashtakam", src: "devotional/dev32.mp3" },
+  { title: "Hanuman Chalisa (Lo-fi)", src: "devotional/dev33.mp3" },
+  { title: "Shiva Tandava Stotram", src: "devotional/dev34.mp3" },
+  { title: "Rudra Gayatri Mantra", src: "devotional/dev35.mp3" },
+  { title: "Chandrachooda (Anoop Sankar)", src: "devotional/dev36.mp3" },
+  { title: "Aaditya Hrudayam", src: "devotional/dev37.mp3" },
+  { title: "Hara Hara Sankara", src: "devotional/dev38.mp3" },
+  { title: "Hayagreeva Stotram", src: "devotional/dev39.mp3" },
+  { title: "Hanuman Vadvanal Stotra", src: "devotional/dev40.mp3" },
 ];
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
   { id:'cinema',     label:'CINEMA',     songs: CINEMA_SONGS },
-  { id:'devotional', label:'DEVOTIONAL', songs: [ CINEMA_SONGS[7] ] },
+  { id:'devotional', label:'DEVOTIONAL', songs: DEVOTIONAL_SONGS },
 ];
 let bandIdx=0, playBandIdx=0; // knob position vs band actually playing
 function songs(){ return BANDS[playBandIdx].songs; }
@@ -332,12 +374,21 @@ function play(){deckClick(); if(mode!=='stream'&&!songs().length){emptyBlip(); r
 function pause(){deckClick(); if(audio) audio.muted=true; setPlaying(false);}
 playBtn.addEventListener('click',play); pauseBtn.addEventListener('click',pause);
 /* ---------- Randomize: jump to a different song, once every 10 minutes ---------- */
-const SHUFFLE_WAIT=10*60*1000;
-let lastShuffle=0;
-try{lastShuffle=parseInt(localStorage.getItem('paataShuffleTs')||'0',10)||0;}catch(e){}
-function shuffleReady(){return songs().length>1&&(Date.now()-lastShuffle>=SHUFFLE_WAIT);}
+const SHUFFLE_WAITS={cinema:10*60*1000, devotional:5*60*1000};
+let shuffleTs={};
+try{
+  const raw=localStorage.getItem('paataShuffleTs');
+  if(raw) shuffleTs = raw.trim().charAt(0)==='{' ? (JSON.parse(raw)||{}) : {cinema:parseInt(raw,10)||0};
+}catch(e){ shuffleTs={}; }
+function bandWait(){ return SHUFFLE_WAITS[BANDS[playBandIdx].id]||SHUFFLE_WAITS.cinema; }
+function lastTs(){ return shuffleTs[BANDS[playBandIdx].id]||0; }
+function saveTs(){
+  shuffleTs[BANDS[playBandIdx].id]=Date.now();
+  try{localStorage.setItem('paataShuffleTs',JSON.stringify(shuffleTs));}catch(e){}
+}
+function shuffleReady(){return songs().length>1&&(Date.now()-lastTs()>=bandWait());}
 function paintShuffle(){
-  const usable=songs().length>1, left=SHUFFLE_WAIT-(Date.now()-lastShuffle), ready=usable&&left<=0;
+  const usable=songs().length>1, left=bandWait()-(Date.now()-lastTs()), ready=usable&&left<=0;
   shuffleBtn.classList.toggle('cooling',!ready);
   shuffleBtn.title=!usable?'Add more songs to shuffle':(ready?'Play a different random song':'Shuffles again in '+Math.ceil(left/60000)+' min');
   const t=document.getElementById('shuffleTimer');
@@ -349,7 +400,7 @@ function paintShuffle(){
       t.classList.remove('ready');
       const s=Math.ceil(left/1000);
       d.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
-      b.style.width=(100*(1-left/SHUFFLE_WAIT)).toFixed(1)+'%';
+      b.style.width=(100*(1-left/bandWait())).toFixed(1)+'%';
     }
   }
   clearTimeout(paintShuffle.t);
@@ -375,8 +426,7 @@ function randomize(){
   deckClick();
   if(songs().length<2) return;
   if(!shuffleReady()){showUncle(); return;}
-  lastShuffle=Date.now();
-  try{localStorage.setItem('paataShuffleTs',String(lastShuffle));}catch(e){}
+  saveTs();
   const cur=(audio&&order.length)?order[(oi-1+order.length)%order.length]:-1;
   let n; do{n=Math.floor(Math.random()*songs().length);}while(n===cur);
   order=shuffle(songs().length);
