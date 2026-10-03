@@ -261,17 +261,18 @@ function deckClick(){
     var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
     var ctx=deckClick.c||(deckClick.c=new AC());
     if(ctx.state==='suspended')ctx.resume();
-    var t=ctx.currentTime, dur=0.07, len=Math.floor(ctx.sampleRate*dur),
+    var t=ctx.currentTime, dur=0.035, len=Math.max(1,Math.floor(ctx.sampleRate*dur)),
         buf=ctx.createBuffer(1,len,ctx.sampleRate), d=buf.getChannelData(0), i;
-    for(i=0;i<len;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4);}
+    for(i=0;i<len;i++){d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3.2);}
     var src=ctx.createBufferSource(); src.buffer=buf;
-    var bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2300; bp.Q.value=0.8;
-    var g1=ctx.createGain(); g1.gain.setValueAtTime(0.45,t); g1.gain.exponentialRampToValueAtTime(0.001,t+dur);
-    src.connect(bp); bp.connect(g1); g1.connect(ctx.destination); src.start(t);
-    var o=ctx.createOscillator(); o.type='sine';
-    o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(52,t+0.09);
-    var g2=ctx.createGain(); g2.gain.setValueAtTime(0.4,t); g2.gain.exponentialRampToValueAtTime(0.001,t+0.1);
-    o.connect(g2); g2.connect(ctx.destination); o.start(t); o.stop(t+0.11);
+    var hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=1800;
+    var bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=4200; bp.Q.value=0.7;
+    var g1=ctx.createGain(); g1.gain.setValueAtTime(0.8,t); g1.gain.exponentialRampToValueAtTime(0.001,t+dur);
+    src.connect(hp); hp.connect(bp); bp.connect(g1); g1.connect(ctx.destination); src.start(t);
+    var o=ctx.createOscillator(); o.type='triangle';
+    o.frequency.setValueAtTime(320,t); o.frequency.exponentialRampToValueAtTime(140,t+0.03);
+    var g2=ctx.createGain(); g2.gain.setValueAtTime(0.25,t); g2.gain.exponentialRampToValueAtTime(0.001,t+0.035);
+    o.connect(g2); g2.connect(ctx.destination); o.start(t); o.stop(t+0.04);
   }catch(e){}
 }
 function play(){deckClick(); ensureEngine(); if(audio){audio.muted=false; audio.play().catch(()=>{});} setPlaying(true);}
