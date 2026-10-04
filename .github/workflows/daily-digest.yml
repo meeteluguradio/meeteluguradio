@@ -1,11 +1,15 @@
 name: Daily vote digest
 
-# Runs every day shortly after midnight US Central and emails a
-# likes/dislikes-by-location table to meeteluguradio@gmail.com.
+# Runs once a day shortly after midnight US Central and emails a
+# likes/dislikes-by-location table to meeteluguradio@gmail.com
+# via the Resend API (repo secret RESEND_API_KEY).
+# Two UTC schedules with a local-time guard keep it at ~12:05 AM
+# America/Chicago year-round despite daylight saving changes.
 # Can also be run manually from the Actions tab (workflow_dispatch).
 on:
   schedule:
-    - cron: '30 6 * * *'
+    - cron: '5 5 * * *'
+    - cron: '5 6 * * *'
   workflow_dispatch: {}
 
 jobs:
@@ -14,18 +18,21 @@ jobs:
     steps:
       - name: Build and send digest
         env:
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: |
           python3 - <<'PYEOF'
-          import json, os, smtplib, urllib.request
+          import json, os, urllib.request
           from datetime import datetime, timedelta
-          from email.mime.multipart import MIMEMultipart
-          from email.mime.text import MIMEText
           from zoneinfo import ZoneInfo
 
           TZ = ZoneInfo("America/Chicago")
           now = datetime.now(TZ)
+          # Scheduled runs: only send if local time is in the 12:00 AM hour,
+          # so exactly one of the two UTC slots fires per day.
+          if os.environ.get("GITHUB_EVENT_NAME") == "schedule" and now.hour != 0:
+              print(f"Skipping: local time is {now.strftime('%H:%M')} America/Chicago, not the midnight hour.")
+              raise SystemExit(0)
+
           day = (now - timedelta(days=1)).date()          # the day that just ended
           start = datetime(day.year, day.month, day.day, tzinfo=TZ).timestamp() * 1000
           end = start + 86400 * 1000
@@ -71,17 +78,27 @@ jobs:
           <p style="color:#888;font-size:12px">One vote per listener (latest vote counts). Times in America/Chicago.</p>
           </body></html>"""
 
-          user = os.environ["GMAIL_USER"]
-          pwd = os.environ["GMAIL_APP_PASSWORD"]
-          msg = MIMEMultipart("alternative")
-          msg["Subject"] = f"Mee Radio votes — {day_str}: {total_likes} likes, {total_dislikes} dislikes"
-          msg["From"] = user
-          msg["To"] = "meeteluguradio@gmail.com"
-          msg.attach(MIMEText(html, "html"))
+          payload = json.dumps({
+              "from": "Mee Radio <onboarding@resend.dev>",
+              "to": ["meeteluguradio@gmail.com"],
+              "subject": f"Mee Radio votes — {day_str}: {total_likes} likes, {total_dislikes} dislikes",
+              "html": html,
+          }).encode()
 
-          with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as s:
-              s.starttls()
-              s.login(user, pwd)
-              s.sendmail(user, ["meeteluguradio@gmail.com"], msg.as_string())
-          print(f"Digest sent for {day_str}: {total_likes} likes, {total_dislikes} dislikes")
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=payload,
+              headers={
+                  "Authorization": f"Bearer {os.environ['RESEND_API_KEY']}",
+                  "Content-Type": "application/json",
+              },
+              method="POST",
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  resp = json.loads(r.read().decode())
+          except urllib.error.HTTPError as e:
+              print("Resend error:", e.code, e.read().decode()[:500])
+              raise SystemExit(1)
+          print(f"Digest sent for {day_str}: {total_likes} likes, {total_dislikes} dislikes (id {resp.get('id')})")
           PYEOF
