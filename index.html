@@ -89,6 +89,42 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .band-key{font-family:var(--f-type);font-size:11px;letter-spacing:.1em;padding:11px 6px;color:#2a1a0c;text-align:center;
   background:linear-gradient(180deg,#f6ecd4,#dcc491);box-shadow:0 6px 0 #4a3016,0 6px 0 3px #0d0703}
 .knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:var(--ink);opacity:.7;text-indent:.32em}
+/* Station Region knob */
+.region-wrap{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.region-plate{position:relative;width:176px;height:132px;border:3px solid #0d0703;border-radius:20px;
+  background:linear-gradient(180deg,#f8efdb,#e6d0a0);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.65),0 4px 0 #4a3016,0 4px 0 3px #0d0703}
+.rk-lab{position:absolute;font-family:var(--f-type);font-size:10px;letter-spacing:.1em;color:#2a1a0c;
+  background:none;border:0;cursor:pointer;padding:5px 3px;z-index:2}
+.rk-lab.on{color:#a31313;font-weight:bold;text-shadow:0 0 6px rgba(163,19,19,.4)}
+.lab-telugu{left:8px;top:54px}
+.lab-kannada{left:50%;top:0;transform:translateX(-50%)}
+.lab-tamil{right:8px;top:54px}
+.rk-knob{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;
+  background:radial-gradient(circle at 34% 30%,#96754f,#4a3220 58%,#241708);
+  border:3px solid #0d0703;box-shadow:0 5px 9px rgba(0,0,0,.5),inset 0 2px 4px rgba(255,255,255,.35);cursor:pointer;z-index:1}
+.rk-knob::before{content:"";position:absolute;inset:7px;border-radius:50%;
+  background:repeating-conic-gradient(rgba(0,0,0,.28) 0 7deg,transparent 7deg 14deg)}
+.rk-knob::after{content:"";position:absolute;inset:16px;border-radius:50%;
+  background:radial-gradient(circle at 40% 32%,#6b4f33,#3a2817 70%);box-shadow:inset 0 2px 5px rgba(0,0,0,.55)}
+.rk-inner{position:absolute;inset:0;transform:rotate(-55deg);transition:transform .5s cubic-bezier(.55,-.15,.3,1.25);z-index:1}
+.rk-pointer{position:absolute;left:calc(50% - 3px);top:9px;width:6px;height:24px;background:#ffe9b8;border-radius:3px;
+  box-shadow:0 0 6px rgba(0,0,0,.75),0 0 3px rgba(255,233,184,.8)}
+/* Tamil region mode: hide Telugu-only channel keys */
+body.region-tamil .band-key[data-band="0"],
+body.region-tamil .band-key[data-band="1"]{display:none}
+/* Uncle character (Tamil mode only) */
+.uncle{position:fixed;left:12px;bottom:12px;width:132px;z-index:60;display:none;pointer-events:none}
+body.region-tamil .uncle{display:block;animation:uncleBob 1.7s ease-in-out infinite}
+@keyframes uncleBob{0%,100%{transform:translateY(0) rotate(-1.4deg)}50%{transform:translateY(-11px) rotate(1.4deg)}}
+.uncle img{width:100%;display:block;filter:drop-shadow(0 7px 9px rgba(0,0,0,.5))}
+.uncle-bubble{position:absolute;left:74%;bottom:74%;background:var(--cream);border:3px solid #0d0703;border-radius:14px;
+  padding:5px 13px 7px;font-family:var(--f-type);text-align:center;white-space:nowrap;
+  box-shadow:3px 3px 0 rgba(0,0,0,.35);animation:uncleBob 1.7s ease-in-out infinite reverse}
+.uncle-bubble b{display:block;font-size:23px;letter-spacing:.05em;color:#a31313;line-height:1.1}
+.uncle-bubble span{font-size:10px;letter-spacing:.22em;color:#2a1a0c}
+.uncle-bubble::after{content:"";position:absolute;left:14px;bottom:-13px;border:7px solid transparent;border-top-color:#0d0703}
+@media (max-width:640px){.uncle{width:96px;left:8px;bottom:8px}.uncle-bubble b{font-size:18px}}
 .body::after{content:"";position:absolute;left:18px;top:10px;width:40%;height:10px;border-radius:10px;background:rgba(255,255,255,.45);pointer-events:none}
 .top-row{display:grid;grid-template-columns:0.8fr 1.2fr;gap:12px;align-items:stretch}
 .grille{border:3px solid #0d0703;border-radius:18px;background:radial-gradient(circle,#050302 0 2.4px,transparent 3px) 0 0/10px 10px,#4a2f16;box-shadow:inset 0 3px 10px rgba(0,0,0,.55);min-height:110px;position:relative}
@@ -336,6 +372,15 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
              <button class="key band-key" data-band="1" aria-pressed="false">ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు</button>
              <button class="key band-key" data-band="2" aria-pressed="false">MEE RADIO</button>
              <div class="live-tag" aria-hidden="true"><span class="live-text">LIVE</span><span class="live-lamp"></span></div>
+             <div class="region-wrap">
+               <div class="region-plate" role="group" aria-label="Station region">
+                 <button class="rk-lab lab-telugu on" data-region="telugu">TELUGU</button>
+                 <button class="rk-lab lab-kannada" data-region="kannada">KANNADA</button>
+                 <button class="rk-lab lab-tamil" data-region="tamil">TAMIL</button>
+                 <div class="rk-knob" id="regionKnob" role="button" tabindex="0" aria-label="Station region knob: Telugu"><span class="rk-inner"><span class="rk-pointer"></span></span></div>
+               </div>
+               <div class="knob-caption">STATION REGION</div>
+             </div>
            </div>
          </div>
         </div>
@@ -351,6 +396,11 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
     <button class="vote-btn" id="voteLike" aria-label="Thumbs up — I like this station">👍</button>
     <button class="vote-btn" id="voteDislike" aria-label="Thumbs down — not for me">👎</button>
   </div>
+</div>
+
+<div class="uncle" id="uncle" aria-hidden="true">
+  <div class="uncle-bubble"><b>Macha</b><span>STAY TUNED</span></div>
+  <img src="chars/uncle.png" alt="">
 </div>
 
 <script>
@@ -865,6 +915,98 @@ setInterval(()=>{if(playing){secs++;}},1000);
   tapeL.setAttribute('r',(20+24*(1-p)).toFixed(1)); tapeR.setAttribute('r',(20+24*p).toFixed(1));
   requestAnimationFrame(loop);
 })();
+
+/* ---------- Station Region knob: Telugu / Kannada / Tamil ---------- */
+const REGIONS=['telugu','kannada','tamil'];
+const RK_ROT={telugu:-55,kannada:0,tamil:55};
+let region='telugu', tuning=false;
+const regionKnob=document.getElementById('regionKnob');
+const rkInner=regionKnob.querySelector('.rk-inner');
+const dialNeedle=document.querySelector('.dial-needle');
+const eyebrowEl=document.querySelector('.marquee .eyebrow');
+const h1El=document.querySelector('.marquee h1');
+const tagEl=document.querySelector('.marquee .tag');
+const cassetteTe=document.querySelector('.cassette .label .te');
+const TELUGU_TXT={eyebrow:eyebrowEl.textContent,h1:h1El.innerHTML,tag:tagEl.textContent,cassette:cassetteTe.textContent};
+const TAMIL_TXT={
+  eyebrow:"80's · 90's Tamil Golden Hits",
+  h1:'உங்கள், நமது, Evergreen Tamil vintage பாடல்கள் Radio',
+  tag:'நாள் முழுதும் நில்லாமல் உங்கள் விருப்பமான TAMIL பாடல்கள்',
+  cassette:'பழைய பாடல்கள்'
+};
+/* Radio static burst (WebAudio, no audio file needed) */
+let actx=null;
+function radioStatic(dur){
+  try{
+    actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    const n=Math.floor(actx.sampleRate*dur), buf=actx.createBuffer(1,n,actx.sampleRate), d=buf.getChannelData(0);
+    let lvl=0.7;
+    for(let i=0;i<n;i++){
+      if(i%5200===0) lvl=0.5+Math.random()*0.5;
+      let v=(Math.random()*2-1)*lvl;
+      if(Math.random()<0.0007) v+=(Math.random()<0.5?-1:1)*0.85; /* crackle pops */
+      d[i]=v;
+    }
+    const src=actx.createBufferSource(); src.buffer=buf;
+    const bp=actx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1500; bp.Q.value=0.55;
+    const hp=actx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=280;
+    const g=actx.createGain(), t=actx.currentTime;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.5,t+0.09);
+    g.gain.setValueAtTime(0.5,t+dur-0.3);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(actx.destination);
+    src.start(t); src.stop(t+dur+0.05);
+  }catch(e){}
+}
+/* Dial needle rolls randomly while tuning */
+let sweepTimer=null;
+function sweepNeedle(dur){
+  dialNeedle.style.transition='left .11s linear';
+  const t0=Date.now();
+  clearInterval(sweepTimer);
+  sweepTimer=setInterval(()=>{
+    if(Date.now()-t0>dur){
+      clearInterval(sweepTimer);
+      dialNeedle.style.transition='left .9s ease';
+      dialNeedle.style.left='63%';
+      return;
+    }
+    dialNeedle.style.left=(4+Math.random()*92).toFixed(1)+'%';
+  },110);
+}
+function paintRegionKnob(){
+  document.querySelectorAll('.rk-lab').forEach(b=>b.classList.toggle('on',b.dataset.region===region));
+  rkInner.style.transform='rotate('+RK_ROT[region]+'deg)';
+  regionKnob.setAttribute('aria-label','Station region knob: '+region.charAt(0).toUpperCase()+region.slice(1));
+}
+function applyRegionUI(){
+  const tamil=region!=='telugu'; /* Kannada stays on the Tamil page for now */
+  document.body.classList.toggle('region-tamil',tamil);
+  const T=tamil?TAMIL_TXT:TELUGU_TXT;
+  eyebrowEl.textContent=T.eyebrow;
+  h1El.innerHTML=T.h1; h1El.setAttribute('lang',tamil?'ta':'te');
+  tagEl.textContent=T.tag; tagEl.setAttribute('lang',tamil?'ta':'te');
+  cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',tamil?'ta':'te');
+  if(tamil&&bandIdx!==2){ paintBandKeys(2); tuneTo(2); }
+}
+function setRegion(r){
+  if(tuning||r===region) return;
+  tuning=true; region=r; paintRegionKnob();
+  const oldVol=(audio&&typeof audio.volume==='number')?audio.volume:1;
+  if(audio) audio.volume=0.06;
+  sweepNeedle(3000);
+  radioStatic(3);
+  setTimeout(()=>{
+    if(audio) audio.volume=oldVol;
+    tuning=false;
+    applyRegionUI();
+  },3060);
+}
+regionKnob.addEventListener('click',()=>setRegion(REGIONS[(REGIONS.indexOf(region)+1)%3]));
+regionKnob.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();regionKnob.click();}});
+document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();setRegion(b.dataset.region);}));
 </script>
 <script>
 /* Rolling tribute scroll: unfurls on click, rolls back after 10s, × closes */
