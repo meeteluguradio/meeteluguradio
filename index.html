@@ -981,6 +981,7 @@ function paintRegionKnob(){
   rkInner.style.transform='rotate('+RK_ROT[region]+'deg)';
   regionKnob.setAttribute('aria-label','Station region knob: '+region.charAt(0).toUpperCase()+region.slice(1));
 }
+let prevBand=null; /* band to restore when leaving the Tamil page */
 function applyRegionUI(){
   const tamil=region!=='telugu'; /* Kannada stays on the Tamil page for now */
   document.body.classList.toggle('region-tamil',tamil);
@@ -989,8 +990,34 @@ function applyRegionUI(){
   h1El.innerHTML=T.h1; h1El.setAttribute('lang',tamil?'ta':'te');
   tagEl.textContent=T.tag; tagEl.setAttribute('lang',tamil?'ta':'te');
   cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',tamil?'ta':'te');
-  if(tamil&&bandIdx!==2){ paintBandKeys(2); tuneTo(2); }
+  const key2=document.querySelector('.band-key[data-band="2"]');
+  const cs=document.getElementById('cassetteSide');
+  const tgLive=document.getElementById('tgLive');
+  if(tamil){
+    /* Stay tuned: the Tamil station is not on air yet — stop any playback */
+    if(prevBand===null) prevBand={b:bandIdx,p:playBandIdx};
+    if(playing) pause();
+    BANDS[2].label='உங்கள் Radio'; BANDS[2].cassette='உங்கள் Radio';
+    key2.textContent='உங்கள் Radio'; key2.setAttribute('lang','ta');
+    bandIdx=2; playBandIdx=2; paintBandKeys(2);
+    if(tgLive) tgLive.classList.remove('on');
+    if(cs) cs.textContent='SIDE A · உங்கள் Radio';
+  }else{
+    BANDS[2].label='MEE RADIO'; BANDS[2].cassette='MEE RADIO';
+    key2.textContent='MEE RADIO'; key2.removeAttribute('lang');
+    if(prevBand!==null){ bandIdx=prevBand.b; playBandIdx=prevBand.p; prevBand=null; }
+    paintBandKeys(bandIdx);
+    if(cs) cs.textContent='SIDE A · '+BANDS[bandIdx].cassette;
+  }
 }
+/* Tamil mode is stay-tuned dead air: tapping the visible channel key or PLAY
+   gives a static burst instead of starting any audio. */
+document.querySelector('.band-switch').addEventListener('click',ev=>{
+  if(region!=='telugu'&&ev.target.closest('.band-key')){ ev.stopPropagation(); radioStatic(1.2); }
+},true);
+document.querySelector('.keys').addEventListener('click',ev=>{
+  if(region!=='telugu'&&ev.target.closest('#playBtn')){ ev.stopPropagation(); radioStatic(1.2); }
+},true);
 function setRegion(r){
   if(tuning||r===region) return;
   tuning=true; region=r; paintRegionKnob();
