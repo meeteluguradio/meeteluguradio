@@ -209,9 +209,13 @@ body.region-tamil .uncle{display:block}
 .band-key[aria-pressed="true"]:not([data-band="2"]){box-shadow:0 1px 0 #4a3016,0 1px 0 3px #0d0703,0 0 26px 10px rgba(255,196,110,.55)}
 /* HERO OF THE DAY row: piano key + slot-machine lever */
 .hero-row{display:flex;gap:10px;align-items:stretch}
-.hero-key{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0}
-.hero-cap{font-size:9px;letter-spacing:.24em;text-indent:.24em;opacity:.75}
-.hero-name{display:flex;align-items:center;justify-content:center;min-height:26px;font-size:19px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;transform:translateZ(0)}
+.hero-row .band-key{flex:1;min-width:0}
+/* Hero slot reel on the green readout: fixed box so name length never moves the radio */
+.now{min-width:0;overflow:hidden}
+#nowTitle{display:block;min-height:26px}
+.hero-reel{height:26px;overflow:hidden}
+.hero-reel-track{display:flex;flex-direction:column;will-change:transform}
+.hero-reel-track div{height:26px;line-height:26px;font-family:var(--f-type);font-size:15px;letter-spacing:.08em;color:#9ff0c8;text-shadow:0 0 6px rgba(159,240,200,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hero-lever{position:relative;flex:0 0 54px;border:4px solid #160c04;border-radius:12px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
   background:linear-gradient(180deg,#8a6a45,#5e4526);box-shadow:inset 0 2px 6px rgba(0,0,0,.5),0 4px 0 #2a1a0c}
 .hero-lever:active{cursor:grabbing}
@@ -379,7 +383,7 @@ body.region-tamil .hero-row{display:none}
           </div>
           <div class="mid-row">
             <div class="eq" aria-hidden="true"><canvas id="eqCanvas" width="64" height="40"></canvas></div>
-            <div class="now" aria-live="polite"><span class="now-label">NOW PLAYING</span><span id="nowTitle">Press ▶ to start</span></div>
+            <div class="now" aria-live="polite"><span class="now-label">NOW PLAYING</span><span id="nowTitle">Press ▶ to start</span><div class="hero-reel" id="heroReel" aria-hidden="true" hidden><div class="hero-reel-track" id="heroReelTrack"></div></div></div>
           </div>
           <div class="keys">
             <div class="ps-col">
@@ -394,10 +398,7 @@ body.region-tamil .hero-row{display:none}
            <div class="band-switch" role="group" aria-label="Channel">
              <div class="onair onair-top" aria-live="polite" title="People listening right now"><span class="live-dot" aria-hidden="true"></span><span id="liveCount">–</span></div>
              <div class="hero-row">
-               <button class="key band-key hero-key" data-band="3" aria-pressed="false">
-                 <span class="hero-cap">HERO OF THE DAY</span>
-                 <span class="hero-name" id="heroName">PULL THE LEVER</span>
-               </button>
+               <button class="key band-key" data-band="3" aria-pressed="false">HERO OF THE DAY</button>
                <div class="hero-lever" id="heroLever" role="button" tabindex="0" aria-label="Pull the lever for a random hero" title="Pull for a random hero">
                  <div class="lever-track"></div>
                  <div class="lever-arm" id="leverArm"><div class="lever-knob"></div></div>
@@ -4644,7 +4645,8 @@ bandKeys.forEach(btn=>btn.addEventListener('click',()=>{
    station (seeded-shuffled loop + station clock, like MEE RADIO). */
 const HEROES=["Chiranjeevi","Nagarjuna Akkineni","Venkatesh Daggubati","Nandamuri Balakrishna","Mohan Babu","Krishna","Rajendra Prasad","Rajasekhar","Jagapathi Babu","Sobhan Babu"];
 let currentHero=null, spinning=false, heroBag=[];
-const heroNameEl=document.getElementById('heroName');
+const heroReel=document.getElementById('heroReel'), heroReelTrack=document.getElementById('heroReelTrack');
+const REEL_H=26; // must match .hero-reel height in CSS
 /* Fair draw: every hero appears exactly once per round of 10, then reshuffled. */
 function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function drawHero(){ if(!heroBag.length) heroBag=shuffleArr(HEROES.slice()); return heroBag.pop(); }
@@ -4663,19 +4665,30 @@ function spinHero(){
   spinning=true;
   radioStatic(2.6); // slot-machine channel-changing sound while names roll
   const final=drawHero();
-  let i=0; const total=30;
-  const tick=()=>{
-    heroNameEl.textContent=HEROES[Math.floor(Math.random()*HEROES.length)].toUpperCase();
-    if(++i<total){ setTimeout(tick, 40+i*9); }
-    else{ selectHero(final); spinning=false; }
+  // Slot reel on the green readout: names roll vertically, land on the hero.
+  const seq=[];
+  for(let k=0;k<34;k++) seq.push(HEROES[Math.floor(Math.random()*HEROES.length)].toUpperCase());
+  seq.push(final.toUpperCase());
+  heroReelTrack.innerHTML=seq.map(n=>'<div>'+n+'</div>').join('');
+  heroReelTrack.style.transition='none';
+  heroReelTrack.style.transform='translateY(0)';
+  nowTitleEl.style.display='none';
+  heroReel.hidden=false;
+  void heroReelTrack.offsetHeight;
+  let i=0;
+  const step=()=>{
+    i++;
+    heroReelTrack.style.transition='transform '+(0.07+i*0.005).toFixed(3)+'s ease-out';
+    heroReelTrack.style.transform='translateY('+(-i*REEL_H)+'px)';
+    if(i<seq.length){ setTimeout(step, 55+i*9); }
+    else{ setTimeout(()=>{ heroReel.hidden=true; nowTitleEl.style.display=''; selectHero(final); spinning=false; }, 380); }
   };
-  tick();
+  setTimeout(step, 80);
 }
 function selectHero(hero){
   currentHero=hero;
   BANDS[3].songs=(typeof HERO_SONGS!=='undefined'&&HERO_SONGS[hero])||[];
   BANDS[3].cassette='HERO · '+hero.toUpperCase();
-  heroNameEl.textContent=hero.toUpperCase();
   bandIdx=3; paintBandKeys(3); lcdShowBand(3);
   if(lcd) lcd.classList.remove('tuning');
   swapCassette(BANDS[3].cassette).then(()=>playBand(3));
