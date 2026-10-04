@@ -330,6 +330,13 @@ body.region-tamil .hero-row{display:none}
   .key,.band-key,.rk-lab,.rk-knob,.vote-btn,
   .feedback-tab,.tribute-tab,.feedback-x,.tribute-x,.fb-form button[type=submit]{
     touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+/* The closed feedback/tribute slide-down panels keep their full layout height
+  (visibility:hidden + scaleY(0) still occupies space), so their fixed
+  wrappers form invisible tap-blocking rectangles over the radio's buttons
+  on narrow screens. Let taps pass through; only the tabs and OPEN panels
+  take taps. */
+  .feedback-wrap,.tribute-wrap{pointer-events:none}
+  .feedback-tab,.tribute-tab,.feedback-scroll.open,.tribute-scroll.open{pointer-events:auto}
 }
 @media (max-width:640px){
   /* Stack the two columns instead of squeezing them: no clipped text, no overlaps. */
