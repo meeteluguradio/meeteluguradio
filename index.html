@@ -113,18 +113,22 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 /* Tamil region mode: hide Telugu-only channel keys */
 body.region-tamil .band-key[data-band="0"],
 body.region-tamil .band-key[data-band="1"]{display:none}
-/* Uncle character (Tamil mode only) */
-.uncle{position:fixed;left:12px;bottom:12px;width:132px;z-index:60;display:none;pointer-events:none}
-body.region-tamil .uncle{display:block;animation:uncleBob 1.7s ease-in-out infinite}
+/* Uncle character (Tamil mode only). Scoped under .uncle so the periodic
+   #unclePop popup's own .uncle-bubble styling stays untouched. */
+.uncle{position:fixed;z-index:60;display:none;pointer-events:none;
+  left:max(20px,calc(50% - 640px));top:54%;transform:translateY(-50%);width:170px}
+body.region-tamil .uncle{display:block}
+.uncle-bob{animation:uncleBob 1.7s ease-in-out infinite}
 @keyframes uncleBob{0%,100%{transform:translateY(0) rotate(-1.4deg)}50%{transform:translateY(-11px) rotate(1.4deg)}}
 .uncle img{width:100%;display:block;filter:drop-shadow(0 7px 9px rgba(0,0,0,.5))}
-.uncle-bubble{position:absolute;left:74%;bottom:74%;background:var(--cream);border:3px solid #0d0703;border-radius:14px;
+.uncle .uncle-bubble{position:absolute;left:74%;bottom:74%;background:var(--cream);border:3px solid #0d0703;border-radius:14px;
   padding:5px 13px 7px;font-family:var(--f-type);text-align:center;white-space:nowrap;
-  box-shadow:3px 3px 0 rgba(0,0,0,.35);animation:uncleBob 1.7s ease-in-out infinite reverse}
-.uncle-bubble b{display:block;font-size:23px;letter-spacing:.05em;color:#a31313;line-height:1.1}
-.uncle-bubble span{font-size:10px;letter-spacing:.22em;color:#2a1a0c}
-.uncle-bubble::after{content:"";position:absolute;left:14px;bottom:-13px;border:7px solid transparent;border-top-color:#0d0703}
-@media (max-width:640px){.uncle{width:96px;left:8px;bottom:8px}.uncle-bubble b{font-size:18px}}
+  box-shadow:3px 3px 0 rgba(0,0,0,.35);animation:uncleBob 1.7s ease-in-out infinite reverse;transform:none}
+.uncle .uncle-bubble b{display:block;font-size:23px;letter-spacing:.05em;color:#a31313;line-height:1.1}
+.uncle .uncle-bubble span{font-size:10px;letter-spacing:.22em;color:#2a1a0c}
+.uncle .uncle-bubble::after{content:"";position:absolute;left:14px;bottom:-13px;border:7px solid transparent;border-top-color:#0d0703}
+@media (max-width:1100px){.uncle{left:14px;width:140px}}
+@media (max-width:640px){.uncle{left:8px;top:auto;bottom:8px;transform:none;width:104px}.uncle .uncle-bubble b{font-size:18px}}
 .body::after{content:"";position:absolute;left:18px;top:10px;width:40%;height:10px;border-radius:10px;background:rgba(255,255,255,.45);pointer-events:none}
 .top-row{display:grid;grid-template-columns:0.8fr 1.2fr;gap:12px;align-items:stretch}
 .grille{border:3px solid #0d0703;border-radius:18px;background:radial-gradient(circle,#050302 0 2.4px,transparent 3px) 0 0/10px 10px,#4a2f16;box-shadow:inset 0 3px 10px rgba(0,0,0,.55);min-height:110px;position:relative}
@@ -374,9 +378,9 @@ body.region-tamil .uncle{display:block;animation:uncleBob 1.7s ease-in-out infin
              <div class="live-tag" aria-hidden="true"><span class="live-text">LIVE</span><span class="live-lamp"></span></div>
              <div class="region-wrap">
                <div class="region-plate" role="group" aria-label="Station region">
-                 <button class="rk-lab lab-telugu on" data-region="telugu">TELUGU</button>
-                 <button class="rk-lab lab-kannada" data-region="kannada">KANNADA</button>
-                 <button class="rk-lab lab-tamil" data-region="tamil">TAMIL</button>
+                 <button class="rk-lab lab-telugu on" data-region="telugu" lang="te">తెలుగు</button>
+                 <button class="rk-lab lab-kannada" data-region="kannada" lang="kn">ಕನ್ನಡ</button>
+                 <button class="rk-lab lab-tamil" data-region="tamil" lang="ta">தமிழ்</button>
                  <div class="rk-knob" id="regionKnob" role="button" tabindex="0" aria-label="Station region knob: Telugu"><span class="rk-inner"><span class="rk-pointer"></span></span></div>
                </div>
                <div class="knob-caption">STATION REGION</div>
@@ -399,8 +403,10 @@ body.region-tamil .uncle{display:block;animation:uncleBob 1.7s ease-in-out infin
 </div>
 
 <div class="uncle" id="uncle" aria-hidden="true">
-  <div class="uncle-bubble"><b>Macha</b><span>STAY TUNED</span></div>
-  <img src="chars/uncle.png" alt="">
+  <div class="uncle-bob">
+    <div class="uncle-bubble"><b>Macha</b><span>STAY TUNED</span></div>
+    <img src="chars/uncle.png" alt="">
+  </div>
 </div>
 
 <script>
@@ -927,6 +933,7 @@ const eyebrowEl=document.querySelector('.marquee .eyebrow');
 const h1El=document.querySelector('.marquee h1');
 const tagEl=document.querySelector('.marquee .tag');
 const cassetteTe=document.querySelector('.cassette .label .te');
+const nowTitleEl=document.getElementById('nowTitle');
 const TELUGU_TXT={eyebrow:eyebrowEl.textContent,h1:h1El.innerHTML,tag:tagEl.textContent,cassette:cassetteTe.textContent};
 const TAMIL_TXT={
   eyebrow:"80's · 90's Tamil Golden Hits",
@@ -1002,12 +1009,15 @@ function applyRegionUI(){
     bandIdx=2; playBandIdx=2; paintBandKeys(2);
     if(tgLive) tgLive.classList.remove('on');
     if(cs) cs.textContent='SIDE A · உங்கள் Radio';
+    if(!nowTitleEl.dataset.orig) nowTitleEl.dataset.orig=nowTitleEl.textContent;
+    nowTitleEl.textContent='STAY TUNED';
   }else{
     BANDS[2].label='MEE RADIO'; BANDS[2].cassette='MEE RADIO';
     key2.textContent='MEE RADIO'; key2.removeAttribute('lang');
     if(prevBand!==null){ bandIdx=prevBand.b; playBandIdx=prevBand.p; prevBand=null; }
     paintBandKeys(bandIdx);
     if(cs) cs.textContent='SIDE A · '+BANDS[bandIdx].cassette;
+    if(nowTitleEl.dataset.orig){ nowTitleEl.textContent=nowTitleEl.dataset.orig; delete nowTitleEl.dataset.orig; }
   }
 }
 /* Tamil mode is stay-tuned dead air: tapping the visible channel key or PLAY
