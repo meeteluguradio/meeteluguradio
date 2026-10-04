@@ -34,7 +34,7 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 
 /* Radio — vintage wooden receiver */
 .deck-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
-.deck{width:min(520px,100%);perspective:900px;filter:drop-shadow(0 26px 30px rgba(10,2,6,.6))}
+.deck{width:min(560px,100%);perspective:900px;filter:drop-shadow(0 26px 30px rgba(10,2,6,.6))}
 .deck-inner{transform:rotateX(10deg);transform-origin:50% 100%;transition:transform .3s}
 .deck.playing .deck-inner{animation:bob .66s ease-in-out infinite alternate}
 @keyframes bob{from{transform:rotateX(10deg) translateY(0)}to{transform:rotateX(10deg) translateY(-3px) scaleY(1.01)}}
@@ -211,7 +211,7 @@ body.region-tamil .uncle{display:block}
 .hero-row{display:flex;gap:10px;align-items:stretch}
 .hero-key{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0}
 .hero-cap{font-size:9px;letter-spacing:.24em;text-indent:.24em;opacity:.75}
-.hero-name{font-size:19px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.hero-name{display:flex;align-items:center;justify-content:center;min-height:26px;font-size:19px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;transform:translateZ(0)}
 .hero-lever{position:relative;flex:0 0 54px;border:4px solid #160c04;border-radius:12px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
   background:linear-gradient(180deg,#8a6a45,#5e4526);box-shadow:inset 0 2px 6px rgba(0,0,0,.5),0 4px 0 #2a1a0c}
 .hero-lever:active{cursor:grabbing}
@@ -4643,14 +4643,26 @@ bandKeys.forEach(btn=>btn.addEventListener('click',()=>{
 /* HERO OF THE DAY: slot-machine hero picker; each hero runs his own live
    station (seeded-shuffled loop + station clock, like MEE RADIO). */
 const HEROES=["Chiranjeevi","Nagarjuna Akkineni","Venkatesh Daggubati","Nandamuri Balakrishna","Mohan Babu","Krishna","Rajendra Prasad","Rajasekhar","Jagapathi Babu","Sobhan Babu"];
-let currentHero=null, spinning=false;
+let currentHero=null, spinning=false, heroBag=[];
 const heroNameEl=document.getElementById('heroName');
+/* Fair draw: every hero appears exactly once per round of 10, then reshuffled. */
+function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function drawHero(){ if(!heroBag.length) heroBag=shuffleArr(HEROES.slice()); return heroBag.pop(); }
 function spinHero(){
   if(spinning) return;
   if(typeof HERO_SONGS==='undefined'||!HERO_SONGS){ emptyBlip(); return; }
+  // Unlock audio inside this user gesture so the hero's song can start by
+  // itself when the slot stops (phones block play() called long after a tap).
+  ensureEngine();
+  if(audio&&!playing){
+    try{
+      const pr=audio.play();
+      if(pr&&pr.then) pr.then(()=>{ if(!playing&&audio) audio.pause(); }).catch(()=>{});
+    }catch(e){}
+  }
   spinning=true;
   radioStatic(2.6); // slot-machine channel-changing sound while names roll
-  const final=HEROES[Math.floor(Math.random()*HEROES.length)];
+  const final=drawHero();
   let i=0; const total=30;
   const tick=()=>{
     heroNameEl.textContent=HEROES[Math.floor(Math.random()*HEROES.length)].toUpperCase();
