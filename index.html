@@ -343,9 +343,10 @@ body.region-tamil .hero-row{display:none}
   .feedback-tab,.tribute-tab,.feedback-scroll.open,.tribute-scroll.open{pointer-events:auto}
 }
 @media (max-width:640px){
-  /* Stack the two columns instead of squeezing them: no clipped text, no overlaps. */
-  .body{flex-direction:column}
-  .tuner-col{flex:1 1 auto;width:100%;box-sizing:border-box}
+  /* Compact like the desktop browser: keep the side-by-side layout and shrink
+     the whole radio so it fits without scrolling. (zoom shrinks layout too,
+     unlike transform: scale.) */
+  .deck{width:560px;zoom:.68}
   /* Breathing room between every switch: no touching or overlapping controls. */
   .main-col{gap:18px}
   .tuner-col{gap:16px}
@@ -354,7 +355,11 @@ body.region-tamil .hero-row{display:none}
   .hero-row{gap:14px}
   .top-row{gap:16px}
   /* Keep the footer line clear of the fixed vote buttons. */
-  .foot{max-width:none;padding:0 16px 88px}
+  .foot{max-width:none;padding:0 16px 76px}
+}
+@media (max-width:380px){
+  /* Smaller phones (360/375px wide): shrink a touch more to fit. */
+  .deck{zoom:.62}
 }
 </style>
 
