@@ -137,7 +137,7 @@ body.region-tamil .uncle{display:block}
 .body::after{content:"";position:absolute;left:18px;top:10px;width:40%;height:10px;border-radius:10px;background:rgba(255,255,255,.45);pointer-events:none}
 .top-row{display:grid;grid-template-columns:0.8fr 1.2fr;gap:12px;align-items:stretch}
 .grille{border:3px solid #0d0703;border-radius:18px;background:radial-gradient(circle,#050302 0 2.4px,transparent 3px) 0 0/10px 10px,#4a2f16;box-shadow:inset 0 3px 10px rgba(0,0,0,.55);min-height:110px;position:relative}
-.grille::before{content:"STEREO";position:absolute;left:50%;bottom:-2px;transform:translate(-50%,50%);font:11px var(--f-type);letter-spacing:.2em;background:var(--ink);color:var(--marigold);padding:1px 7px;border-radius:6px}
+.grille::before{content:"MEE RADIO";position:absolute;left:50%;bottom:-2px;transform:translate(-50%,50%);font:10px var(--f-type);letter-spacing:.14em;background:var(--ink);color:var(--marigold);padding:1px 9px;border-radius:6px;white-space:nowrap}
 .cassette{border:3px solid var(--ink);border-radius:14px;background:#2a1a1f;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:inset 0 3px 0 rgba(255,255,255,.08);transition:transform .34s cubic-bezier(.55,.06,.35,1),opacity .28s}
 .cassette.eject{transform:translateY(-104%);opacity:0}
 .cassette-slot{border-radius:14px;overflow:hidden;background:#241418;box-shadow:inset 0 4px 12px rgba(0,0,0,.45)}
@@ -153,8 +153,11 @@ body.region-tamil .uncle{display:block}
 .reel{width:44%;max-width:84px;aspect-ratio:1;max-height:84px;animation:spin 1.8s linear infinite;animation-play-state:paused}
 .deck.playing .reel{animation-play-state:running}
 @keyframes spin{to{transform:rotate(360deg)}}
-.mid-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
+.mid-row{display:block}
 .eq{width:64px;height:40px;border:3px solid #8a6a3a;border-radius:10px 10px 6px 6px;background:#0a0f0a;position:relative;overflow:hidden;box-shadow:inset 0 0 8px rgba(0,0,0,.9),0 0 0 2px #0d0703}
+.eq-row{margin-top:10px}
+.eq-wide{width:100%;height:58px}
+.eq-wide canvas{width:100%;height:100%;display:block}
 .eq canvas{width:100%;height:100%;display:block}
 /* Live listener indicator: brass nameplate, black digits, bright blinking green lamp */
 .onair{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;padding:5px 8px;font:13px var(--f-type);
@@ -213,9 +216,10 @@ body.region-tamil .uncle{display:block}
 /* Hero slot reel on the green readout: fixed box so name length never moves the radio */
 .now{min-width:0;overflow:hidden}
 #nowTitle{display:block;min-height:26px}
-.hero-reel{height:26px;overflow:hidden}
+/* Hero slot reel on the top tuner-glass screen: fixed box, never resizes the radio */
+.tg-reel{height:22px;flex:1 1 auto;min-width:0;overflow:hidden}
 .hero-reel-track{display:flex;flex-direction:column;will-change:transform}
-.hero-reel-track div{height:26px;line-height:26px;font-family:var(--f-type);font-size:15px;letter-spacing:.08em;color:#9ff0c8;text-shadow:0 0 6px rgba(159,240,200,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hero-reel-track div{height:22px;line-height:22px;font-family:var(--f-type);font-size:14px;letter-spacing:.14em;color:#8fff9f;text-shadow:0 0 10px rgba(120,255,140,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hero-lever{position:relative;flex:0 0 54px;border:4px solid #160c04;border-radius:12px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
   background:linear-gradient(180deg,#8a6a45,#5e4526);box-shadow:inset 0 2px 6px rgba(0,0,0,.5),0 4px 0 #2a1a0c}
 .hero-lever:active{cursor:grabbing}
@@ -366,6 +370,7 @@ body.region-tamil .hero-row{display:none}
          <div class="main-col">
           <div class="tuner-glass" aria-hidden="true">
             <span class="tg-station" id="tgStation">DEVOTIONAL</span>
+            <div class="hero-reel tg-reel" id="heroReel" aria-hidden="true" hidden><div class="hero-reel-track" id="heroReelTrack"></div></div>
             <span class="tg-live" id="tgLive"><span class="tg-live-text">LIVE</span><span class="tg-lamp"></span></span>
           </div>
           <div class="top-row">
@@ -382,8 +387,7 @@ body.region-tamil .hero-row{display:none}
             </div>
           </div>
           <div class="mid-row">
-            <div class="eq" aria-hidden="true"><canvas id="eqCanvas" width="64" height="40"></canvas></div>
-            <div class="now" aria-live="polite"><span class="now-label">NOW PLAYING</span><span id="nowTitle">Press ▶ to start</span><div class="hero-reel" id="heroReel" aria-hidden="true" hidden><div class="hero-reel-track" id="heroReelTrack"></div></div></div>
+            <div class="now" aria-live="polite"><span class="now-label">NOW PLAYING</span><span id="nowTitle">Press ▶ to start</span></div>
           </div>
           <div class="keys">
             <div class="ps-col">
@@ -393,6 +397,7 @@ body.region-tamil .hero-row{display:none}
             <button id="shuffleBtn" class="key shuffle square" aria-label="Play a different random song"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 9A8 8 0 0 1 19 7.5"/><polyline points="19 3.5 19 7.5 15 7.5"/><path d="M19.5 15A8 8 0 0 1 5 16.5"/><polyline points="5 20.5 5 16.5 9 16.5"/></svg><span class="st-mini" id="shuffleTimer" aria-hidden="true"><span class="st-mini-digits" id="shuffleTimerDigits">READY</span><span class="st-mini-bar"><span id="shuffleTimerBar"></span></span></span></button>
           </div>
           <div class="dial-strip" aria-hidden="true"><span class="dial-needle"></span></div>
+          <div class="eq-row"><div class="eq eq-wide" aria-hidden="true"><canvas id="eqCanvas" width="500" height="48"></canvas></div></div>
          </div>
          <div class="tuner-col">
            <div class="band-switch" role="group" aria-label="Channel">
@@ -4331,7 +4336,7 @@ const EQ_N=10, eqVal=new Array(EQ_N).fill(0), eqPeak=new Array(EQ_N).fill(0);
 let eqT=0;
 function drawEQ(){
   eqT+=0.016;
-  const W=64,H=40,bw=W/EQ_N,segs=5,segH=(H-4)/segs;
+  const W=eqCanvas.width,H=eqCanvas.height,bw=W/EQ_N,segs=5,segH=(H-4)/segs;
   eqCtx.fillStyle='#0a0f0a'; eqCtx.fillRect(0,0,W,H);
   for(let i=0;i<EQ_N;i++){
     let target=0;
@@ -4646,7 +4651,8 @@ bandKeys.forEach(btn=>btn.addEventListener('click',()=>{
 const HEROES=["Chiranjeevi","Nagarjuna Akkineni","Venkatesh Daggubati","Nandamuri Balakrishna","Mohan Babu","Krishna","Rajendra Prasad","Rajasekhar","Jagapathi Babu","Sobhan Babu"];
 let currentHero=null, spinning=false, heroBag=[];
 const heroReel=document.getElementById('heroReel'), heroReelTrack=document.getElementById('heroReelTrack');
-const REEL_H=26; // must match .hero-reel height in CSS
+const REEL_H=22; // must match .tg-reel height in CSS
+const tgStationEl=document.getElementById('tgStation');
 /* Fair draw: every hero appears exactly once per round of 10, then reshuffled. */
 function shuffleArr(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 function drawHero(){ if(!heroBag.length) heroBag=shuffleArr(HEROES.slice()); return heroBag.pop(); }
@@ -4665,14 +4671,14 @@ function spinHero(){
   spinning=true;
   radioStatic(2.6); // slot-machine channel-changing sound while names roll
   const final=drawHero();
-  // Slot reel on the green readout: names roll vertically, land on the hero.
+  // Slot reel on the top tuner-glass screen: names roll vertically, land on the hero.
   const seq=[];
   for(let k=0;k<34;k++) seq.push(HEROES[Math.floor(Math.random()*HEROES.length)].toUpperCase());
   seq.push(final.toUpperCase());
   heroReelTrack.innerHTML=seq.map(n=>'<div>'+n+'</div>').join('');
   heroReelTrack.style.transition='none';
   heroReelTrack.style.transform='translateY(0)';
-  nowTitleEl.style.display='none';
+  tgStationEl.style.display='none';
   heroReel.hidden=false;
   void heroReelTrack.offsetHeight;
   let i=0;
@@ -4681,7 +4687,7 @@ function spinHero(){
     heroReelTrack.style.transition='transform '+(0.07+i*0.005).toFixed(3)+'s ease-out';
     heroReelTrack.style.transform='translateY('+(-i*REEL_H)+'px)';
     if(i<seq.length){ setTimeout(step, 55+i*9); }
-    else{ setTimeout(()=>{ heroReel.hidden=true; nowTitleEl.style.display=''; selectHero(final); spinning=false; }, 380); }
+    else{ setTimeout(()=>{ heroReel.hidden=true; tgStationEl.style.display=''; selectHero(final); tgStationEl.textContent=final.toUpperCase(); spinning=false; }, 380); }
   };
   setTimeout(step, 80);
 }
