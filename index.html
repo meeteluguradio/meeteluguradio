@@ -4329,82 +4329,23 @@ let rT; addEventListener('resize',()=>{clearTimeout(rT); rT=setTimeout(paint,120
 const deck=document.getElementById('deck'), playBtn=document.getElementById('playBtn'), pauseBtn=document.getElementById('pauseBtn'), shuffleBtn=document.getElementById('shuffleBtn');
 const nowTitle=document.getElementById('nowTitle');
 const eqCanvas=document.getElementById('eqCanvas'), eqCtx=eqCanvas.getContext('2d');
-/* Vintage LED equalizer: 10 segmented bars with peak-hold. A muted mirror
-   audio element feeds a Web Audio analyser so the bars bounce to the real
-   music; the main playback element is never touched, so playback can't break.
-   CORS-safe URLs (same-origin + saavncdn) get true spectrum data, anything
-   else falls back to a procedural bounce. */
+/* Vintage LED equalizer: 10 segmented bars with peak-hold, driven by a
+   music-like procedural signal (real FFT is impossible for cross-origin
+   release tracks without breaking playback, so this simulates the bounce). */
 const EQ_N=10, eqVal=new Array(EQ_N).fill(0), eqPeak=new Array(EQ_N).fill(0);
-let eqT=0, anzCtx=null, analyser=null, anzEl=null, anzFreq=null, anzOK=false;
-function isCorsSafe(url){
-  try{ const u=new URL(url, location.href);
-    return u.origin===location.origin || /(^|\.)saavncdn\.com$/.test(u.hostname);
-  }catch(e){ return false; }
-}
-function anzEnsure(){
-  if(anzCtx) return true;
-  try{
-    const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
-    anzCtx=new AC();
-    analyser=anzCtx.createAnalyser();
-    analyser.fftSize=128; analyser.smoothingTimeConstant=0.78;
-    const g=anzCtx.createGain(); g.gain.value=0; // analysis only, never heard
-    anzEl=new Audio(); anzEl.crossOrigin='anonymous'; anzEl.preload='auto';
-    const src=anzCtx.createMediaElementSource(anzEl);
-    src.connect(analyser); analyser.connect(g); g.connect(anzCtx.destination);
-    anzFreq=new Uint8Array(analyser.frequencyBinCount);
-    anzEl.addEventListener('error',()=>{ anzOK=false; });
-    return true;
-  }catch(e){ anzCtx=null; return false; }
-}
-function anzResume(){ try{ if(anzCtx&&anzCtx.state==='suspended') anzCtx.resume(); }catch(e){} }
-function anzSync(){
-  anzOK=false;
-  if(!audio||!audio.src||!isCorsSafe(audio.src)) return;
-  if(!anzEnsure()) return;
-  anzResume();
-  try{
-    anzEl.src=audio.src;
-    const go=()=>{
-      try{ anzEl.currentTime=audio.currentTime||0; }catch(e){}
-      try{
-        const p=anzEl.play();
-        if(p&&p.catch) p.catch(()=>{ anzOK=false; });
-      }catch(e){ anzOK=false; return; }
-      anzOK=true;
-      setTimeout(()=>{ try{ if(anzOK&&anzEl) anzEl.currentTime=audio.currentTime||0; }catch(e){} },1600);
-    };
-    if(anzEl.readyState>=2) go();
-    else anzEl.oncanplay=()=>{ anzEl.oncanplay=null; go(); };
-  }catch(e){ anzOK=false; }
-}
-function anzPlay(on){
-  try{
-    if(!anzEl) return;
-    if(on&&anzOK){ try{ anzEl.currentTime=audio.currentTime||0; }catch(e){} const p=anzEl.play(); if(p&&p.catch) p.catch(()=>{}); }
-    else anzEl.pause();
-  }catch(e){}
-}
+let eqT=0;
 function drawEQ(){
   eqT+=0.016;
   const W=eqCanvas.width,H=eqCanvas.height,bw=W/EQ_N,segs=5,segH=(H-4)/segs;
   eqCtx.fillStyle='#0a0f0a'; eqCtx.fillRect(0,0,W,H);
-  const useAnz=playing&&anzOK&&analyser&&anzFreq;
-  if(useAnz){ try{ analyser.getByteFrequencyData(anzFreq); }catch(e){} }
   for(let i=0;i<EQ_N;i++){
     let target=0;
     if(playing){
-      if(useAnz){
-        const f=Math.pow(i/EQ_N,1.7)*0.72;
-        const bin=Math.min(anzFreq.length-1, 2+Math.floor(f*(anzFreq.length-2)));
-        target=Math.min(1,(anzFreq[bin]/255)*1.7);
-      }else{
       const beat=Math.pow(Math.max(0,Math.sin(eqT*2.4)),2)*Math.max(0,Math.sin(eqT*0.61+1.2));
       const w1=Math.sin(eqT*(1.8+i*0.65)+i*1.7)*0.5+0.5;
       const w2=Math.sin(eqT*(4.6+i*1.25)+i*0.9)*0.5+0.5;
       const bass=1-i/EQ_N, treb=i/EQ_N;
       target=Math.min(1, beat*(0.35+bass*0.9) + w1*(0.25+bass*0.45) + w2*(0.15+treb*0.5));
-      }
     }
     const k=target>eqVal[i]?0.45:0.07;
     eqVal[i]+=(target-eqVal[i])*k;
@@ -4468,7 +4409,7 @@ function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
     audio.addEventListener('loadedmetadata',h);
     audio.addEventListener('canplay',c);
   }
-  audio.play().catch(()=>{}); anzSync(); }
+  audio.play().catch(()=>{}); }
 
 function ensureEngine(){
   if(audio) return;
@@ -4514,10 +4455,9 @@ function play(){deckClick(); if(mode!=='stream'&&!songs().length){emptyBlip(); r
     const liveBand=(BANDS[playBandIdx].id==='meeradio'||BANDS[playBandIdx].id==='hero');
     if(liveBand&&!fresh){ audio.muted=false; nextTrack(); }
     else { audio.muted=false; audio.play().catch(()=>{}); }
-    anzResume(); anzPlay(true);
   }
   setPlaying(true);}
-function pause(){deckClick(); if(audio) audio.muted=true; setPlaying(false); anzPlay(false);}
+function pause(){deckClick(); if(audio) audio.muted=true; setPlaying(false);}
 playBtn.addEventListener('click',play); pauseBtn.addEventListener('click',pause);
 /* ---------- Randomize: jump to a different song, per-channel cooldown ---------- */
 const SHUFFLE_WAITS={devotional:5*60*1000, mss:3*60*1000};
