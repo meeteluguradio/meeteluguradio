@@ -318,6 +318,27 @@ body.region-tamil .hero-row{display:none}
   .band-key[data-band="2"]{animation:none;outline-color:#ff2222}
 }
 </style>
+<style>
+/* ===== MOBILE-ONLY FIXES (2026-10-04) — all desktop CSS above is untouched ===== */
+@media (pointer:coarse){
+  /* The whole radio bobs every 0.66s while playing. On touch screens the tap
+     target moves between touchstart and touchend, so the tap is treated as a
+     scroll and the click never fires. Freeze the deck on touch devices. */
+  .deck.playing .deck-inner{animation:none}
+  /* Let taps dispatch as clicks immediately; stop double-tap-zoom and scroll
+     gestures from hijacking them. (Hero lever keeps touch-action:none: it is a drag control.) */
+  .key,.band-key,.rk-lab,.rk-knob,.vote-btn,
+  .feedback-tab,.tribute-tab,.feedback-x,.tribute-x,.fb-form button[type=submit]{
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+}
+@media (max-width:640px){
+  /* Stack the two columns instead of squeezing them: no clipped text, no overlaps. */
+  .body{flex-direction:column}
+  .tuner-col{flex:1 1 auto;width:100%;box-sizing:border-box}
+  /* Keep the footer line clear of the fixed vote buttons. */
+  .foot{max-width:none;padding:0 16px 88px}
+}
+</style>
 
 <canvas id="poster" aria-hidden="true"></canvas>
 <div class="grain" id="grain" aria-hidden="true"></div>
