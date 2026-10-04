@@ -506,17 +506,13 @@ const tapeL=document.getElementById('tapeL'), tapeR=document.getElementById('tap
 const mode = STREAM_URL ? 'stream' : 'playlist';
 
 let audio=null, playing=false, order=[], oi=0, secs=0;
-let radioOverride=-1, radioCur=-1, trackGen=0; // mee radio: one-shot shuffle jump + current track + seek generation
+let trackGen=0; // seek generation guard for the live rejoin
 
 function setTitle(t){nowTitle.textContent=t; var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=t; if('mediaSession' in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:t,artist:'Paata Paatalu Radio'});}catch(e){}}}
 function shuffle(n){const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
 function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
   const myGen=++trackGen;
-  if(BANDS[playBandIdx].id==='meeradio'){
-    if(radioOverride>=0){ idx=radioOverride; radioOverride=-1; }
-    else { const pos=meeNow(); idx=pos.idx; off=pos.off; }
-    radioCur=idx;
-  }
+  if(BANDS[playBandIdx].id==='meeradio'){ const pos=meeNow(); idx=pos.idx; off=pos.off; }
   else { if(oi>=order.length){order=shuffle(s.length); oi=0;} idx=order[oi++]; }
   const t=s[idx]; audio.src=t.src; setTitle(t.title||'Untitled');
   if(off>1){
@@ -586,7 +582,7 @@ function play(){deckClick(); if(mode!=='stream'&&!songs().length){emptyBlip(); r
 function pause(){deckClick(); if(audio) audio.muted=true; setPlaying(false);}
 playBtn.addEventListener('click',play); pauseBtn.addEventListener('click',pause);
 /* ---------- Randomize: jump to a different song, per-channel cooldown ---------- */
-const SHUFFLE_WAITS={devotional:5*60*1000, mss:3*60*1000, meeradio:5*60*1000};
+const SHUFFLE_WAITS={devotional:5*60*1000, mss:3*60*1000};
 let shuffleTs={};
 try{
   const raw=localStorage.getItem('paataShuffleTs');
@@ -600,6 +596,15 @@ function saveTs(){
 }
 function shuffleReady(){return songs().length>1&&(Date.now()-lastTs()>=bandWait());}
 function paintShuffle(){
+  const isRadio=BANDS[playBandIdx].id==='meeradio';
+  const d0=document.getElementById('shuffleTimerDigits'), b0=document.getElementById('shuffleTimerBar');
+  if(isRadio){
+    shuffleBtn.classList.add('cooling');
+    shuffleBtn.title='Shuffle is off for Mee Radio';
+    if(d0){d0.textContent='OFF';} if(b0){b0.style.width='0%';}
+    const t0=document.getElementById('shuffleTimer'); if(t0) t0.classList.remove('ready');
+    return;
+  }
   const usable=songs().length>1, left=bandWait()-(Date.now()-lastTs()), ready=usable&&left<=0;
   shuffleBtn.classList.toggle('cooling',!ready);
   shuffleBtn.title=!usable?'Add more songs to shuffle':(ready?'Play a different random song':'Shuffles again in '+Math.ceil(left/60000)+' min');
@@ -639,22 +644,15 @@ function showUncle(){
 }
 function randomize(){
   deckClick();
+  if(BANDS[playBandIdx].id==='meeradio') return; // shuffle stays off for Mee Radio
   if(songs().length<2) return;
   if(!shuffleReady()){showUncle(); return;}
   saveTs();
-  if(BANDS[playBandIdx].id==='meeradio'){
-    // live station: jump to a different song from the top; the next track rejoins the station clock
-    const cur=radioCur>=0?radioCur:meeNow().idx;
-    let n; do{ n=Math.floor(Math.random()*songs().length); }while(songs().length>1&&n===cur);
-    radioOverride=n;
-    const fresh=!audio; ensureEngine(); if(!fresh) nextTrack();
-  } else {
-    const cur=(audio&&order.length)?order[(oi-1+order.length)%order.length]:-1;
-    let n; do{n=Math.floor(Math.random()*songs().length);}while(n===cur);
-    order=shuffle(songs().length);
-    const k=order.indexOf(n); order[k]=order[0]; order[0]=n; oi=0;
-    const fresh=!audio; ensureEngine(); if(!fresh) nextTrack();
-  }
+  const cur=(audio&&order.length)?order[(oi-1+order.length)%order.length]:-1;
+  let n; do{n=Math.floor(Math.random()*songs().length);}while(n===cur);
+  order=shuffle(songs().length);
+  const k=order.indexOf(n); order[k]=order[0]; order[0]=n; oi=0;
+  const fresh=!audio; ensureEngine(); if(!fresh) nextTrack();
   if(audio){audio.muted=false; audio.play().catch(()=>{});}
   setPlaying(true); paintShuffle();
 }
