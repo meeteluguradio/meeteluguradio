@@ -1,6 +1,6 @@
 80s · 90s Telugu Golden Hits
 
-# మీ, మన, Evergreen పాట పాటల Radio
+# మీ, మన, Evergreen పాటల Radio
 
 రోజంతా · నాన్-స్టాప్ · మీ తెలుగు పాటలు
 
