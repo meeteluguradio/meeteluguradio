@@ -427,11 +427,12 @@ const tapeL=document.getElementById('tapeL'), tapeR=document.getElementById('tap
 const mode = STREAM_URL ? 'stream' : 'playlist';
 
 let audio=null, playing=false, order=[], oi=0, secs=0;
-let radioOverride=-1, radioCur=-1; // mee radio: one-shot shuffle jump + current track
+let radioOverride=-1, radioCur=-1, trackGen=0; // mee radio: one-shot shuffle jump + current track + seek generation
 
 function setTitle(t){nowTitle.textContent=t; var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=t; if('mediaSession' in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:t,artist:'Paata Paatalu Radio'});}catch(e){}}}
 function shuffle(n){const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
 function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
+  const myGen=++trackGen;
   if(BANDS[playBandIdx].id==='meeradio'){
     if(radioOverride>=0){ idx=radioOverride; radioOverride=-1; }
     else { const pos=meeNow(); idx=pos.idx; off=pos.off; }
@@ -439,9 +440,23 @@ function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
   }
   else { if(oi>=order.length){order=shuffle(s.length); oi=0;} idx=order[oi++]; }
   const t=s[idx]; audio.src=t.src; setTitle(t.title||'Untitled');
-  if(off>1){ const h=function(){ audio.removeEventListener('loadedmetadata',h);
-    try{ if(audio.duration&&isFinite(audio.duration)&&off<audio.duration-1) audio.currentTime=off; }catch(e){} };
-    audio.addEventListener('loadedmetadata',h); }
+  if(off>1){
+    // Join mid-song: seek to the live offset. Phones may ignore a seek at
+    // loadedmetadata, so retry at canplay and once more shortly after.
+    const target=off;
+    const trySeek=function(){
+      if(myGen!==trackGen) return; // superseded by a newer track
+      try{
+        if(audio.duration&&isFinite(audio.duration)&&target<audio.duration-1&&Math.abs(audio.currentTime-target)>1.5){
+          audio.currentTime=target;
+        }
+      }catch(e){}
+    };
+    const h=function(){ audio.removeEventListener('loadedmetadata',h); trySeek(); };
+    const c=function(){ audio.removeEventListener('canplay',c); trySeek(); setTimeout(trySeek,600); };
+    audio.addEventListener('loadedmetadata',h);
+    audio.addEventListener('canplay',c);
+  }
   audio.play().catch(()=>{}); }
 
 function ensureEngine(){
@@ -480,7 +495,15 @@ function deckClick(){
     o.connect(g2); g2.connect(ctx.destination); o.start(t); o.stop(t+0.04);
   }catch(e){}
 }
-function play(){deckClick(); if(mode!=='stream'&&!songs().length){emptyBlip(); return;} ensureEngine(); if(audio){audio.muted=false; audio.play().catch(()=>{});} setPlaying(true);}
+function play(){deckClick(); if(mode!=='stream'&&!songs().length){emptyBlip(); return;}
+  const fresh=!audio; ensureEngine();
+  if(audio){
+    // Mee Radio is live: always rejoin the current point on the station clock,
+    // never resume a stale position (e.g. after the phone slept the audio).
+    if(BANDS[playBandIdx].id==='meeradio'&&!fresh){ audio.muted=false; nextTrack(); }
+    else { audio.muted=false; audio.play().catch(()=>{}); }
+  }
+  setPlaying(true);}
 function pause(){deckClick(); if(audio) audio.muted=true; setPlaying(false);}
 playBtn.addEventListener('click',play); pauseBtn.addEventListener('click',pause);
 /* ---------- Randomize: jump to a different song, per-channel cooldown ---------- */
