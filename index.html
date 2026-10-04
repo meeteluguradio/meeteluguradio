@@ -121,14 +121,15 @@ body.region-tamil .uncle{display:block}
 .uncle-bob{animation:uncleBob 1.7s ease-in-out infinite}
 @keyframes uncleBob{0%,100%{transform:translateY(0) rotate(-1.4deg)}50%{transform:translateY(-11px) rotate(1.4deg)}}
 .uncle img{width:100%;display:block;filter:drop-shadow(0 7px 9px rgba(0,0,0,.5))}
-.uncle .uncle-bubble{position:absolute;left:74%;bottom:74%;background:var(--cream);border:3px solid #0d0703;border-radius:14px;
-  padding:5px 13px 7px;font-family:var(--f-type);text-align:center;white-space:nowrap;
-  box-shadow:3px 3px 0 rgba(0,0,0,.35);animation:uncleBob 1.7s ease-in-out infinite reverse;transform:none}
-.uncle .uncle-bubble b{display:block;font-size:23px;letter-spacing:.05em;color:#a31313;line-height:1.1}
-.uncle .uncle-bubble span{font-size:10px;letter-spacing:.22em;color:#2a1a0c}
-.uncle .uncle-bubble::after{content:"";position:absolute;left:14px;bottom:-13px;border:7px solid transparent;border-top-color:#0d0703}
+.uncle .uncle-bubble{position:absolute;left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) rotate(-3deg);background:#fffdf4;
+  border:3px solid #0d0703;border-radius:16px;padding:8px 20px 10px;font-family:var(--f-type);text-align:center;white-space:nowrap;
+  box-shadow:4px 4px 0 rgba(0,0,0,.35)}
+.uncle .uncle-bubble b{display:block;font-size:27px;letter-spacing:.04em;color:#a31313;line-height:1.1}
+.uncle .uncle-bubble span{display:block;font-size:13px;letter-spacing:.24em;color:#2a1a0c;margin-top:3px}
+.uncle .uncle-bubble::after{content:"";position:absolute;left:50%;top:100%;margin-left:-10px;border:10px solid transparent;border-top:13px solid #0d0703}
+.uncle .uncle-bubble::before{content:"";position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top:8px solid #fffdf4;z-index:1}
 @media (max-width:1100px){.uncle{left:14px;width:170px}}
-@media (max-width:640px){.uncle{left:8px;top:auto;bottom:8px;transform:none;width:122px}.uncle .uncle-bubble b{font-size:18px}}
+@media (max-width:640px){.uncle{left:8px;top:auto;bottom:8px;transform:none;width:122px}.uncle .uncle-bubble b{font-size:22px}.uncle .uncle-bubble span{font-size:11px}}
 /* STAY TUNED readout: big, gold, centered, gently pulsing */
 #nowTitle.staytuned{font-size:23px;letter-spacing:.3em;padding-left:.3em;text-align:center;color:var(--marigold);
   text-shadow:0 0 12px rgba(245,191,79,.8);white-space:normal;overflow:visible;animation:stPulse 2.2s ease-in-out infinite}
