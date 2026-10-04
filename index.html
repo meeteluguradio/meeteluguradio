@@ -325,6 +325,10 @@ body.region-tamil .hero-row{display:none}
      target moves between touchstart and touchend, so the tap is treated as a
      scroll and the click never fires. Freeze the deck on touch devices. */
   .deck.playing .deck-inner{animation:none}
+  /* Flat and stable on touch: drop the 3D tilt (perspective + rotateX) so the
+     radio never shifts under the finger. */
+  .deck{perspective:none}
+  .deck-inner{transform:none}
   /* Let taps dispatch as clicks immediately; stop double-tap-zoom and scroll
      gestures from hijacking them. (Hero lever keeps touch-action:none: it is a drag control.) */
   .key,.band-key,.rk-lab,.rk-knob,.vote-btn,
@@ -342,6 +346,13 @@ body.region-tamil .hero-row{display:none}
   /* Stack the two columns instead of squeezing them: no clipped text, no overlaps. */
   .body{flex-direction:column}
   .tuner-col{flex:1 1 auto;width:100%;box-sizing:border-box}
+  /* Breathing room between every switch: no touching or overlapping controls. */
+  .main-col{gap:18px}
+  .tuner-col{gap:16px}
+  .band-switch{gap:16px}
+  .keys{gap:16px}
+  .hero-row{gap:14px}
+  .top-row{gap:16px}
   /* Keep the footer line clear of the fixed vote buttons. */
   .foot{max-width:none;padding:0 16px 88px}
 }
