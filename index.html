@@ -167,6 +167,12 @@ body.region-tamil .uncle{display:block}
 .uncle .uncle-bubble span{display:block;font-size:13px;letter-spacing:.24em;color:#2a1a0c;margin-top:3px}
 .uncle .uncle-bubble::after{content:"";position:absolute;left:50%;top:100%;margin-left:-10px;border:10px solid transparent;border-top:13px solid #0d0703}
 .uncle .uncle-bubble::before{content:"";position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top:8px solid #fffdf4;z-index:1}
+/* Live mode: the bubble flashes with a warm golden glow */
+.uncle .uncle-bubble.live{animation:uncleGlow 1.6s ease-in-out infinite}
+@keyframes uncleGlow{
+  0%,100%{box-shadow:4px 4px 0 rgba(0,0,0,.35),0 0 16px 4px rgba(255,180,60,.55)}
+  50%{box-shadow:4px 4px 0 rgba(0,0,0,.35),0 0 36px 12px rgba(255,210,90,.95)}
+}
 @media (max-width:1100px){.uncle{left:14px;width:170px}}
 @media (max-width:640px){.uncle{left:8px;top:auto;bottom:8px;transform:none;width:122px}.uncle .uncle-bubble b{font-size:22px}.uncle .uncle-bubble span{font-size:11px}}
 /* Small screens: compact zoomed player (desktop layout, shrunk) + flat radio, clear gaps */
@@ -199,6 +205,9 @@ body.region-tamil .uncle{display:block}
 #nowTitle.staytuned{font-size:23px;letter-spacing:.3em;padding-left:.3em;text-align:center;color:var(--marigold);
   text-shadow:0 0 12px rgba(245,191,79,.8);white-space:normal;overflow:visible;animation:stPulse 2.2s ease-in-out infinite}
 @keyframes stPulse{0%,100%{opacity:1}50%{opacity:.72}}
+/* Tamil mode: NOW PLAYING is a scrolling marquee of the station credits */
+#nowTitle .tamil-scroll{display:inline-block;white-space:nowrap;animation:tamilScroll 28s linear infinite;color:#9ff0c8;text-shadow:0 0 6px rgba(159,240,200,.6)}
+@keyframes tamilScroll{0%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 .body::after{content:"";position:absolute;left:18px;top:10px;width:40%;height:10px;border-radius:10px;background:rgba(255,255,255,.45);pointer-events:none}
 .top-row{display:grid;grid-template-columns:0.8fr 1.2fr;gap:12px;align-items:stretch}
 .grille{border:3px solid #0d0703;border-radius:18px;background:radial-gradient(circle,#050302 0 2.4px,transparent 3px) 0 0/10px 10px,#4a2f16;box-shadow:inset 0 3px 10px rgba(0,0,0,.55);min-height:110px;position:relative}
@@ -528,7 +537,7 @@ body.region-tamil .hero-row{display:none}
 
 <div class="uncle" id="uncle" aria-hidden="true">
   <div class="uncle-bob">
-    <div class="uncle-bubble"><b>Macha</b><span>STAY TUNED</span></div>
+    <div class="uncle-bubble live"><b>Thambi!</b><span>It's LIVE Kanna</span></div>
     <img src="chars/uncle.png" alt="">
   </div>
 </div>
@@ -4598,6 +4607,291 @@ const MEE_DUR=[289,301,335,315,299,319,190,285,260,327,228,227,404,326,359,253,3
 const MEE_TOTAL=MEE_DUR.reduce((a,b)=>a+b,0);
 function meeNow(){let el=Math.floor((Date.now()-MEE_EPOCH)/1000)%MEE_TOTAL; if(el<0)el+=MEE_TOTAL; let acc=0; for(let i=0;i<MEE_DUR.length;i++){if(el<acc+MEE_DUR[i])return{idx:i,off:el-acc}; acc+=MEE_DUR[i];} return{idx:0,off:0};}
 
+/* ---------- Tamil station: 275 MP3s from the repo's tamil/ folder ----------
+   Seeded shuffle (seed 20261005) baked at build time + live station clock,
+   so every device worldwide hears the same song at the same point, 24/7. */
+const TAMIL_SONGS = [
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/23_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/21_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "இசைஞானியின் 1985 Hits (Volume 1) Maestro Ilaiyaraaja Evergreen Song in Tamil", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_%E0%AE%87%E0%AE%9A%E0%AF%88%E0%AE%9E%E0%AE%BE%E0%AE%A9%E0%AE%BF%E0%AE%AF%E0%AE%BF%E0%AE%A9%E0%AF%8D%201985%20Hits%20%28Volume%201%29%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20Song%20in%20Tamil%20%20.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/23_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/28_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "இசைஞானியின் 1985 Hits (Volume 1) Maestro Ilaiyaraaja Evergreen Song in Tamil", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_%E0%AE%87%E0%AE%9A%E0%AF%88%E0%AE%9E%E0%AE%BE%E0%AE%A9%E0%AE%BF%E0%AE%AF%E0%AE%BF%E0%AE%A9%E0%AF%8D%201985%20Hits%20%28Volume%201%29%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20Song%20in%20Tamil%20%20.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/24_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/23_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "இசைஞானியின் 1985 Hits (Volume 1) Maestro Ilaiyaraaja Evergreen Song in Tamil", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_%E0%AE%87%E0%AE%9A%E0%AF%88%E0%AE%9E%E0%AE%BE%E0%AE%A9%E0%AE%BF%E0%AE%AF%E0%AE%BF%E0%AE%A9%E0%AF%8D%201985%20Hits%20%28Volume%201%29%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20Song%20in%20Tamil%20%20.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/26_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/24_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/21_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/29_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/22_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "1990s Tamil Evergreen Love Songs Hariharan Hits Ajith Vijay Digital High Qualit", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_1990s%20Tamil%20Evergreen%20Love%20Songs%20Hariharan%20Hits%20Ajith%20Vijay%20%20Digital%20High%20Qualit.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/30_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/22_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "இசைஞானியின் 1985 Hits (Volume 1) Maestro Ilaiyaraaja Evergreen Song in Tamil", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_%E0%AE%87%E0%AE%9A%E0%AF%88%E0%AE%9E%E0%AE%BE%E0%AE%A9%E0%AE%BF%E0%AE%AF%E0%AE%BF%E0%AE%A9%E0%AF%8D%201985%20Hits%20%28Volume%201%29%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20Song%20in%20Tamil%20%20.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/21_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/24_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "1990s Tamil Evergreen Love Songs Hariharan Hits Ajith Vijay Digital High Qualit", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_1990s%20Tamil%20Evergreen%20Love%20Songs%20Hariharan%20Hits%20Ajith%20Vijay%20%20Digital%20High%20Qualit.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "இசைஞானியின் 1985 Hits (Volume 1) Maestro Ilaiyaraaja Evergreen Song in Tamil", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_%E0%AE%87%E0%AE%9A%E0%AF%88%E0%AE%9E%E0%AE%BE%E0%AE%A9%E0%AE%BF%E0%AE%AF%E0%AE%BF%E0%AE%A9%E0%AF%8D%201985%20Hits%20%28Volume%201%29%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20Song%20in%20Tamil%20%20.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/17_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/21_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/23_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/22_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "SPB + AR Rahman Combo Jukebox SPB Hits Tamil Hits Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_SPB%20%2B%20AR%20Rahman%20%20Combo%20%20Jukebox%20%20SPB%20Hits%20%20Tamil%20Hits%20%20Tamil%20Songs_MP3.mp3" },
+  { title: "1990s Tamil Evergreen Love Songs Hariharan Hits Ajith Vijay Digital High Qualit", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_1990s%20Tamil%20Evergreen%20Love%20Songs%20Hariharan%20Hits%20Ajith%20Vijay%20%20Digital%20High%20Qualit.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/22_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/25_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/12_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/21_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "1990s Tamil Evergreen Love Songs Hariharan Hits Ajith Vijay Digital High Qualit", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/02_1990s%20Tamil%20Evergreen%20Love%20Songs%20Hariharan%20Hits%20Ajith%20Vijay%20%20Digital%20High%20Qualit.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/06_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/24_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Ilaiyaraaja - Rajinikanth (80s Hits) Isaignani & Superstar 80s Evergreen Melodi", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Ilaiyaraaja%20-%20Rajinikanth%20%2880s%20Hits%29%20%20Isaignani%20%26%20Superstar%2080s%20Evergreen%20Melodi.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/19_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/09_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/27_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/23_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/20_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Isaignani Super Hits of S P Balasubrahmanyam & S Janaki - Volume 2 Ilaiyaraaja", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Isaignani%20Super%20Hits%20of%20S%20P%20Balasubrahmanyam%20%26%20S%20Janaki%20-%20Volume%202%20%20Ilaiyaraaja%20.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/22_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Isaignani Super Hits of K J Yesudas Ilaiyaraaja 80s & 90s Hits Tamil Evergree", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Isaignani%20Super%20Hits%20of%20K%20J%20Yesudas%20%20Ilaiyaraaja%20%2080s%20%26%2090s%20Hits%20%20Tamil%20Evergree.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/07_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa 2", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa_2.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/13_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/08_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Isaignanis (S.P.B & K. S. Chithra) Love Duets Maestro Ilaiyaraaja Evergreen So", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/14_Isaignanis%20%28S.P.B%20%26%20K.%20S.%20Chithra%29%20Love%20Duets%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20So.mp3" },
+  { title: "Ilaiyaraaja Evergreen 80s Hits Vol 1 En Iniya Pon Nilave Andhi Mazhai Pozhiki", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/16_Ilaiyaraaja%20Evergreen%20%2080s%20Hits%20Vol%201%20%20En%20Iniya%20Pon%20Nilave%20%20Andhi%20Mazhai%20Pozhiki.mp3" },
+  { title: "Hits of S. P. Balasubrahmanyam - Birthday Special Ilamai Ennum Poonkaatru Andh", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/18_Hits%20of%20S.%20P.%20Balasubrahmanyam%20-%20Birthday%20Special%20%20Ilamai%20Ennum%20Poonkaatru%20%20Andh.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "Top 20 Hits of Viswanathan - Ramamoorthy Vol - 2 Poojaiku Vandha Chinna Chinna", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/03_Top%2020%20Hits%20of%20Viswanathan%20-%20Ramamoorthy%20Vol%20-%202%20%20Poojaiku%20Vandha%20%20Chinna%20Chinna.mp3" },
+  { title: "Solo Hits of SPB (Vol 1) Hi-Res Audio Jukebox Celebrating our Great S. P. Balas", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/01_Solo%20Hits%20of%20SPB%20%28Vol%201%29%20Hi-Res%20Audio%20Jukebox%20%20Celebrating%20our%20Great%20S.%20P.%20Balas.mp3" },
+  { title: "Solo Hits of SPB (Vol 2) Hi-Res Audio Jukebox S. P. Balasubrahmanyam Ilaiyaraa", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/24_Solo%20Hits%20of%20SPB%20%28Vol%202%29%20Hi-Res%20Audio%20Jukebox%20%20S.%20P.%20Balasubrahmanyam%20%20Ilaiyaraa.mp3" },
+  { title: "1990s Tamil Evergreen Love Songs Hariharan Hits Ajith Vijay Digital High Qualit", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/04_1990s%20Tamil%20Evergreen%20Love%20Songs%20Hariharan%20Hits%20Ajith%20Vijay%20%20Digital%20High%20Qualit.mp3" },
+  { title: "இசைஞானியின் 1985 Hits (Volume 1) Maestro Ilaiyaraaja Evergreen Song in Tamil", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/05_%E0%AE%87%E0%AE%9A%E0%AF%88%E0%AE%9E%E0%AE%BE%E0%AE%A9%E0%AE%BF%E0%AE%AF%E0%AE%BF%E0%AE%A9%E0%AF%8D%201985%20Hits%20%28Volume%201%29%20%20Maestro%20Ilaiyaraaja%20%20Evergreen%20Song%20in%20Tamil%20%20.mp3" },
+  { title: "Remembering S P Balasubrahmanyam Isaignani Ilaiyaraaja Super Hits of SPB 80s a", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/15_Remembering%20S%20P%20Balasubrahmanyam%20%20Isaignani%20Ilaiyaraaja%20Super%20Hits%20of%20SPB%20%2080s%20a.mp3" },
+  { title: "AR Rahman 90s Tamil Hits Tamil Songs ARR Playlist #arrahman", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/11_AR%20Rahman%2090s%20Tamil%20Hits%20Tamil%20Songs%20ARR%20Playlist%20%23arrahman_MP3.mp3" },
+  { title: "Ilayaraaja Radio Hour (Audio) Jukebox Best of Ilayaraaja Tamil Songs", src: "https://raw.githubusercontent.com/meeteluguradio/meeteluguradio/main/tamil/10_Ilayaraaja%20Radio%20Hour%20%28Audio%29%20Jukebox%20%20Best%20of%20Ilayaraaja%20Tamil%20Songs_MP3.mp3" }
+];
+const TAMIL_DUR=[75,75,386,155,552,79,257,402,268,278,240,276,86,551,103,271,273,352,288,251,257,3289,279,277,13,254,36,310,267,104,441,155,263,257,2484,257,265,106,258,266,246,600,533,300,272,261,262,248,195,342,257,266,279,518,186,374,278,297,296,274,263,235,308,236,257,288,261,195,272,272,129,262,841,303,88,249,269,42,613,522,11,250,325,297,269,276,836,310,246,376,201,262,262,595,278,286,253,277,402,268,273,263,36,1074,305,710,266,263,270,371,289,44,250,277,248,272,289,249,13,542,295,258,77,387,1328,270,258,281,269,179,258,272,36,254,258,88,252,288,277,274,278,108,272,103,17,250,107,329,279,271,235,273,319,292,250,331,307,313,256,209,273,264,221,248,274,108,341,266,275,301,236,289,265,1560,273,277,303,143,10,82,258,525,217,74,371,273,844,269,736,268,217,265,258,281,99,331,609,268,272,280,206,256,261,11,197,261,312,272,312,263,283,230,464,256,271,264,272,225,1677,271,204,82,538,288,365,210,566,106,266,257,272,291,261,279,43,273,538,257,272,236,269,266,220,359,263,276,264,287,538,278,250,284,278,245,542,277,17,277,99,253,345,267,320,288,36,333,195,213,266,286,306,706,255,408,243];
+const TAMIL_EPOCH=1791158400000; // station sign-on: 2026-10-05 00:00 UTC
+const TAMIL_TOTAL=TAMIL_DUR.reduce((a,b)=>a+b,0);
+function tamilNow(){let el=Math.floor((Date.now()-TAMIL_EPOCH)/1000)%TAMIL_TOTAL; if(el<0)el+=TAMIL_TOTAL; let acc=0; for(let i=0;i<TAMIL_DUR.length;i++){if(el<acc+TAMIL_DUR[i])return{idx:i,off:el-acc}; acc+=TAMIL_DUR[i];} return{idx:0,off:0};}
+
 
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
@@ -4608,7 +4902,7 @@ const BANDS = [
   { id:'chants',     label:'CHANTS', cassette:'CHANTS', songs: CHANTS_SONGS },
   { id:'instrumental', label:'INSTRUMENTAL', cassette:'INSTRUMENTAL', songs: INSTRUMENTAL_SONGS },
 ];
-const isLiveBand=id=>id==='meeradio'||id==='hero'||id==='chants'||id==='instrumental';
+const isLiveBand=id=>id==='meeradio'||id==='hero'||id==='chants'||id==='instrumental'||id==='tamil'||id==='tamilchants'||id==='tamilinst';
 let bandIdx=0, playBandIdx=0; // knob position vs band actually playing
 function songs(){ return BANDS[playBandIdx].songs; }
 // Option B: a licensed internet-radio stream URL (takes priority over the bands)
@@ -4732,7 +5026,9 @@ const mode = STREAM_URL ? 'stream' : 'playlist';
 
 let audio=null, playing=false, order=[], oi=0, secs=0;
 
-function setTitle(t){nowTitle.textContent=t; var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=t; if('mediaSession' in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:t,artist:'Paata Paatalu Radio'});}catch(e){}}}
+function setTitle(t){
+  try{ if(region==='tamil'&&BANDS[playBandIdx]&&BANDS[playBandIdx].id==='tamil'){ tamilMarquee(); return; } }catch(e){}
+  nowTitle.textContent=t; var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=t; if('mediaSession' in navigator){try{navigator.mediaSession.metadata=new MediaMetadata({title:t,artist:'Paata Paatalu Radio'});}catch(e){}}}
 function shuffle(n){const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a;}
 let currentIdx=-1, lastEndedIdx=-1, trackGen=0; // live-station guards
 function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
@@ -4762,6 +5058,24 @@ function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
   else if(BANDS[playBandIdx].id==='instrumental'){
     // Instrumental live station: seeded-shuffled loop + station clock.
     const pos=instNow(); idx=pos.idx; off=pos.off;
+    if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
+    lastEndedIdx=-1;
+  }
+  else if(BANDS[playBandIdx].id==='tamil'){
+    // Tamil live station: 275 repo MP3s, seeded-shuffled loop + station clock.
+    const pos=tamilNow(); idx=pos.idx; off=pos.off;
+    if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
+    lastEndedIdx=-1;
+  }
+  else if(BANDS[playBandIdx].id==='tamilchants'){
+    // Tamil chants live station: seeded-shuffled loop + station clock.
+    const pos=tamilChantsNow(); idx=pos.idx; off=pos.off;
+    if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
+    lastEndedIdx=-1;
+  }
+  else if(BANDS[playBandIdx].id==='tamilinst'){
+    // Tamil instrumental live station: seeded-shuffled loop + station clock.
+    const pos=tamilInstNow(); idx=pos.idx; off=pos.off;
     if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
     lastEndedIdx=-1;
   }
@@ -5222,20 +5536,52 @@ function paintRegionKnob(){
   regionKnob.setAttribute('aria-label','Station region knob: '+region.charAt(0).toUpperCase()+region.slice(1));
 }
 let prevBand=null; /* band to restore when leaving the Tamil page */
+let tamilLive=false; /* true while the Tamil live station owns the deck */
+/* Original band configs, so Tamil mode can swap in its stations and Telugu
+   mode can restore them exactly. */
+const ORIG_BANDS={
+  2:{id:BANDS[2].id,label:BANDS[2].label,cassette:BANDS[2].cassette,songs:BANDS[2].songs},
+  4:{id:BANDS[4].id,label:BANDS[4].label,cassette:BANDS[4].cassette,songs:BANDS[4].songs},
+  5:{id:BANDS[5].id,label:BANDS[5].label,cassette:BANDS[5].cassette,songs:BANDS[5].songs}
+};
+const TAMIL_MARQUEE="Tamil melodies, 80's, 90's from Ilaiyaraaja, A. R. Rahman, Deva, S. A. Rajkumar, Vidyasagar, S. P. Balasubrahmanyam, K. S. Chithra, Malaysia Vasudevan, S. Janaki, Hariharan and more…";
+function tamilMarquee(){
+  nowTitleEl.innerHTML='<span class="tamil-scroll">'+TAMIL_MARQUEE+'</span>';
+  nowTitleEl.classList.remove('staytuned');
+  var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=TAMIL_MARQUEE;
+}
 function applyRegionUI(){
-  const tamil=region!=='telugu'; /* Kannada stays on the Tamil page for now */
-  document.body.classList.toggle('region-tamil',tamil);
-  const T=tamil?TAMIL_TXT:TELUGU_TXT;
+  const tamilUI=region!=='telugu'; /* Kannada stays on the Tamil page for now */
+  const isTamil=region==='tamil', isKannada=region==='kannada';
+  document.body.classList.toggle('region-tamil',tamilUI);
+  const T=tamilUI?TAMIL_TXT:TELUGU_TXT;
   eyebrowEl.textContent=T.eyebrow;
-  h1El.innerHTML=T.h1; h1El.setAttribute('lang',tamil?'ta':'te');
-  tagEl.textContent=T.tag; tagEl.setAttribute('lang',tamil?'ta':'te');
-  cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',tamil?'ta':'te');
+  h1El.innerHTML=T.h1; h1El.setAttribute('lang',tamilUI?'ta':'te');
+  tagEl.textContent=T.tag; tagEl.setAttribute('lang',tamilUI?'ta':'te');
+  cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',tamilUI?'ta':'te');
   const key2=document.querySelector('.band-key[data-band="2"]');
   const cs=document.getElementById('cassetteSide');
   const tgLive=document.getElementById('tgLive');
-  if(tamil){
-    /* Stay tuned: the Tamil station is not on air yet — stop any playback */
+  if(isTamil){
+    /* Tamil live station: 275 repo MP3s on a seeded-shuffled 24/7 clock. */
     if(prevBand===null) prevBand={b:bandIdx,p:playBandIdx};
+    tamilLive=true;
+    extReset();
+    BANDS[2].id='tamil'; BANDS[2].label='உங்கள் Radio'; BANDS[2].cassette='TAMIL'; BANDS[2].songs=TAMIL_SONGS;
+    BANDS[4].id='tamilchants'; BANDS[4].songs=(typeof TAMIL_CHANTS_SONGS!=='undefined')?TAMIL_CHANTS_SONGS:[];
+    BANDS[5].id='tamilinst'; BANDS[5].songs=(typeof TAMIL_INST_SONGS!=='undefined')?TAMIL_INST_SONGS:[];
+    key2.textContent='உங்கள் Radio'; key2.setAttribute('lang','ta');
+    bandIdx=2; playBandIdx=2; paintBandKeys(2);
+    if(cs) cs.textContent='SIDE A · TAMIL';
+    tamilMarquee();
+    const tp1=document.getElementById('tributeP1');
+    if(tp1){ if(!tp1.dataset.orig) tp1.dataset.orig=tp1.textContent;
+      tp1.textContent=tp1.dataset.orig.replace(/Telugu cinema/g,'Tamil cinema'); }
+  }else if(isKannada){
+    /* Kannada: page switches, but no songs play — kept empty for now. */
+    if(prevBand===null) prevBand={b:bandIdx,p:playBandIdx};
+    tamilLive=false;
+    extReset();
     if(playing) pause();
     BANDS[2].label='உங்கள் Radio'; BANDS[2].cassette='உங்கள் Radio';
     key2.textContent='உங்கள் Radio'; key2.setAttribute('lang','ta');
@@ -5245,32 +5591,49 @@ function applyRegionUI(){
     if(!nowTitleEl.dataset.orig) nowTitleEl.dataset.orig=nowTitleEl.textContent;
     nowTitleEl.textContent='STAY TUNED';
     nowTitleEl.classList.add('staytuned');
-    const tp1=document.getElementById('tributeP1');
-    if(tp1){ if(!tp1.dataset.orig) tp1.dataset.orig=tp1.textContent;
-      tp1.textContent=tp1.dataset.orig.replace(/Telugu cinema/g,'Tamil cinema'); }
+    const tp1k=document.getElementById('tributeP1');
+    if(tp1k){ if(!tp1k.dataset.orig) tp1k.dataset.orig=tp1k.textContent;
+      tp1k.textContent=tp1k.dataset.orig.replace(/Telugu cinema/g,'Tamil cinema'); }
   }else{
-    BANDS[2].label='MEE RADIO'; BANDS[2].cassette='MEE RADIO';
+    /* Back to Telugu: restore the original bands exactly. */
+    tamilLive=false;
+    for(const k of [2,4,5]){ BANDS[k].id=ORIG_BANDS[k].id; BANDS[k].label=ORIG_BANDS[k].label; BANDS[k].cassette=ORIG_BANDS[k].cassette; BANDS[k].songs=ORIG_BANDS[k].songs; }
     key2.textContent='MEE RADIO'; key2.removeAttribute('lang');
     if(prevBand!==null){ bandIdx=prevBand.b; playBandIdx=prevBand.p; prevBand=null; }
     paintBandKeys(bandIdx);
     if(cs) cs.textContent='SIDE A · '+BANDS[bandIdx].cassette;
-    if(nowTitleEl.dataset.orig){ nowTitleEl.textContent=nowTitleEl.dataset.orig; delete nowTitleEl.dataset.orig; }
     nowTitleEl.classList.remove('staytuned');
+    /* restore the title for the current band */
+    const s=songs(); if(s.length&&currentIdx>=0&&s[currentIdx]) setTitle(s[currentIdx].title||'Untitled');
+    else { if(nowTitleEl.dataset.orig){ nowTitleEl.textContent=nowTitleEl.dataset.orig; delete nowTitleEl.dataset.orig; } }
     const tp1r=document.getElementById('tributeP1');
     if(tp1r&&tp1r.dataset.orig){ tp1r.textContent=tp1r.dataset.orig; delete tp1r.dataset.orig; }
   }
 }
-/* Tamil mode is stay-tuned dead air: tapping the visible channel key or PLAY
-   gives a static burst instead of starting any audio. */
+/* Kannada mode is silent: tapping the visible channel key or PLAY gives a
+   static burst instead of starting any audio. Tamil mode plays for real. */
 document.querySelector('.band-switch').addEventListener('click',ev=>{
-  if(region!=='telugu'&&ev.target.closest('.band-key')){ ev.stopPropagation(); radioStatic(1.2); }
+  if(region==='kannada'&&ev.target.closest('.band-key')){ ev.stopPropagation(); radioStatic(1.2); }
 },true);
 document.querySelector('.keys').addEventListener('click',ev=>{
-  if(region!=='telugu'&&ev.target.closest('#playBtn')){ ev.stopPropagation(); radioStatic(1.2); }
+  if(region==='kannada'&&ev.target.closest('#playBtn')){ ev.stopPropagation(); radioStatic(1.2); }
 },true);
 function setRegion(r){
   if(tuning||r===region) return;
   tuning=true; region=r; paintRegionKnob();
+  if(r==='tamil'){
+    /* Tamil goes live at once: set up the station and start it inside the
+       tap gesture (so phones allow autoplay), then run the tuning theatre
+       over the ducked music like a real radio finding the station. */
+    applyRegionUI();
+    play();
+    if(audio) audio.volume=0.06;
+    const oldVol=1;
+    sweepNeedle(3000);
+    radioStatic(3);
+    setTimeout(()=>{ if(audio) audio.volume=oldVol; tuning=false; },3060);
+    return;
+  }
   const oldVol=(audio&&typeof audio.volume==='number')?audio.volume:1;
   if(audio) audio.volume=0.06;
   sweepNeedle(3000);
