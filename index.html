@@ -6017,7 +6017,7 @@ function showUncle(){
 }
 function randomize(){
   deckClick();
-  if(BANDS[playBandIdx].id==='meeradio') return; // shuffle stays off for Mee Radio
+  if(isLiveBand(BANDS[playBandIdx].id)) return; // shuffle stays off for live stations (Mee Radio, Hero, Chants, Instru, Tamil)
   if(songs().length<2) return;
   if(!shuffleReady()){showUncle(); return;}
   saveTs();
@@ -6351,6 +6351,12 @@ const ORIG_BANDS={
 };
 const TAMIL_MARQUEE="Tamil melodies, 80's, 90's from Ilaiyaraaja, A. R. Rahman, Deva, S. A. Rajkumar, Vidyasagar, S. P. Balasubrahmanyam, K. S. Chithra, Malaysia Vasudevan, S. Janaki, Hariharan and more…";
 function tamilMarquee(){
+  /* Set once and never restart: recreating the span would restart the CSS
+     scroll animation, making it look like it stops. */
+  if(nowTitleEl.querySelector('.tamil-scroll')){
+    var lt0=document.getElementById('lcdTrack'); if(lt0) lt0.textContent=TAMIL_MARQUEE;
+    return;
+  }
   nowTitleEl.innerHTML='<span class="tamil-scroll">'+TAMIL_MARQUEE+'</span>';
   nowTitleEl.classList.remove('staytuned');
   var lt=document.getElementById('lcdTrack'); if(lt) lt.textContent=TAMIL_MARQUEE;
