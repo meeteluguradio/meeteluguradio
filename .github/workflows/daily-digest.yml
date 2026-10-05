@@ -1,0 +1,105 @@
+name: Daily vote digest
+
+# Runs once a day shortly after midnight US Central and emails a
+# likes/dislikes-by-location table to meeteluguradio@gmail.com
+# via the Resend API (repo secret RESEND_API_KEY).
+# Two UTC schedules with a local-time guard keep it at ~12:05 AM
+# America/Chicago year-round despite daylight saving changes.
+# Can also be run manually from the Actions tab (workflow_dispatch).
+on:
+  schedule:
+    - cron: '5 5 * * *'
+    - cron: '5 6 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and send digest
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          python3 - <<'PYEOF'
+          import json, os, urllib.request
+          from datetime import datetime, timedelta
+          from zoneinfo import ZoneInfo
+
+          TZ = ZoneInfo("America/Chicago")
+          now = datetime.now(TZ)
+          # Scheduled runs: only send if local time is in the 12:00 AM hour,
+          # so exactly one of the two UTC slots fires per day.
+          if os.environ.get("GITHUB_EVENT_NAME") == "schedule" and now.hour != 0:
+              print(f"Skipping: local time is {now.strftime('%H:%M')} America/Chicago, not the midnight hour.")
+              raise SystemExit(0)
+
+          day = (now - timedelta(days=1)).date()          # the day that just ended
+          start = datetime(day.year, day.month, day.day, tzinfo=TZ).timestamp() * 1000
+          end = start + 86400 * 1000
+
+          def get_votes():
+              url = "https://mee-radio-default-rtdb.firebaseio.com/votes.json"
+              req = urllib.request.Request(url, headers={"Accept": "application/json"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.loads(r.read().decode() or "null") or {}
+
+          votes = get_votes()
+          loc = {}   # "City, Region, Country" -> [likes, dislikes]
+          total_likes = total_dislikes = 0
+          for v in votes.values():
+              if not isinstance(v, dict):
+                  continue
+              ts = v.get("ts", 0)
+              if not (start <= ts < end):
+                  continue
+              t = v.get("type")
+              if t not in ("like", "dislike"):
+                  continue
+              place = ", ".join(p for p in (v.get("city"), v.get("region"), v.get("country")) if p) or "Unknown location"
+              row = loc.setdefault(place, [0, 0])
+              if t == "like":
+                  row[0] += 1; total_likes += 1
+              else:
+                  row[1] += 1; total_dislikes += 1
+
+          day_str = day.strftime("%b %d, %Y")
+          rows = "".join(
+              f"<tr><td>{p}</td><td align='center'>{l}</td><td align='center'>{d}</td></tr>"
+              for p, (l, d) in sorted(loc.items())
+          ) or "<tr><td colspan='3' align='center'>No votes yet — share the station!</td></tr>"
+
+          html = f"""<html><body style="font-family:sans-serif;color:#222">
+          <h2>Mee Radio votes — {day_str}</h2>
+          <p><b>{total_likes}</b> likes &nbsp;·&nbsp; <b>{total_dislikes}</b> dislikes</p>
+          <table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse">
+          <tr style="background:#f0e6cc"><th>Location</th><th>Likes</th><th>Dislikes</th></tr>
+          {rows}
+          </table>
+          <p style="color:#888;font-size:12px">One vote per listener (latest vote counts). Times in America/Chicago.</p>
+          </body></html>"""
+
+          payload = json.dumps({
+              "from": "Mee Radio <onboarding@resend.dev>",
+              "to": ["meeteluguradio@gmail.com"],
+              "subject": f"Mee Radio votes — {day_str}: {total_likes} likes, {total_dislikes} dislikes",
+              "html": html,
+          }).encode()
+
+          req = urllib.request.Request(
+              "https://api.resend.com/emails",
+              data=payload,
+              headers={
+                  "Authorization": f"Bearer {os.environ['RESEND_API_KEY']}",
+                  "Content-Type": "application/json",
+                  "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+              },
+              method="POST",
+          )
+          try:
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  resp = json.loads(r.read().decode())
+          except urllib.error.HTTPError as e:
+              print("Resend error:", e.code, e.read().decode()[:500])
+              raise SystemExit(1)
+          print(f"Digest sent for {day_str}: {total_likes} likes, {total_dislikes} dislikes (id {resp.get('id')})")
+          PYEOF
