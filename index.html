@@ -88,15 +88,13 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .band-switch{display:flex;flex-direction:column;gap:10px;width:100%}
 .band-key{font-family:var(--f-type);font-size:11px;letter-spacing:.1em;padding:11px 6px;color:#2a1a0c;text-align:center;
   background:linear-gradient(180deg,#f6ecd4,#dcc491);box-shadow:0 6px 0 #4a3016,0 6px 0 3px #0d0703}
-.knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:var(--ink);opacity:.7;text-indent:.32em}
+.knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:#ffe9b8;opacity:.9;text-indent:.32em;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 /* Station Region knob */
 .region-wrap{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:9px}
-.region-plate{position:relative;width:176px;height:132px;border:3px solid #0d0703;border-radius:20px;
-  background:linear-gradient(180deg,#f8efdb,#e6d0a0);
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.65),0 4px 0 #4a3016,0 4px 0 3px #0d0703}
-.rk-lab{position:absolute;font-family:var(--f-type);font-size:10px;letter-spacing:.1em;color:#2a1a0c;
-  background:none;border:0;cursor:pointer;padding:5px 3px;z-index:2}
-.rk-lab.on{color:#a31313;font-weight:bold;text-shadow:0 0 6px rgba(163,19,19,.4)}
+.region-plate{position:relative;width:176px;height:132px}
+.rk-lab{position:absolute;font-family:var(--f-type);font-size:10px;letter-spacing:.1em;color:#ffe9b8;
+  background:none;border:0;cursor:pointer;padding:5px 3px;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.85)}
+.rk-lab.on{color:#ff8a50;font-weight:bold;text-shadow:0 0 9px rgba(255,110,50,.9),0 1px 2px rgba(0,0,0,.85)}
 .lab-telugu{left:8px;top:54px}
 .lab-kannada{left:50%;top:0;transform:translateX(-50%)}
 .lab-tamil{right:8px;top:54px}
@@ -148,19 +146,29 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
   box-shadow:0 0 12px 4px rgba(63,214,95,.7),inset 0 1px 2px rgba(255,255,255,.65)}
 .ext-toggle{background:none;border:0;cursor:pointer;padding:2px;-webkit-tap-highlight-color:transparent}
 .ext-toggle:focus-visible{outline:2px solid var(--marigold);outline-offset:3px;border-radius:8px}
-.ext-slot{position:relative;display:block;width:32px;height:78px;border-radius:16px;
-  background:linear-gradient(180deg,#030201,#161009);border:2px solid #0d0703;
-  box-shadow:inset 0 4px 10px rgba(0,0,0,.92),0 1px 0 rgba(255,220,160,.14)}
-.ext-slot::before{content:"ON";position:absolute;top:5px;left:0;right:0;text-align:center;
-  font-family:var(--f-type);font-size:7px;letter-spacing:.1em;color:#8a6f4a}
-.ext-slot::after{content:"OFF";position:absolute;bottom:5px;left:0;right:0;text-align:center;
-  font-family:var(--f-type);font-size:7px;letter-spacing:.1em;color:#8a6f4a}
-.ext-bat{position:absolute;left:50%;top:34px;width:19px;height:36px;margin-left:-9.5px;border-radius:9px 9px 6px 6px;
-  background:linear-gradient(90deg,#545458,#d8d8dd 28%,#f7f7f9 50%,#c4c4c9 72%,#48484c);
-  box-shadow:0 4px 7px rgba(0,0,0,.7),inset 0 -5px 7px rgba(0,0,0,.32),inset 0 3px 3px rgba(255,255,255,.55);
-  transition:top .11s cubic-bezier(.55,-.35,.35,1.35)}
-.ext-sw.on .ext-bat{top:7px}
-.ext-name{font-family:var(--f-type);font-size:10px;letter-spacing:.14em;color:#f3e3bd;text-shadow:0 1px 2px #000;text-align:center;line-height:1.5}
+.ext-toggle{background:none;border:0;cursor:pointer;padding:2px;-webkit-tap-highlight-color:transparent}
+.ext-toggle:focus-visible{outline:2px solid var(--marigold);outline-offset:3px;border-radius:8px}
+.ext-tag{font-family:var(--f-type);font-size:8px;letter-spacing:.14em;padding:2px 8px;border-radius:3px;
+  border:1px solid #0d0703;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.ext-tag.on-tag{background:linear-gradient(180deg,#b81f1f,#6d0d0d);color:#ffd9c9}
+.ext-tag.off-tag{background:linear-gradient(180deg,#3d3d3d,#101010);color:#bdbdbd}
+.ext-sw.on .ext-tag.on-tag{box-shadow:0 0 8px 2px rgba(255,80,40,.65);color:#fff}
+.ext-bezel{position:relative;display:block;width:58px;height:58px;border-radius:50%;
+  background:radial-gradient(circle at 35% 28%,#efeff2,#a2a2a8 42%,#545458 72%,#2b2b2f);
+  border:2px solid #0d0703;
+  box-shadow:0 4px 7px rgba(0,0,0,.6),inset 0 2px 3px rgba(255,255,255,.55),inset 0 -3px 6px rgba(0,0,0,.4)}
+.ext-bat{position:absolute;left:50%;bottom:50%;width:15px;height:42px;margin-left:-7.5px;border-radius:8px 8px 4px 4px;
+  background:linear-gradient(90deg,#5b5b5f,#dbdbdf 28%,#fbfbfc 50%,#c6c6cb 72%,#4c4c50);
+  box-shadow:0 4px 6px rgba(0,0,0,.65),inset 0 -5px 7px rgba(0,0,0,.3),inset 0 3px 3px rgba(255,255,255,.6);
+  transform-origin:50% 100%;transform:rotate(180deg);
+  transition:transform .12s cubic-bezier(.5,-.35,.4,1.35)}
+.ext-sw.on .ext-bat{transform:rotate(0deg)}
+.ext-nut{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;z-index:2;
+  background:radial-gradient(circle at 35% 30%,#f2f2f4,#8d8d93 58%,#3a3a3e);
+  border:2px solid #0d0703;box-shadow:0 2px 4px rgba(0,0,0,.65),inset 0 1px 2px rgba(255,255,255,.5)}
+.ext-nut::after{content:"";position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;
+  border-radius:50%;background:#17171a;box-shadow:inset 0 1px 3px #000}
+.ext-name{font-family:var(--f-type);font-size:11px;letter-spacing:.14em;color:#f3e3bd;text-shadow:0 1px 2px #000;text-align:center;line-height:1.5}
 .ext-brand{font-family:var(--f-type);font-size:9px;letter-spacing:.3em;text-indent:.3em;color:#3a2410;opacity:.85}
 @media (max-width:900px){
   .radio-row{flex-direction:column;align-items:center}
@@ -496,13 +504,17 @@ body.region-tamil .hero-row{display:none}
         <div class="ext-panel">
           <div class="ext-sw" id="extSwChantsWrap">
             <span class="ext-lamp amber" id="extLampChants"></span>
-            <button class="ext-toggle" id="extSwChants" aria-pressed="false" aria-label="Chants station"><span class="ext-slot"><span class="ext-bat"></span></span></button>
-            <span class="ext-name">CHANTS</span>
+            <span class="ext-tag on-tag">ON</span>
+            <button class="ext-toggle" id="extSwChants" aria-pressed="false" aria-label="Chants station"><span class="ext-bezel"><span class="ext-bat"></span><span class="ext-nut"></span></span></button>
+            <span class="ext-tag off-tag">OFF</span>
+            <span class="ext-name">Chants</span>
           </div>
           <div class="ext-sw" id="extSwInstWrap">
             <span class="ext-lamp green" id="extLampInst"></span>
-            <button class="ext-toggle" id="extSwInst" aria-pressed="false" aria-label="Instrumental station"><span class="ext-slot"><span class="ext-bat"></span></span></button>
-            <span class="ext-name">INSTRU&shy;MENTAL</span>
+            <span class="ext-tag on-tag">ON</span>
+            <button class="ext-toggle" id="extSwInst" aria-pressed="false" aria-label="Instru station"><span class="ext-bezel"><span class="ext-bat"></span><span class="ext-nut"></span></span></button>
+            <span class="ext-tag off-tag">OFF</span>
+            <span class="ext-name">Instru</span>
           </div>
         </div>
         <div class="ext-brand">SIDE&nbsp;UNIT</div>
