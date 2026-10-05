@@ -90,11 +90,14 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
   background:linear-gradient(180deg,#f6ecd4,#dcc491);box-shadow:0 6px 0 #4a3016,0 6px 0 3px #0d0703}
 .knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:#ffe9b8;opacity:.9;text-indent:.32em;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 /* Station Region knob */
-.region-wrap{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:9px}
-.region-plate{position:relative;width:200px;height:132px}
+.region-wrap{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:9px}
+.region-plate{position:relative;width:200px;height:124px}
 .rk-lab{position:absolute;font-family:var(--f-type);font-size:10px;letter-spacing:.1em;color:#ffe9b8;
-  background:none;border:0;cursor:pointer;padding:5px 3px;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.85)}
-.rk-lab.on{color:#ff8a50;font-weight:bold;text-shadow:0 0 9px rgba(255,110,50,.9),0 1px 2px rgba(0,0,0,.85)}
+  background:rgba(0,0,0,.18);border:1px solid rgba(245,191,79,.38);border-radius:9px;cursor:pointer;padding:4px 6px;z-index:2;
+  text-shadow:0 1px 3px rgba(0,0,0,.85);box-shadow:0 0 7px rgba(245,191,79,.16),inset 0 0 5px rgba(245,191,79,.07)}
+.rk-lab.on{color:#ff8a50;font-weight:bold;border-color:rgba(255,205,110,.9);
+  text-shadow:0 0 9px rgba(255,110,50,.9),0 1px 2px rgba(0,0,0,.85);
+  box-shadow:0 0 13px rgba(245,191,79,.5),inset 0 0 6px rgba(245,191,79,.18)}
 .lab-telugu{left:4px;top:54px}
 .lab-kannada{left:50%;top:0;transform:translateX(-50%)}
 .lab-tamil{right:4px;top:54px}
@@ -115,8 +118,8 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
    later, so no audio is tuned here. */
 .radio-row{display:flex;justify-content:center;align-items:stretch;width:100%}
 .aux-row{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%}
-.ext-sw{display:flex;flex-direction:column;align-items:center;gap:5px}
-.ext-lamp{width:13px;height:13px;border-radius:50%;background:#3a2413;border:2px solid #0d0703;
+.ext-sw{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ext-lamp{width:12px;height:12px;border-radius:50%;background:#3a2413;border:2px solid #0d0703;
   box-shadow:inset 0 2px 4px rgba(0,0,0,.85);transition:background .15s,box-shadow .15s}
 .ext-sw.on .ext-lamp.amber{background:radial-gradient(circle at 35% 30%,#ffedb5,#f5a623 60%,#9a5200);
   box-shadow:0 0 12px 4px rgba(245,166,35,.7),inset 0 1px 2px rgba(255,255,255,.65)}
@@ -129,21 +132,22 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .ext-tag.on-tag{background:linear-gradient(180deg,#b81f1f,#6d0d0d);color:#ffd9c9}
 .ext-tag.off-tag{background:linear-gradient(180deg,#3d3d3d,#101010);color:#bdbdbd}
 .ext-sw.on .ext-tag.on-tag{box-shadow:0 0 8px 2px rgba(255,80,40,.65);color:#fff}
-.ext-bezel{position:relative;display:block;width:46px;height:46px;border-radius:50%;
+.ext-bezel{position:relative;display:block;width:42px;height:42px;border-radius:50%;
   background:radial-gradient(circle at 35% 28%,#efeff2,#a2a2a8 42%,#545458 72%,#2b2b2f);
   border:2px solid #0d0703;
   box-shadow:0 4px 7px rgba(0,0,0,.6),inset 0 2px 3px rgba(255,255,255,.55),inset 0 -3px 6px rgba(0,0,0,.4)}
-.ext-bat{position:absolute;left:50%;bottom:50%;width:12px;height:34px;margin-left:-6px;border-radius:6px 6px 3px 3px;
+.ext-bat{position:absolute;left:50%;bottom:50%;width:11px;height:30px;margin-left:-5.5px;border-radius:6px 6px 3px 3px;
   background:linear-gradient(90deg,#5b5b5f,#dbdbdf 28%,#fbfbfc 50%,#c6c6cb 72%,#4c4c50);
   box-shadow:0 4px 6px rgba(0,0,0,.65),inset 0 -5px 7px rgba(0,0,0,.3),inset 0 3px 3px rgba(255,255,255,.6);
   transform-origin:50% 100%;transform:rotate(180deg);
   transition:transform .12s cubic-bezier(.5,-.35,.4,1.35)}
 .ext-sw.on .ext-bat{transform:rotate(0deg)}
-.ext-nut{position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%;z-index:2;
+.ext-nut{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;z-index:2;
   background:radial-gradient(circle at 35% 30%,#f2f2f4,#8d8d93 58%,#3a3a3e);
   border:2px solid #0d0703;box-shadow:0 2px 4px rgba(0,0,0,.65),inset 0 1px 2px rgba(255,255,255,.5)}
-.ext-nut::after{content:"";position:absolute;left:50%;top:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;
+.ext-nut::after{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;
   border-radius:50%;background:#17171a;box-shadow:inset 0 1px 3px #000}
+.mobile-aux{display:none}
 .ext-name{font-family:var(--f-type);font-size:10px;letter-spacing:.12em;color:#f3e3bd;text-shadow:0 1px 2px #000;text-align:center;line-height:1.4}
 /* Tamil region mode: hide Telugu-only channel keys */
 body.region-tamil .band-key[data-band="0"],
@@ -165,6 +169,32 @@ body.region-tamil .uncle{display:block}
 .uncle .uncle-bubble::before{content:"";position:absolute;left:50%;top:100%;margin-left:-6px;border:6px solid transparent;border-top:8px solid #fffdf4;z-index:1}
 @media (max-width:1100px){.uncle{left:14px;width:170px}}
 @media (max-width:640px){.uncle{left:8px;top:auto;bottom:8px;transform:none;width:122px}.uncle .uncle-bubble b{font-size:22px}.uncle .uncle-bubble span{font-size:11px}}
+/* Small screens: compact zoomed player (desktop layout, shrunk) + flat radio, clear gaps */
+@media (max-width:640px){
+  .deck{width:560px;zoom:.68}
+  .deck-inner{transform:none}
+  .deck.playing .deck-inner{animation:none}
+  .band-switch{gap:18px}
+  .keys{gap:14px}
+  .hero-row{gap:14px}
+  .top-row{gap:14px}
+  .main-col{gap:16px}
+  .tuner-col{gap:14px}
+  .foot{padding-bottom:76px}
+  .aux-row{justify-content:center}
+  .mobile-aux{display:flex;align-items:center;justify-content:center;gap:36px;
+    margin:12px auto 0;padding:12px 26px;width:max-content;max-width:94%;
+    background:linear-gradient(180deg,#8f5e2c,#5f3a18);
+    border:4px solid #1d0f04;border-radius:16px;
+    box-shadow:0 6px 0 #2c190a,0 6px 0 4px #100903,inset 0 2px 0 rgba(255,220,160,.3)}
+}
+@media (max-width:380px){ .deck{zoom:.62} }
+@media (pointer:coarse){
+  .deck{perspective:none}
+  .deck-inner{transform:none}
+  .deck.playing .deck-inner{animation:none}
+  button{touch-action:manipulation}
+}
 /* STAY TUNED readout: big, gold, centered, gently pulsing */
 #nowTitle.staytuned{font-size:23px;letter-spacing:.3em;padding-left:.3em;text-align:center;color:var(--marigold);
   text-shadow:0 0 12px rgba(245,191,79,.8);white-space:normal;overflow:visible;animation:stPulse 2.2s ease-in-out infinite}
@@ -269,6 +299,9 @@ body.region-tamil .hero-row{display:none}
 
 /* Rolling tribute scroll, top right */
 .tribute-wrap{position:fixed;top:12px;right:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-end}
+.feedback-wrap,.tribute-wrap{pointer-events:none}
+.feedback-tab,.tribute-tab{pointer-events:auto}
+.feedback-scroll.open,.tribute-scroll.open{pointer-events:auto}
 .tribute-tab{font-family:var(--f-type);font-size:11px;letter-spacing:.18em;cursor:pointer;
   background:linear-gradient(180deg,#f6e7c2,#dcb96f);color:#4a2c12;border:3px solid #2a1a0c;border-bottom:none;border-radius:10px 10px 0 0;
   padding:9px 13px;box-shadow:0 4px 12px rgba(0,0,0,.45)}
@@ -456,7 +489,7 @@ body.region-tamil .hero-row{display:none}
                 <span class="ext-tag off-tag">OFF</span>
                 <span class="ext-name">Chants</span>
               </div>
-              <div class="live-tag" aria-hidden="true"><span class="live-text">LIVE</span><span class="live-lamp"></span></div>
+              <div class="live-tag" id="liveTag" aria-hidden="true"><span class="live-text">LIVE</span><span class="live-lamp"></span></div>
               <div class="ext-sw" id="extSwInstWrap">
                 <span class="ext-lamp green" id="extLampInst"></span>
                 <span class="ext-tag on-tag">ON</span>
@@ -480,6 +513,7 @@ body.region-tamil .hero-row{display:none}
       </div>
     </section>
    </div>
+   <div class="mobile-aux" id="mobileAux" aria-label="Chants and Instru switches"></div>
     <p class="foot" id="foot">Plays at random, non-stop, for as long as this page is open.</p>
   </div>
 </main>
@@ -4286,6 +4320,477 @@ const MEE_RADIO_SONGS = [
   { title: "Ekkadiki Nee Parugu (1998)", src: "https://aac.saavncdn.com/302/362ad06862cdbc8daa299b872fee283a_160.mp4" },
   { title: "Namo Narayana (1980)", src: "https://aac.saavncdn.com/264/e915873d144a32eb9bdca54357a5b49c_160.mp4" }
 ];
+const CHANTS_SONGS = [
+  { title: "HANUMAN CHALISA", src: "https://aac.saavncdn.com/081/3f86ff8763471e95d47f06660eb18137_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/668/e38d0ba4c157468722e8edccb46f78ae_160.mp4" },
+  { title: "Ashta Lakshmi Sthothram", src: "https://aac.saavncdn.com/227/3b92b765f884f5ef878657740a6fd109_160.mp4" },
+  { title: "Dr. M. Balamuralikrishna's Hariye Gathi", src: "https://aac.saavncdn.com/471/075ac1f4dfb19e094b3bd061dbaec2e7_160.mp4" },
+  { title: "Sri Mahalakshmi Chathurvimshathi Nama Stotram", src: "https://aac.saavncdn.com/185/d4f1abff44883f4ecdde03f79a26d170_160.mp4" },
+  { title: "Sri Lakshmi Sahasranama Sthothram", src: "https://aac.saavncdn.com/150/052c3a41736ec34fb3c589deaf2e2315_160.mp4" },
+  { title: "Suprabhatamayya", src: "https://aac.saavncdn.com/286/9154ed838ebe94f7bde128c7263fac0c_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/483/ec18cbea45c2e27227add73087d8efa6_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/582/1f3754001b64314bc9673abe060bee41_160.mp4" },
+  { title: "Siva Stothram", src: "https://aac.saavncdn.com/176/b7403a0194960a912040f45fde130e53_160.mp4" },
+  { title: "KANAKADHARA STOTHRAM", src: "https://aac.saavncdn.com/044/cfaa96c363b8e3f477ecd6d221322ecc_160.mp4" },
+  { title: "Shiva Panchakshara Stotram", src: "https://aac.saavncdn.com/440/18dbd9e4e78ad82cb444bedccd8f4780_160.mp4" },
+  { title: "Shiva Stotram (From &quot;Eduruleni Manishi&quot;)", src: "https://aac.saavncdn.com/300/2a27ab025783458b7e343f9ce84fe871_160.mp4" },
+  { title: "Sri Hanuman Chalisa", src: "https://aac.saavncdn.com/251/8373fb90139108348b461869941fef8e_160.mp4" },
+  { title: "Mallikarjuna Suprabhatam", src: "https://aac.saavncdn.com/089/32e7854f9530021e7538445ecdf9bb8c_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/292/8cfbedbc8f0295119fc71e5672590b7f_160.mp4" },
+  { title: "SHIVA THANDAVAM STHOTHRAM 360D", src: "https://aac.saavncdn.com/840/c32325c17e3cf57f90b59d3f1c4e2af6_160.mp4" },
+  { title: "Varalakshmi Vratham Telugu Speech-2", src: "https://aac.saavncdn.com/634/8c844a1c994d284dbbcb72bf8194c514_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/629/8807b31247e1df0b2f2079cd4c0b9045_160.mp4" },
+  { title: "Hanuman chalisa", src: "https://aac.saavncdn.com/628/43f6f10061791d5b618e115d6f92d7db_160.mp4" },
+  { title: "Hanuman Chalesa", src: "https://aac.saavncdn.com/650/6e62a014779d18d108343d07a3acc231_160.mp4" },
+  { title: "Shree Siddi Vinayaka Stotram (Telugu)", src: "https://aac.saavncdn.com/382/13ab5da68e8e4c5330b4970f849f02f3_160.mp4" },
+  { title: "Ashtalakshmi Stotram", src: "https://aac.saavncdn.com/652/a911b4ffa8dd0c2e41c5e501bb9a369f_160.mp4" },
+  { title: "Bhaja Govindam Vishnu Sahasranamam - 2", src: "https://aac.saavncdn.com/386/77c244086a70b810c4b5ea3d0b2257ca_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/140/b1e80d24ae4ce649ea125190f1c7699d_160.mp4" },
+  { title: "Sri Lakshmi Karavalamba Stothram (From &quot;Sri Lakshmi Sthuthi&quot;)", src: "https://aac.saavncdn.com/562/10121da95268c6e8254d0e22846074c1_160.mp4" },
+  { title: "Sri Lalitha Sahasranamam Stotram", src: "https://aac.saavncdn.com/657/24b8e0e3499ea9dd5215f4ce36420e4c_160.mp4" },
+  { title: "Sri Lakshmi Karavalamba Stothram", src: "https://aac.saavncdn.com/405/5739fd9ca7632322bb16c4ac0861c4c1_160.mp4" },
+  { title: "Pancharatnam, Ashtottara Shathanama Stotram", src: "https://aac.saavncdn.com/505/dd75a95a8009f71336ba29885b691402_160.mp4" },
+  { title: "Sri Vigneshwara Suprabhatam", src: "https://aac.saavncdn.com/906/34982871a3d5cde2155a269251548a20_160.mp4" },
+  { title: "Sri Rama Raksha Stothram", src: "https://aac.saavncdn.com/206/2858203e23715ef0c01600e77a59a46f_160.mp4" },
+  { title: "Siva Aksharamala Stotram", src: "https://aac.saavncdn.com/939/ce78ae1de15025f61955750b7f7faee7_160.mp4" },
+  { title: "Shiva Tandava Stothram", src: "https://aac.saavncdn.com/008/22283ed754926484b7ae3bef435e31ee_160.mp4" },
+  { title: "Ganapathi Prasanna Vadana Stothram", src: "https://aac.saavncdn.com/058/f107e116b017c42a2f9f2052f916577e_160.mp4" },
+  { title: "Pradakshina sthothram", src: "https://aac.saavncdn.com/926/bb719a453b8575f53a3666c24737f182_160.mp4" },
+  { title: "Mallikarjuna Suprabhatam", src: "https://aac.saavncdn.com/580/6780837d8374252db0c1bcec36ebe487_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/972/6d3fe97cd70776f5b5afc88111575cbf_160.mp4" },
+  { title: "Lakshmi Sthothram", src: "https://aac.saavncdn.com/421/01ff8db127d3c1c42081b0d3da522eef_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/871/879a628e19deb2e41840bc774fc41626_160.mp4" },
+  { title: "Vinayaka Suprabhatam", src: "https://aac.saavncdn.com/077/5c73ab7be19b31e9227f7b5191ee9e9b_160.mp4" },
+  { title: "Sri Lalitha Sahasranamam", src: "https://aac.saavncdn.com/016/528206730894e4b828ab149ac7243749_160.mp4" },
+  { title: "Sri Lalitha Sahasranaamam (From &quot;Sri Lalitha Sahasra Naamam,Phalasruthi&quot;)", src: "https://aac.saavncdn.com/564/36e3e36d78e971a2ae902519cd36e875_160.mp4" },
+  { title: "Ashtottara Shatanamavali", src: "https://aac.saavncdn.com/505/48ef83ebc5f21056e2b11b93dc9aac23_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/581/3aeed65c83575fd3fb63e4a83ef2aede_160.mp4" },
+  { title: "Durga Devi Suprabhatam", src: "https://aac.saavncdn.com/279/208423a64a82891f90605b6eb355e587_160.mp4" },
+  { title: "SHIVA PANCHAKSHARA NAKSHATRAMALA STOTHRAM", src: "https://aac.saavncdn.com/770/795abed739ab00b36532377c6c46818b_160.mp4" },
+  { title: "Asthalakshmi Stotram", src: "https://aac.saavncdn.com/336/3307cd5282b006f0db741d349f26a5ca_160.mp4" },
+  { title: "Sri Hanuman Chalisa", src: "https://aac.saavncdn.com/699/6764734a88617c7026088de56600bc90_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/979/f3507f20221c17e97fc7b081b77388fe_160.mp4" },
+  { title: "Suprabatham", src: "https://aac.saavncdn.com/547/4ff346c1bc94bf0823d4070d76b8850b_160.mp4" },
+  { title: "Suprabhatam", src: "https://aac.saavncdn.com/419/5413e37c6de99533467260d9b7a70973_160.mp4" },
+  { title: "SRI HANUMAN CHALISA", src: "https://aac.saavncdn.com/168/c9573bdcddcb5ce4ba25776d0c1eb741_160.mp4" },
+  { title: "SRI VENKATESWARA SARANAGATHI STHOTHRAM", src: "https://aac.saavncdn.com/498/3f83dd9a7b63f2d42354a2d957f58cdb_160.mp4" },
+  { title: "Suprabhatam", src: "https://aac.saavncdn.com/288/a4df4e02509a57e8f9b357f338c4afd2_160.mp4" },
+  { title: "Ayyappa Suprabhatam", src: "https://aac.saavncdn.com/068/f181b934c0f76b5b366539f1ba3f73e9_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/718/6f8f7c667fa3229d407069d2d83fa245_160.mp4" },
+  { title: "Sai Suprabhatam", src: "https://aac.saavncdn.com/977/11d25849c7b9894b157299d63a165c62_160.mp4" },
+  { title: "Narayana Sthothram", src: "https://aac.saavncdn.com/232/0ef7cfbf7b0cadf382cb597b9e48e87a_160.mp4" },
+  { title: "Suprbatham,Sthothram,Praparthi,Mangalasasanam", src: "https://aac.saavncdn.com/998/ab9a8a372d906cf730a6ac8cf73a779f_160.mp4" },
+  { title: "Sri Lalitha Sahasranamam", src: "https://aac.saavncdn.com/668/2090d568ccb88379acc41bd4d0451e7f_160.mp4" },
+  { title: "Shiva Mahimna Stothram", src: "https://aac.saavncdn.com/127/378e516af296097be1c7625436b84ee6_160.mp4" },
+  { title: "Hanuman Chalisa (From &quot;Sri Anjaneya Suprabhatham&quot;)", src: "https://aac.saavncdn.com/244/82c5d13779bcea4572cf7a10f55a3951_160.mp4" },
+  { title: "Telugu Hanuman Chalisa Part - I", src: "https://aac.saavncdn.com/231/1a03c736f3e3ceeae0ffdced01b07df2_160.mp4" },
+  { title: "Kanakadurga", src: "https://aac.saavncdn.com/743/d6cf5c58bbe7fc9e96370eb74d0a93d5_160.mp4" },
+  { title: "Sri Mahalakshmi Stotram", src: "https://aac.saavncdn.com/343/b349378d47fdccf87e304809f25a54d5_160.mp4" },
+  { title: "Mallikarjuna Suprabhatam 1", src: "https://aac.saavncdn.com/742/8dfae0b88e1558a32a55c9d62457aea0_160.mp4" },
+  { title: "Sri Rama Mangala Stothram", src: "https://aac.saavncdn.com/206/31b2780e681be07b9844e0fc9e5e259a_160.mp4" },
+  { title: "Srinivasa Govinda Namalu", src: "https://aac.saavncdn.com/759/5b852ab61d909369ec0542122a6f5083_160.mp4" },
+  { title: "Nityanandakari - Annapurna Stotram", src: "https://aac.saavncdn.com/079/7437a22f1061d94968f9ea3a4a33af9f_160.mp4" },
+  { title: "Pradakshina Sthothram", src: "https://aac.saavncdn.com/410/81499a32446df96e86c777ebe915a871_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/686/be472945b9635c16aa4e3b0eaeaf24b4_160.mp4" },
+  { title: "Shiva Panchakshari Stotram - Telugu", src: "https://aac.saavncdn.com/826/54d7f1f7347ec8662b0a7b15dc5e8fc2_160.mp4" },
+  { title: "Sumanasa Vandhita - Ashta Laxmi Stotram (From &quot;Devi Stothramalika - New&quot;)", src: "https://aac.saavncdn.com/418/3445c82de8fd45a223b534f7d3870677_160.mp4" },
+  { title: "Dwadasi Jyothirlinga Stotram", src: "https://aac.saavncdn.com/513/fcdbccf92ed7218fa53a81f38d3bdc43_160.mp4" },
+  { title: "Sumanasa Vandhita (Asta Laxmi Stothram)", src: "https://aac.saavncdn.com/135/e72c05639e5d3b0746af3a8ff4c5c607_160.mp4" },
+  { title: "Sri Venkateshwara Sthothram", src: "https://aac.saavncdn.com/842/358a1287df0028a6bf1527b1ccc30b62_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/625/d5badc1de7aa88c0b7ac298fdb1c0364_160.mp4" },
+  { title: "Saraswathi Shasrtamayi", src: "https://aac.saavncdn.com/410/771fce91dc6433b17826c7239338b3a9_160.mp4" },
+  { title: "Sri Hanuman Chalisa", src: "https://aac.saavncdn.com/044/3267a0f29658ce56cd92db358d30b7e4_160.mp4" },
+  { title: "Saraswathi Dwadasa Nama Stotram", src: "https://aac.saavncdn.com/225/33e637af47582b9e88283cf944594ce2_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/013/83e1ef36b80902f90444b9f6ff1469a7_160.mp4" },
+  { title: "Suprabhatamide neeku", src: "https://aac.saavncdn.com/836/651d4d018a94521cd3f3b73257d5130f_160.mp4" },
+  { title: "Namaskara Sthothram", src: "https://aac.saavncdn.com/403/78cdbb9920a9e5dfc7cc708319f3f438_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/174/709f8cb20a6a9a8c2dbc148523a1f428_160.mp4" },
+  { title: "Sri Lalitha Sahasranamam", src: "https://aac.saavncdn.com/256/937152db5573f2778192be91b6bbd605_160.mp4" },
+  { title: "Sri Mahalakshmi Ashtakam", src: "https://aac.saavncdn.com/743/d8d534bd37aeea83b249272c8d512196_160.mp4" },
+  { title: "SRI VENKATESWARA VAZRAKAVACHA STHOTHRAM", src: "https://aac.saavncdn.com/498/a5cee8695322b65a6c9d9963c8e388a0_160.mp4" },
+  { title: "Sri Lalitha Sahasranaamam", src: "https://aac.saavncdn.com/748/4568d01becdcac2df1e2d210ddfa47d1_160.mp4" },
+  { title: "Kousalya Supraja (Suprabhatam)", src: "https://aac.saavncdn.com/112/f3ed94560f4871ed62c36ca7ea6b57e5_160.mp4" },
+  { title: "Sri Venkateshwara Suprabhatam", src: "https://aac.saavncdn.com/850/8bdd7a63377d949ecea040783be10c1c_160.mp4" },
+  { title: "SRI VENKATESHWARA SUPRABHATHAM", src: "https://aac.saavncdn.com/999/566456f9b0dd12813b241906b890d0b1_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/776/5423ad036dab8417262c752f7b577d02_160.mp4" },
+  { title: "Namaameesha", src: "https://aac.saavncdn.com/377/7d802dcf8a97b66e89462a96688bf9fc_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/133/f8f3f47dd6bf6a9f4e5c5596217df97c_160.mp4" },
+  { title: "Sarva Devakrutha Lakshmi Stotram", src: "https://aac.saavncdn.com/634/9cf292dd26ce97ea5204752c7d1d059c_160.mp4" },
+  { title: "Narayana Stotram - Telugu", src: "https://aac.saavncdn.com/581/2b9f53ff8cc7c9b8cc8b6aafc6404aa8_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/586/4809182b5cf75a5bae706d5fafa4b821_160.mp4" },
+  { title: "Bham Bham Hanuman Chalisa", src: "https://aac.saavncdn.com/157/4b0cc8110d302a1fe60c1007b364a139_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/119/cd453e89f7ceb385bdc7f0c0d7536df5_160.mp4" },
+  { title: "Shiva Stotram", src: "https://aac.saavncdn.com/248/7625ab09a7e3a9d2e0be6b825943ae1f_160.mp4" },
+  { title: "Sri Vishnu Sahasranamam Stotram", src: "https://aac.saavncdn.com/633/f285a439c2ac43beebaddcf72b134588_160.mp4" },
+  { title: "Anjaneya Suprabhatam", src: "https://aac.saavncdn.com/639/442c1a725772ec4f3dd40f936770df35_160.mp4" },
+  { title: "Sri Lakshmi Sthothram", src: "https://aac.saavncdn.com/458/ed34b0468326169dbaf8313912503ab4_160.mp4" },
+  { title: "Sri Subrahmanya Karavalamba Stotram", src: "https://aac.saavncdn.com/697/31d3a38f3773d31d88d695fdf1e07903_160.mp4" },
+  { title: "Nava Durga Stotram", src: "https://aac.saavncdn.com/332/174629dd7d44e2924542d0a4731d7bb2_160.mp4" },
+  { title: "Omkara Bindu", src: "https://aac.saavncdn.com/377/72727f2a539a663c27cb4d909e7ba4f1_160.mp4" },
+  { title: "Sri Venkateswara Ashtothara Sathanama Sthothram", src: "https://aac.saavncdn.com/232/aa89186a3d5b4f89dd10ad49ac570d25_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/376/4777c4463e0e81de952e65867d83976f_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/912/b78a39341450a50397ad7acd3015a1d2_160.mp4" },
+  { title: "Deepa Lakshmi Stotram", src: "https://aac.saavncdn.com/092/b4c80ee79f3b03e0c923c0bb48330908_160.mp4" },
+  { title: "Suprabhatam - Ganand", src: "https://aac.saavncdn.com/260/50e4ff7afbf17374f5ed19e60bb49fe9_160.mp4" },
+  { title: "Suprabhatam Talli", src: "https://aac.saavncdn.com/745/cfa71fd20bcdd5a0a02624bda05518f4_160.mp4" },
+  { title: "Namo Devadhi", src: "https://aac.saavncdn.com/377/49f263a36805ab3352752cbcec0b43c9_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/153/e8de3cbbacd5b5b56887d1720016af73_160.mp4" },
+  { title: "Sumanasa Vandhita - Ashta Laxmi Stotram (&quot;Devi Stothramalika-New&quot;)", src: "https://aac.saavncdn.com/null/4a54c93e28cd7d2c0b17ab65b415acec_160.mp4" },
+  { title: "Sri Venkateswara Suprabatham", src: "https://aac.saavncdn.com/861/62c8554fdea79dd80c7332846a21087e_160.mp4" },
+  { title: "Shinashtottara Sathanamavali", src: "https://aac.saavncdn.com/228/3e934832e9e578c89c7cefab3fb2fa5e_160.mp4" },
+  { title: "SRI VENKATESWARA VAZRAKAVACHA STHOTHRAM", src: "https://aac.saavncdn.com/655/bbcebb60bbf4c1aeeda5efd6b2efd2e3_160.mp4" },
+  { title: "Jyothirlinga Stotram", src: "https://aac.saavncdn.com/013/ea8eae60cee4f774a9b8a125b6443a04_160.mp4" },
+  { title: "Namo Bhoothanadam", src: "https://aac.saavncdn.com/518/365d086d041986cf3802067e2cc14f88_160.mp4" },
+  { title: "Sri Rama Mangala Stothram", src: "https://aac.saavncdn.com/206/168cf36069b5658f5740a085bf3f0654_160.mp4" },
+  { title: "Sri Surya Suprabhatam", src: "https://aac.saavncdn.com/335/309dbce2daef331d3966eaa5499f341c_160.mp4" },
+  { title: "Sri Kanaka Dhara Sthothram", src: "https://aac.saavncdn.com/420/72a6a16f5b07e91fb260655987aef736_160.mp4" },
+  { title: "Sri Vishnu Sahasranamam", src: "https://aac.saavncdn.com/482/c16bda6b96635cc16b59432688667ce4_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/550/6da8bb22c0e162b3c7f167ae2a1e577c_160.mp4" },
+  { title: "Aadhi Pujitha", src: "https://aac.saavncdn.com/962/8bae66296d5e3103d9bb0907be8eb8f3_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/676/30a75493a6e9fb482f601c7ce0b6f138_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/750/a111c8bdd90eb49ceeefe427a19fed10_sar_160.mp4" },
+  { title: "Vishnu Sahasranamam", src: "https://aac.saavncdn.com/099/1ea35e5619daa8ec9711387fa8b714df_160.mp4" },
+  { title: "Sai Suprabhatam", src: "https://aac.saavncdn.com/734/7261489ec6f3584957ae76985a14a3af_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/957/ba4af9c7767be1a6fe237baa7aace8b4_160.mp4" },
+  { title: "SRI VENKATESWARA SARANAGATHI STHOTHRAM", src: "https://aac.saavncdn.com/232/33984e231f5abd22d07f9772fad2af58_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/098/3265315bcd35eb545d86d7f1a68c4f9c_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/007/0cd7f54df9d603541453129c0be8eea3_160.mp4" },
+  { title: "Sri Shiva Panchakshari Stotram", src: "https://aac.saavncdn.com/363/99c473affaf50a5ded57df5b8032e44a_160.mp4" },
+  { title: "Sri Lakshmi Sahasranama Sthotram", src: "https://aac.saavncdn.com/663/18c383ab4398f52827dfeb95f5358267_160.mp4" },
+  { title: "Sri Hanuman Chalisa", src: "https://aac.saavncdn.com/237/b0784c3d66677890c29d9f3a806b1389_160.mp4" },
+  { title: "Hanuman Chaleesa", src: "https://aac.saavncdn.com/485/1b8f0272191ff55b6b961b9f7d10030d_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/909/bd67a66747688afd0344df84fbb269ea_160.mp4" },
+  { title: "SIVA AKSHARAMALA STOTRAM", src: "https://aac.saavncdn.com/381/a502d0ffea039b44d6b9aa8d64e950dd_160.mp4" },
+  { title: "Lalitha Sahasranamam", src: "https://aac.saavncdn.com/025/18351a50efef7cec1a96330020667da8_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/553/a6894c1423ab068ff220cf52c4a9186d_160.mp4" },
+  { title: "Devi Durga", src: "https://aac.saavncdn.com/743/55a9ecc47d9117772f2ce8395cc8d753_160.mp4" },
+  { title: "Sri Venkateswara Suprabhatam - Telugu Adaptation", src: "https://aac.saavncdn.com/588/c4aea9c6b126fd0d1ab4c3eb28f004c5_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/590/e4c7328dc9489ab5d22849674430caf9_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/395/fdb575b27b6b4b16d263dc0abb4b6301_160.mp4" },
+  { title: "Sri Rama Mangala Stothram", src: "https://aac.saavncdn.com/019/c35429de05054e4dd8ddf6be682fa042_160.mp4" },
+  { title: "Shiva Panchakshari Stotram", src: "https://aac.saavncdn.com/597/0340aadfda7efaf7de1ea3d43124a244_160.mp4" },
+  { title: "Manasasmarami", src: "https://aac.saavncdn.com/547/8584e812c2ddc6490740ac0494badabb_160.mp4" },
+  { title: "Sourasatra Deshe", src: "https://aac.saavncdn.com/377/180666e4ae9ed8a399f70d0c64573a2c_160.mp4" },
+  { title: "Devi Durgama", src: "https://aac.saavncdn.com/743/2c3bdeb0e4feb3adb5985015ef1da103_160.mp4" },
+  { title: "Subrahmanya Bhujanga Stotram", src: "https://aac.saavncdn.com/850/29ab88086d3b4610c12e5e8b0e55e229_160.mp4" },
+  { title: "Sri Venkateswara Ashtothara Sathanama Sthothram", src: "https://aac.saavncdn.com/498/3fa6cb6b17629c121e23d330eb12a2ba_160.mp4" },
+  { title: "Hanuman Chalisa - for Strength and Courage", src: "https://aac.saavncdn.com/296/2be25ed769ea13aacf9c439142d8d510_160.mp4" },
+  { title: "Sri lakshmi karavalamba sthotram", src: "https://aac.saavncdn.com/345/01df78bee021bee7a0859b57eabc71cd_160.mp4" },
+  { title: "Sri Lakshmi Tulasi Sthotram", src: "https://aac.saavncdn.com/016/4e2d92245fe3dda0523d54f5fdef269c_160.mp4" },
+  { title: "Aditya Hrudayam (Stotram)", src: "https://aac.saavncdn.com/511/46bc912565572d268e88624a3c9de2d8_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/668/48e8b7b73bc8e910e54d2703912bbbf2_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/839/7183f14422469551cdaaa965307e6e16_160.mp4" },
+  { title: "Shiva Pankashara Nakshatra Mala Stotram", src: "https://aac.saavncdn.com/746/5a24078a93106c8f26e8a636dce36a3e_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/913/a86ac9be1a0c45db0e3c373fe9e2256f_160.mp4" },
+  { title: "Sri Lakshmi Sahasranama stothram", src: "https://aac.saavncdn.com/345/1b9e5441fc9e5b97208638b4d2d3d38f_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/872/596bc2fc25c362ed4805210c2a4550a0_160.mp4" },
+  { title: "Suprabhatam", src: "https://aac.saavncdn.com/094/db209f1a45e25d63e47141ae0afc8cdd_160.mp4" },
+  { title: "Mallikarjuna Suprabhatam", src: "https://aac.saavncdn.com/915/5b4d62d4d95c8bfbc26c81fba52f60f0_160.mp4" },
+  { title: "Hanuman Chalisa (From &quot;Sri Anjaneya Suprabhatham&quot;)", src: "https://aac.saavncdn.com/785/7abe7ce2c9b390a57fdfb597174d6733_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/589/84fcdf705836963d80d77461faace61f_160.mp4" },
+  { title: "Lakshmi Astothora Sathanama.Sto", src: "https://aac.saavncdn.com/943/ae35ce5480861c18e6415c110ab1df2a_160.mp4" },
+  { title: "Vishnu Sahasranamam", src: "https://aac.saavncdn.com/316/9766095f9e967f1aa42ef32e21a0a7ac_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/732/aa60e56ec0bc7a8944fe3f2bca5ddc3e_160.mp4" },
+  { title: "Sri Ashtalakshmi Stotram", src: "https://aac.saavncdn.com/016/ca30f1e17d2cb0766174fc8e393e9680_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/680/4217b5d764640c6eea4fa51f13cf46f5_160.mp4" },
+  { title: "Kanakadhara Stotra", src: "https://aac.saavncdn.com/256/40c947e2adf2094ba864b121436fb0d2_160.mp4" },
+  { title: "Hanuman Chaleesa", src: "https://aac.saavncdn.com/644/1a1142909fc46ace24334314a0e8e886_160.mp4" },
+  { title: "Mrutha Sanjeevana Stotram", src: "https://aac.saavncdn.com/665/50a727dddff2fd2f9a2d36219ca55cb9_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/105/ccbc21b785843b33ff8bb4884d45c692_160.mp4" },
+  { title: "Kanaka Durgamma Suprabhatam", src: "https://aac.saavncdn.com/117/85dfb059eedbe3d1e3c862a5ef49612b_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/575/84afa0c473c02b0bc304d8cb3b72bd3a_160.mp4" },
+  { title: "Sri Venkateshwara Suprabhatam", src: "https://aac.saavncdn.com/104/3af363434d8d564f240216d386820413_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/621/1df87bcd95b7510bc1e7850d09d47aec_160.mp4" },
+  { title: "Lakshmi Stothram", src: "https://aac.saavncdn.com/943/c27ec579b7aa71c363a2a3e4ac4a51dd_160.mp4" },
+  { title: "Sri Ashtalakshmi Sthotram", src: "https://aac.saavncdn.com/195/bd10daa5b8114689e0c407c595d4438a_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/141/82eea0257832d5da45f8a4257ee19446_160.mp4" },
+  { title: "Shiva Bhujanga Stotram", src: "https://aac.saavncdn.com/292/530dbb1e894e9eb9112d00db657a63f6_160.mp4" },
+  { title: "Shiva Panchakshari Sthothram", src: "https://aac.saavncdn.com/225/bf93d4c4a67c08e293dc79def79fe7c7_160.mp4" },
+  { title: "Jaya Hanuman Gyana Guna Sagara (Hanuman Chalisa)", src: "https://aac.saavncdn.com/776/33f60232a0db9cc8adc1398e7a7b0eff_160.mp4" },
+  { title: "Sumanasa Vandhita [Ashta Laxmi Stotram] (From &quot;Devi Stothramalika-New&quot;)", src: "https://aac.saavncdn.com/162/950da066fb86af98a24d2fc94e3f3ac5_160.mp4" },
+  { title: "Hanuman Suprabhatam", src: "https://aac.saavncdn.com/814/9d6902cfd910f4493671cc1778f1bfd1_160.mp4" },
+  { title: "Ayyappa Suprabatham", src: "https://aac.saavncdn.com/862/05cc48f833b9381aeb9e525bf608989d_160.mp4" },
+  { title: "Subramanya Karavalamba Stotram", src: "https://aac.saavncdn.com/474/2acb05b05faf3ca1759b5192e9490640_160.mp4" },
+  { title: "Hanuman Chalisa - Telugu", src: "https://aac.saavncdn.com/null/5a27cc1e5dc5a9891c5aad6fe50f18d0_160.mp4" },
+  { title: "Lakshmi Stothram (From &quot;Vishnusahasra Sto.Laxmi Stotram&quot;)", src: "https://aac.saavncdn.com/180/0e523a242044a2a5ddc4e25182b7870c_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/737/ee556c33355fd274b7ae437d87e90eaa_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/478/5845fb7b71921fd04e8ded9821a80d9d_160.mp4" },
+  { title: "Vamsha Vrudikara Durga Kavacham", src: "https://aac.saavncdn.com/634/09759d606adec01f883e35a72cf69ea0_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/270/6739e24173cef987f075df8a3a0e0707_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/575/c8675d03b846e8ba5a81887538be8f51_160.mp4" },
+  { title: "Sri Venkateshwara stotram", src: "https://aac.saavncdn.com/396/74168a15e0719052a7cb45e0240e8e07_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/545/71725917cdfdd652834111f8cc3962c9_160.mp4" },
+  { title: "Sri Lakshmi Astothara Sathanama Stothram", src: "https://aac.saavncdn.com/739/304da81cfa88f9d1847b23a8af3a1673_160.mp4" },
+  { title: "Suryanarayana Suprabhatam", src: "https://aac.saavncdn.com/698/b8bb4b89ffa817389447c11297b26e0a_160.mp4" },
+  { title: "Sri Anjaneya Suprabhatam (From &quot;Sri Anjaneya Suprabhatham&quot;)", src: "https://aac.saavncdn.com/595/f30fe4bf324ca403a02c7dd86815c227_160.mp4" },
+  { title: "Narayana Sthothram", src: "https://aac.saavncdn.com/655/38c8b5d30307fdc25b855f6139d48f95_160.mp4" },
+  { title: "Sankatanasana Sri Ganapathi Stothram", src: "https://aac.saavncdn.com/977/0af13db2d24ce51e133145ce6d4e522d_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/158/d4760680ff9f5c06124168e96c89f691_160.mp4" },
+  { title: "Narayana Sthothram", src: "https://aac.saavncdn.com/498/a7a6dcefe58ba5692a91ae818dd8cce2_160.mp4" },
+  { title: "Daridraya Dahana Shiva Stotram", src: "https://aac.saavncdn.com/511/df0fedf6d4cc254429156bf806b067e3_160.mp4" },
+  { title: "Hanuman Chalisa Spoorthy Geetham", src: "https://aac.saavncdn.com/046/1bc0a7c1f47bb9ed87f7f27bdc61d83b_160.mp4" },
+  { title: "Sri Annapurna Stothram", src: "https://aac.saavncdn.com/750/041b38e60fb7f78d5ee403da0e2a9184_160.mp4" },
+  { title: "Agasthya Krutha Sri Lakshmi Stotram", src: "https://aac.saavncdn.com/634/f3e6e48ed572f9749719bad7d2e89a95_160.mp4" },
+  { title: "Hanuman Chalisa (From &quot;Jai Hanumaan&quot;)", src: "https://aac.saavncdn.com/175/e3c20b06e3862f0342bd9eb49191da1c_160.mp4" },
+  { title: "Suprabhatham", src: "https://aac.saavncdn.com/087/48fee6c96d494dceb9cbf88cac2ca5a2_160.mp4" },
+  { title: "Maha Ganapathi Sahasra Naama Sthothram", src: "https://aac.saavncdn.com/537/a3a98d35368e4237307f5442e89b5d3f_160.mp4" },
+  { title: "Dwaraka Tirumala Suprabhatam", src: "https://aac.saavncdn.com/089/aceb017304d8eb625aa30e05289cb74e_160.mp4" },
+  { title: "Ashtalakshmi Stotram", src: "https://aac.saavncdn.com/974/53120a3bedd4d3fdf7924d4ea8870191_160.mp4" },
+  { title: "Ganapathi Thalam Speech", src: "https://aac.saavncdn.com/634/e984cc51674d8c6fc12248b732cf67b9_160.mp4" },
+  { title: "Suprabhatam", src: "https://aac.saavncdn.com/136/93fa4ecdde831e0183a464edc87a4a45_160.mp4" },
+  { title: "Om Sri Sai Ram Chanting", src: "https://aac.saavncdn.com/464/b8a566e53b28d30ac3f585ee590e7d6f_160.mp4" },
+  { title: "Hanuman Chalisa (From &quot;Hanuman Chalisa And Sri Rama Ganamrutham&quot;)", src: "https://aac.saavncdn.com/433/91909d5b0b00bc19886a106a770174f8_160.mp4" },
+  { title: "Suprabatham", src: "https://aac.saavncdn.com/625/b0e843769850613cd5d5625f1b38f420_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/634/46e89fd1819dbc7edd6172a6dfe19e2a_160.mp4" },
+  { title: "Lalitha Sahasranamam", src: "https://aac.saavncdn.com/632/24ebbbd8b736aa9b3e3444b034f7fea6_160.mp4" },
+  { title: "Suprabhatam (P)", src: "https://aac.saavncdn.com/164/da64164aa970f5373918d2a7e497ac70_160.mp4" },
+  { title: "Saraswathi Dwadasa Nama Stotram", src: "https://aac.saavncdn.com/437/73ac185c2d4b03c0f6711e04d0aa4fcc_160.mp4" },
+  { title: "Daridrya Dahana Shiva Stotram", src: "https://aac.saavncdn.com/365/6478380f73cb00da254928eb98fa3959_160.mp4" },
+  { title: "Sri Venkateshwara Suprabhatham", src: "https://aac.saavncdn.com/753/f237006c2ddbcfc946cb8405a32fbb1d_sar_160.mp4" },
+  { title: "Aadi Lakshmi Amsamuna", src: "https://aac.saavncdn.com/856/44af116a3ff49546bc9df91033c864c3_160.mp4" },
+  { title: "Stotram Stotram", src: "https://aac.saavncdn.com/314/9ab64811374c6a7ae97ff40fcad86fc6_160.mp4" },
+  { title: "Sai Suprabhatam", src: "https://aac.saavncdn.com/464/5a7e9a285bf7ad4602cfe0a654ab1767_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/921/e43e43eec971848ae8c60b796cef352b_160.mp4" },
+  { title: "Sri Saraswathi Sthothram", src: "https://aac.saavncdn.com/016/1b9facb684d6a887d48eec81791e794f_160.mp4" },
+  { title: "Shiva Panchakshara Nakshatramala Stotram Telugu", src: "https://aac.saavncdn.com/710/e896c035558764925e60704ab11d2f1e_160.mp4" },
+  { title: "Venkateshwara Suprabhatam", src: "https://aac.saavncdn.com/867/3ab0fa4f49559aaee012be208de03d25_160.mp4" },
+  { title: "SRI VENKATESWARA VAZRAKAVACHA STHOTHRAM", src: "https://aac.saavncdn.com/232/8564d5b3886a4e01eb22247b8e09938e_160.mp4" },
+  { title: "Shiva Sahasranama Stotram", src: "https://aac.saavncdn.com/228/88d556173b92a919e5f3af7f02d1ea07_160.mp4" },
+  { title: "Vighneshwara Suprabhatam", src: "https://aac.saavncdn.com/939/1e697bbf0ee0cf71728646dc70721b6c_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/766/2d47c0fac640cc4910e9db947ddbf121_160.mp4" },
+  { title: "Sri Venkateswara Suprabhatham", src: "https://aac.saavncdn.com/548/76a59a57f0bb7d67bede0a6d2f067e87_160.mp4" },
+  { title: "Shiva Panchakshari Stothram", src: "https://aac.saavncdn.com/033/7a4e8a06f1f4a2ce6ae9a9478c04b292_160.mp4" },
+  { title: "Sri Narayana Stotram", src: "https://aac.saavncdn.com/818/ff394764c5c2fae21dcdb084e2bcc07b_160.mp4" },
+  { title: "Guru Dakshinamurthi Stotram", src: "https://aac.saavncdn.com/199/d871bbb1a7a07c9fc311b611aee55f0f_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/145/149ecb9977f3adbf01f0f3e5a496af47_160.mp4" },
+  { title: "Sri Hanuman Chalisa", src: "https://aac.saavncdn.com/440/76f3ae36a0dcad110d7b647c311f4559_160.mp4" },
+  { title: "Ashtalakshmi Stotram", src: "https://aac.saavncdn.com/323/955d591f6c76d36121335ba6c5a1761f_160.mp4" },
+  { title: "Sri Lakshmi Shasranama Stothram", src: "https://aac.saavncdn.com/739/1f24d0d32cac2f6d5fe915ef8a37037d_160.mp4" },
+  { title: "Sri Venkateswara Bhujanga Stotram", src: "https://aac.saavncdn.com/000/40916b54cf4caec0c87cf68046111721_160.mp4" },
+  { title: "Suprabhatam Theme Song (Original Motion Picture Soundtrack)", src: "https://aac.saavncdn.com/712/ca12f8975e745282f3ea6de62e2ccf10_160.mp4" },
+  { title: "Lalitha Sahasranamam", src: "https://aac.saavncdn.com/268/ca7d88fe4cecadf5e64c4dc1c3a92375_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/012/fa7924fbc726afbf565b5f8cba3b3355_160.mp4" },
+  { title: "Vinayaka Suprabhatam", src: "https://aac.saavncdn.com/405/c94fc16a5f335e88102319e773f8339c_160.mp4" },
+  { title: "Siva Aksharamala Stotram", src: "https://aac.saavncdn.com/008/33b2ce79001a20469f0c5555e7843360_160.mp4" },
+  { title: "Sri Sarada Stotram", src: "https://aac.saavncdn.com/109/6f87a37a92cea3ce82345671980a1cd7_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/319/3ee6e42ae9449a686372be5bfebc36e0_160.mp4" },
+  { title: "Karavamblam, Runa Vimochana, Ashtothram", src: "https://aac.saavncdn.com/505/9f9d6b332a645d10b22352a1db92d494_160.mp4" },
+  { title: "Subrahmanya Karavalamba Sthothram", src: "https://aac.saavncdn.com/530/205072c782796815b3c0e0a7d7eb9c36_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/346/d63a4d241fed96d097122a4959509bbf_160.mp4" },
+  { title: "Sai Suprabhatam", src: "https://aac.saavncdn.com/517/f65ecc7e8115543de7ea2ead19249173_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/545/a07a3e4e93709beb0aa28e34366e5581_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/134/fdd35b312524ab24f2107d7c0c2ada5a_160.mp4" },
+  { title: "Namo Devadhi", src: "https://aac.saavncdn.com/518/ab0f248089e6470f51c7bc21b42e9c13_160.mp4" },
+  { title: "Mudaakaraatha Modakam", src: "https://aac.saavncdn.com/518/7a35debd3f181ab5dfd190505ea91f09_160.mp4" },
+  { title: "Om Jaya Jagannadha", src: "https://aac.saavncdn.com/978/2eca3b7806c4bb10d64d4b1a79358b8c_160.mp4" },
+  { title: "Lakshmi Astothora Sathanamavali", src: "https://aac.saavncdn.com/943/f25cb3e93768299caaa803247796ed75_160.mp4" },
+  { title: "Shiva Tandava Stotram", src: "https://aac.saavncdn.com/199/aac385d6117b417de511edd913a101e4_160.mp4" },
+  { title: "Sri Hanuman Suprabhatham", src: "https://aac.saavncdn.com/044/2da17199c8fce599c977be17357718a0_160.mp4" },
+  { title: "Nava Durga Stothram", src: "https://aac.saavncdn.com/000/130acf8fa28c8e02f9048ecdf7941c14_160.mp4" },
+  { title: "Karavalamba Sthothram", src: "https://aac.saavncdn.com/547/b92457b73804add0e0cf59de52217b53_160.mp4" },
+  { title: "Santhana Ganapathi Stotram", src: "https://aac.saavncdn.com/440/4a3ccfdc940d42feee11f212c99a03d8_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/391/ec1eb80e2237dc81485b79bcec6969c6_160.mp4" },
+  { title: "Trikoteswara Suprabhatam", src: "https://aac.saavncdn.com/219/3283c406c862105c67f3bf39a9473eb6_160.mp4" },
+  { title: "Vishnu Sahasra Namam Parayanam Maha Punyamu", src: "https://aac.saavncdn.com/076/6f3a8e34fe177d99b81cddfbc41640a8_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/178/4a017119558d88dc1fb7bf226b3cdf38_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/099/4f030b50da7f19e5ea73c6c60d9a88fc_160.mp4" },
+  { title: "Runa Vimochana Maha Ganapati Stotram", src: "https://aac.saavncdn.com/691/a82857657de07a462e06da393bc470c3_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/739/53a26511d9c6dba4ba73f7116630d923_160.mp4" },
+  { title: "Surya Suprabhatam", src: "https://aac.saavncdn.com/366/8b0a10ac866e029a1abc5851ac03186a_160.mp4" },
+  { title: "Sri Narasimha Pahimam", src: "https://aac.saavncdn.com/547/6e613c094ea4198ccbe3b8a3d35f6da8_160.mp4" },
+  { title: "Durgambika", src: "https://aac.saavncdn.com/743/3fd9dfe8cd1fbba3d158311a6a553c46_160.mp4" },
+  { title: "Hanuman Chalisa (From &quot;Sri Anjaneya Suprabhatham&quot;)", src: "https://aac.saavncdn.com/438/c54e10160c4c87e7ec2b745142dda631_160.mp4" },
+  { title: "ARDHANAREESHWARA STOTHRAM", src: "https://aac.saavncdn.com/770/9253ee794d321e55196c5ba814a70791_160.mp4" },
+  { title: "Om Namah Sivaaya", src: "https://aac.saavncdn.com/664/069a9a91bf453f22ee2d2251a1a619f2_160.mp4" },
+  { title: "Siva Panchakshari Stotram", src: "https://aac.saavncdn.com/119/534587c085a0467fe16ccc4e397b76a2_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/651/9965600c6660035a5bb1130aec426bda_160.mp4" },
+  { title: "Sri Lakshmi Karavalamba Stothram (From &quot;Sri Lakshmi Sthuthi&quot;)", src: "https://aac.saavncdn.com/226/6be7596e14bcd491d4213e8543534d6f_160.mp4" },
+  { title: "Sri Hanuman Chalisa (Telugu)", src: "https://aac.saavncdn.com/094/ec5405d3552dec67a2ed7141d878a4c1_160.mp4" },
+  { title: "Lalitha Sahasranamam", src: "https://aac.saavncdn.com/158/ce6e959235b9bd079401edd20095f400_160.mp4" },
+  { title: "Sri Maha Lakshmi Stotram", src: "https://aac.saavncdn.com/336/345bcbb73e73273a9720a34a837f6d6a_160.mp4" },
+  { title: "Siva Shadakshari Stotram", src: "https://aac.saavncdn.com/000/6a2a2dd0cfa2f3cb19f1fb2b8a436d76_160.mp4" },
+  { title: "Ashtalakshmi Stotram", src: "https://aac.saavncdn.com/059/1ef18a9c61e217971727216cb55730d0_160.mp4" },
+  { title: "Namah Sivaabhyam", src: "https://aac.saavncdn.com/377/792d4a443491e79663a83d5d36aa02aa_160.mp4" },
+  { title: "Sri Shiva Panchakshari Stotram", src: "https://aac.saavncdn.com/513/0fb7f7042c97b74224a8803727fab229_160.mp4" },
+  { title: "Mudaakaraatha Modakam", src: "https://aac.saavncdn.com/377/bfdad5b1ef581cd6624366c3af67696b_160.mp4" },
+  { title: "Neela Saraswathi Stotram", src: "https://aac.saavncdn.com/726/8543f25db92461bdde79701633bc10fa_160.mp4" },
+  { title: "Namah Sivaabhyam", src: "https://aac.saavncdn.com/518/53b6b8ddd4b608a3eb578c3954a3a025_160.mp4" },
+  { title: "SRI LALITHA SAHASRANAMAM", src: "https://aac.saavncdn.com/698/90725c0fce3521585b99b0385c140242_160.mp4" },
+  { title: "Sri Ashta Lakshmi Sthothram", src: "https://aac.saavncdn.com/802/b75ed4ab41253443fce68e87f7f5fe54_160.mp4" },
+  { title: "Hanuman Chalisa Bhajan", src: "https://aac.saavncdn.com/744/0f54f2e57a095e8a6cbc034760a85021_160.mp4" },
+  { title: "Sri Durga Devi Stotram", src: "https://aac.saavncdn.com/745/ef3d0fe1ac8ac3b1402adb77c650c144_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/735/fc948cd92b1c56f9c7c4117a378533bd_160.mp4" },
+  { title: "Pancha Ratna Stotram", src: "https://aac.saavncdn.com/240/3b306a909cd9cb87bc6527506d4d5ada_160.mp4" },
+  { title: "Sri Rama Dootha Stotram", src: "https://aac.saavncdn.com/162/cabf303349ad94a98ea0a8d843490f67_160.mp4" },
+  { title: "Sri Rama Raksha Stothram", src: "https://aac.saavncdn.com/019/3eac9cac1fe398682eae9740b6208cfa_160.mp4" },
+  { title: "Sri Venkateswara Suprabatham", src: "https://aac.saavncdn.com/009/68fed6b8b689315a9bde1e56fedfa482_160.mp4" },
+  { title: "SRI VENKATESWARA SARANAGATHI STHOTHRAM", src: "https://aac.saavncdn.com/655/deaa0e281129c544510574a91fcb03fd_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/276/7380f3a688be49728694cd2bcc425405_160.mp4" },
+  { title: "Shiva Aksharamala Stothram", src: "https://aac.saavncdn.com/269/60fef4e629078340034d57e6c2febff3_160.mp4" },
+  { title: "Shiva Tandava Stotram", src: "https://aac.saavncdn.com/727/c5905b3e563ecfaf2a6543d646af99a6_160.mp4" },
+  { title: "Namo Bhoothanadam", src: "https://aac.saavncdn.com/377/097c1899f993fb1b2d4b0c167e9db5e2_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/861/61ba5e08207ea2d634b1429d9238ae6b_160.mp4" },
+  { title: "Siva Sankara Siva Nama Stotram", src: "https://aac.saavncdn.com/553/5ce00439c84e1a384d911c50df743d44_160.mp4" },
+  { title: "Uma Maheshwara Stotram", src: "https://aac.saavncdn.com/199/905477228c0e4a9f92d98f015693c836_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/045/89cab621e7b21d12ef5ffa55f2f9b4af_160.mp4" },
+  { title: "Sri Venkateswara Suprabhatam", src: "https://aac.saavncdn.com/587/dd2f571dab98212e3f78aad9eae71628_160.mp4" },
+  { title: "Hanuman Chalisa Telugu", src: "https://aac.saavncdn.com/244/c98adc66cd24b94c720a253efb75c600_160.mp4" },
+  { title: "SRI VISHNU SAHASRANAMAM", src: "https://aac.saavncdn.com/750/0a7de38dad0457efd96b90dc5bd03d0d_160.mp4" },
+  { title: "Rocketry's Shri Venkatesa Suprabatham", src: "https://aac.saavncdn.com/734/3023529af2b32ca43a87bde1fe286eac_160.mp4" },
+  { title: "Suprabhatam", src: "https://aac.saavncdn.com/020/7a2d8d111e4cd13e75590b49e38d7600_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/487/139a0d959705fc38bc9268c88f1365ef_160.mp4" },
+  { title: "SRI HANUMAN CHALISA", src: "https://aac.saavncdn.com/783/36004ad6daaf9fd8fb6d22b079a470a3_160.mp4" },
+  { title: "Sri Vishnu Sahsranam", src: "https://aac.saavncdn.com/978/bd8375d2a31c81f9e9c6a29aca1fd859_160.mp4" },
+  { title: "Sri Lakshmi Karavalamba Stothram (From &quot;Sri Lakshmi Sthuthi&quot;)", src: "https://aac.saavncdn.com/252/172202ccf868fcd1cacf4c9e1685ee01_160.mp4" },
+  { title: "Sri Lalitha Sahasranamam", src: "https://aac.saavncdn.com/468/701ac9419f60015897d9def287e96c45_160.mp4" },
+  { title: "Vishnu Sahasranamam (From &quot;Vishnu Sahasranamam&quot;)", src: "https://aac.saavncdn.com/365/ce7c38db074cc6557724633fabb348fd_160.mp4" },
+  { title: "Sri Lakshmi Karavalamba Stothram (From &quot;Sri Lakshmi Sthuthi&quot;)", src: "https://aac.saavncdn.com/464/15ec2c9c589df1623e9099da039508ed_160.mp4" },
+  { title: "Sri Venkatesa Sthothram", src: "https://aac.saavncdn.com/096/2147ef4547c0fff8e11a9986236e3add_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/955/eb06dfd511e1a633557a9b68a7aba0a5_160.mp4" },
+  { title: "Vishnu Sahasranamam", src: "https://aac.saavncdn.com/994/85e17aa83b8ef60618aef54a16f9f05e_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/214/ad26e63989a54214fd258aa81e0504a9_160.mp4" },
+  { title: "Vishnu Sahasranamam Part 2", src: "https://aac.saavncdn.com/991/552c2ae72008a2d34074e310744c61b1_sar_160.mp4" },
+  { title: "Shiva Mahima Stothram", src: "https://aac.saavncdn.com/269/73f44d8fff3c77a13f756c5d4316837a_160.mp4" },
+  { title: "Shiva Panchakshri Stotram", src: "https://aac.saavncdn.com/279/cf55e4bd0aad97475a9ed0687fe472ba_160.mp4" },
+  { title: "SRI LAKSHMI DWADASA NAA STOTHRAM", src: "https://aac.saavncdn.com/572/b301515d219981a1c5a84e6149d8f364_160.mp4" },
+  { title: "Sri Venkateshwara Stotram", src: "https://aac.saavncdn.com/240/ba18b6b3e75e6df372b7d4f0db4b2394_160.mp4" },
+  { title: "Ayyappa Suprabhatam", src: "https://aac.saavncdn.com/487/7f9248a9d3b0e5962e3df6600533597d_160.mp4" },
+  { title: "Sri Lakshmi Karavalamba Stothram (From &quot;Sri Lakshmi Sthuthi&quot;)", src: "https://aac.saavncdn.com/715/d5f0065aa8144270c7caf685659254f1_160.mp4" },
+  { title: "Telugu Hanuman Chalisa Part - Ii", src: "https://aac.saavncdn.com/231/497aac732b19bcbcbf0a0c8b1585b3c9_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/808/323c0db91d5ac6c18cb387cf35e6e8ec_160.mp4" },
+  { title: "Suprabhatha", src: "https://aac.saavncdn.com/372/bd33b48f9a3c7a22388181cbd0705afc_160.mp4" },
+  { title: "Shiva Suprabhatam", src: "https://aac.saavncdn.com/091/8f8172b037f5a06e2cefd729abbc1816_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/268/c88e16e451af505fa098001796cd5a94_160.mp4" },
+  { title: "Sri Venkateswara Suprabhatham", src: "https://aac.saavncdn.com/052/32215b828d9e2b6dcbc12b56e3c57f26_160.mp4" },
+  { title: "Deva Krita Shiva Stotram", src: "https://aac.saavncdn.com/389/d20b639849d133e4fc79c08069d83bbd_160.mp4" },
+  { title: "Suprabhatam", src: "https://aac.saavncdn.com/051/450c379d6da2ee3b5967c2abe6299cee_160.mp4" },
+  { title: "Namaskara sthothram", src: "https://aac.saavncdn.com/636/9299ed9b51d4a189dfcb7c023e5dbfca_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/777/58e1be0ba96d557fbb043573791a0a90_160.mp4" },
+  { title: "Vishveshwaraya", src: "https://aac.saavncdn.com/377/c7fa3d2b706524e6eb420ad17807638d_160.mp4" },
+  { title: "Shiva Panchakshara Nakshatramala Stothram", src: "https://aac.saavncdn.com/953/aeb28d6bcae8fb27d442a35cd718aa50_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/875/0867f7265e173da87bd31c3f91e2c854_160.mp4" },
+  { title: "Ganesha Stotram", src: "https://aac.saavncdn.com/513/a84add61a6e7fbf683ff7d7101b7dc30_160.mp4" },
+  { title: "Sri Lalitha Sahasranaamam", src: "https://aac.saavncdn.com/323/55b7ca7c6bbb3c3765b462bc94203fbd_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/364/ae74cfc8812c779a41e5b82cd878093f_160.mp4" },
+  { title: "Sri Rama Raksha Stothram", src: "https://aac.saavncdn.com/206/61fec7aa6f39e4084dece485556c8c48_160.mp4" },
+  { title: "Shiva Panchakshara Nakshatramala Stotram", src: "https://aac.saavncdn.com/946/b10ca027827c67acd59a1d2eef304b22_160.mp4" },
+  { title: "Bujanga Stotram", src: "https://aac.saavncdn.com/536/9c8acfe5c184620815533cc973ffd2d7_160.mp4" },
+  { title: "Shiva Varnamala Stothram", src: "https://aac.saavncdn.com/051/86eadeb0347fb59abdee453e5ea4136a_160.mp4" },
+  { title: "Ashtalakshmi Stotram Fusion With Western Instrumental Music", src: "https://aac.saavncdn.com/000/3bd0e56c4679993c631976d0e4a6d5eb_160.mp4" },
+  { title: "Om Sri Kanaka Durge Namaha", src: "https://aac.saavncdn.com/410/5722e97e77ba003f77c7ee37fa96d054_160.mp4" },
+  { title: "Sri Rama Raksha Stotram", src: "https://aac.saavncdn.com/773/8eeaaa8ec186c40262743b93391c6ee3_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/206/d802421df32d178f9bd138efe121020d_160.mp4" },
+  { title: "Sri Venkateswara Ashtothara Sathanama Sthothram", src: "https://aac.saavncdn.com/655/3b42f1a58967f44c41d1b6de4d569318_160.mp4" },
+  { title: "Shiva Stotram (From &quot;Eduruleni Manishi&quot;)", src: "https://aac.saavncdn.com/404/d983f7ee7c6e52cc4b5d2b1bf3a4be67_160.mp4" },
+  { title: "Ashtalakshmi Stotram Telugu", src: "https://aac.saavncdn.com/364/393c3044dd169026db5fa734a45f364d_160.mp4" },
+  { title: "Narayana Sthothram", src: "https://aac.saavncdn.com/626/b97eac35cbe2ec298e525f4b5bcf0bf1_160.mp4" },
+  { title: "Govinda Namalu", src: "https://aac.saavncdn.com/816/230a1b47e3895efb4845bd4bab5e440b_160.mp4" },
+  { title: "Varalakshmi Vratham Telugu Speech-1", src: "https://aac.saavncdn.com/634/897ecb98424edeb03b2e5a01198c46bc_160.mp4" },
+  { title: "Shri Govinda Namalu", src: "https://aac.saavncdn.com/835/b5ead98f3d0ea00e94ccfdcd6672d2ab_160.mp4" },
+  { title: "Vinara Ganapati Sankatahara Stotram", src: "https://aac.saavncdn.com/363/e725359c81f4e4f231f442c74ef7a5f9_160.mp4" },
+  { title: "Sivamangalam", src: "https://aac.saavncdn.com/377/99527aae94821464c052488795b0f62c_160.mp4" },
+  { title: "Suprabhatam Aasee Visaalakshi", src: "https://aac.saavncdn.com/745/b05c03a2eda7f3bbef3c22aa51110a88_160.mp4" },
+  { title: "SHIVA THANDAVAM STHOTHRAM", src: "https://aac.saavncdn.com/840/b260d6444a290bd9f2ce8b7e8c8413a1_160.mp4" },
+  { title: "Sri Bala Krishna Stotram", src: "https://aac.saavncdn.com/242/4bed1a5fbc4e73f0a08d109ffadb18e9_160.mp4" },
+  { title: "Hanuman Chalisa", src: "https://aac.saavncdn.com/256/180d973e22481a1dfa45a472eb27b1c4_160.mp4" },
+  { title: "Aditya Hrudayam", src: "https://aac.saavncdn.com/258/959502e2cd46de542aaa0cc6c150aab0_160.mp4" },
+  { title: "Venkateswara Suprabhatham", src: "https://aac.saavncdn.com/675/aba746df00895b2d5d0cb469f133ed3f_160.mp4" },
+  { title: "Mahalakshmi Suprabhatam", src: "https://aac.saavncdn.com/972/1da9505e38acac3e2274a3477c0184d9_160.mp4" },
+  { title: "Kowsalya Supraja", src: "https://aac.saavncdn.com/373/4f7427bd2c53c517aa6fa4be9781df36_160.mp4" },
+  { title: "Aditya Hridayam", src: "https://aac.saavncdn.com/992/4c5b1d4f4e0b1e458ed30491ee4fe7df_160.mp4" },
+  { title: "Hanuman Chaalisa", src: "https://aac.saavncdn.com/565/2b9421fc03e81997ec76f27414d403fd_160.mp4" },
+  { title: "Ardhanareeshwara Stotram And Telugu Speech", src: "https://aac.saavncdn.com/474/68394c69c6788ecff645277bf69bafe5_160.mp4" },
+  { title: "Shiva Aksharamala Stothram", src: "https://aac.saavncdn.com/127/67e0b0b64d57872091d10210d5f60eb9_160.mp4" },
+  { title: "Suprabhatamayya", src: "https://aac.saavncdn.com/863/afec34f15e59471350b212142cd29290_160.mp4" },
+  { title: "Shiva Rudra Gayatri Stotram", src: "https://aac.saavncdn.com/091/08b5f6b0d5a34d8e5444a8d96ac1d307_160.mp4" },
+];
+const CHANTS_EPOCH=1791072000000; // station sign-on: 2026-10-04 00:00 UTC
+const CHANTS_DUR=[695,1347,602,355,244,1938,412,596,596,656,651,301,178,692,1112,596,554,261,596,550,758,534,361,867,656,279,1934,279,1308,667,1661,668,499,292,75,1315,1257,155,409,666,2358,1874,169,531,178,1403,334,537,317,864,1702,1259,263,471,588,596,1334,714,1430,2068,1794,505,375,302,338,581,358,678,456,75,596,209,549,284,551,319,530,1298,927,218,596,397,66,596,2858,710,232,1874,747,1333,1261,596,226,596,244,390,596,412,582,189,1728,429,65,558,522,280,588,534,1030,140,202,265,290,596,549,597,506,232,401,259,358,187,651,1688,596,340,596,491,1826,876,596,263,695,596,232,1293,630,598,596,670,2076,596,235,1421,505,596,357,349,1002,282,220,759,588,706,278,268,954,1057,934,952,409,1985,596,1297,1303,505,596,497,1587,775,315,582,785,603,500,596,1227,596,1293,596,218,313,773,948,438,692,549,451,588,339,703,217,596,512,665,596,596,194,596,418,213,797,714,114,596,714,259,455,458,661,601,1298,2022,1705,538,296,601,163,773,412,596,1760,1409,218,265,1245,226,400,877,596,459,1000,1333,232,2211,660,596,1287,420,783,454,596,698,415,1945,230,254,563,1435,666,670,257,456,1466,350,705,545,596,515,290,89,465,739,242,463,583,508,273,596,307,308,702,596,289,596,187,416,225,505,545,334,629,898,279,1026,269,623,197,373,440,232,86,520,439,1791,374,472,682,596,416,284,1660,1272,263,1438,670,242,259,1244,132,334,745,1165,558,1688,1658,421,596,1236,1748,279,1791,2738,279,595,596,1772,596,1394,1795,467,81,324,461,279,388,596,1654,970,1259,1287,298,159,66,596,280,1401,281,91,1874,481,1661,1000,299,251,638,1328,514,1236,588,178,392,714,928,248,596,202,180,253,555,128,813,783,304,1074,724,236,163,647,670,412,130];
+const CHANTS_TOTAL=CHANTS_DUR.reduce((a,b)=>a+b,0);
+function chantsNow(){let el=Math.floor((Date.now()-CHANTS_EPOCH)/1000)%CHANTS_TOTAL; if(el<0)el+=CHANTS_TOTAL; let acc=0; for(let i=0;i<CHANTS_DUR.length;i++){if(el<acc+CHANTS_DUR[i])return{idx:i,off:el-acc}; acc+=CHANTS_DUR[i];} return{idx:0,off:0};}
+const INSTRUMENTAL_SONGS = [
+  { title: "Nemaliki Nerpina - Sapthapadhi", src: "https://aac.saavncdn.com/288/1b14f3f9e45a7e420f771fb4ee9cace7_160.mp4" },
+  { title: "Kalaganna Instrumental", src: "https://aac.saavncdn.com/041/e52359d7a180d0d8f7f766eea6f93c95_160.mp4" },
+  { title: "Manasaa Thullipadake - Sri Vaariki Premaleka", src: "https://aac.saavncdn.com/288/e97619f8016475e33ba2f16100ae7002_160.mp4" },
+  { title: "O Prema (Instrumental)", src: "https://aac.saavncdn.com/450/f8d93e21580dba67baaa948a402e253c_160.mp4" },
+  { title: "Rekkalochina ( Flute - Instrumental)", src: "https://aac.saavncdn.com/067/cebd020b431afaa349c015818d0509f1_160.mp4" },
+  { title: "Instrumental Music", src: "https://aac.saavncdn.com/057/f4a766f9dc58f53c1eebebd04e5963f7_160.mp4" },
+  { title: "Yentha Prema (Piano Instrumental)", src: "https://aac.saavncdn.com/371/b5b6b3070c5d1483fb46a84982f38d69_160.mp4" },
+  { title: "Instrumental Tunes - Dasaradha Ramudu Neevanta", src: "https://aac.saavncdn.com/455/14e34cd0536e2a4a308e14b32b33eef1_160.mp4" },
+  { title: "Prema Ane Pariksharasi", src: "https://aac.saavncdn.com/323/558db3008b482f874c07bf46b709b74e_160.mp4" },
+  { title: "Jorumeedunnavu - Sivaranjani", src: "https://aac.saavncdn.com/288/4182836dd1531d4ae63f8c02bdef799f_160.mp4" },
+  { title: "Soul Of Arundhathi (Instrumental)", src: "https://aac.saavncdn.com/683/4965014ef79a3961c790943adc736ff2_160.mp4" },
+  { title: "Gaali Vaanalo - Swayamvaram", src: "https://aac.saavncdn.com/288/f3021a80dc78260812bec175a2292614_sar_160.mp4" },
+  { title: "Amrutha Varshini (Instrumental)", src: "https://aac.saavncdn.com/193/c87e4ee82015b8fe178d679b7357d2f7_160.mp4" },
+  { title: "Aamani Ruthuve (Instrumental)", src: "https://aac.saavncdn.com/238/16c77ced1ccc10bd1d9c77c5b160f597_160.mp4" },
+  { title: "Instrumental", src: "https://aac.saavncdn.com/736/18975d2db4505925380b91ee7a64ed3e_160.mp4" },
+  { title: "Ekku Tholimettu", src: "https://aac.saavncdn.com/323/e28c14b5c93bc19cf8e327094c92ea54_sar_160.mp4" },
+  { title: "Pachadaname Pachadaname", src: "https://aac.saavncdn.com/323/a9c627a42cb157114d53142ec75a44e2_sar_160.mp4" },
+  { title: "Thelisindhile - Instrumental", src: "https://aac.saavncdn.com/711/1e2f485f714442956ba04a38f8e53d5a_160.mp4" },
+  { title: "Paadavela Radhika - Iddharu Mithrulu Instrumental", src: "https://aac.saavncdn.com/030/1eb29e105403d5a4e0a6e392120c4687_sar_160.mp4" },
+  { title: "Instrumental Songs", src: "https://aac.saavncdn.com/722/b93874614796a637541d3c8644420956_160.mp4" },
+  { title: "Niluvuma Niluvuma - Amarasilpi Jakkanna Instrumental", src: "https://aac.saavncdn.com/030/2d16843d1cb623c1ff5a8666806cd715_160.mp4" },
+  { title: "Instrumental Music", src: "https://aac.saavncdn.com/549/accfb84047aee4eb9d0241cad41679e4_160.mp4" },
+  { title: "Love Tale Guitar Theme", src: "https://aac.saavncdn.com/740/64229eaebe146222a22ba7645dffc88c_160.mp4" },
+  { title: "Fly Fly Fly Galaatta (Instrumental)", src: "https://aac.saavncdn.com/486/a240bbab9cd5ae642f86ded4b35f7720_160.mp4" },
+  { title: "Jailer Theme (Instrumental)", src: "https://aac.saavncdn.com/435/8900b04f7d1371094619c2947a57742c_160.mp4" },
+  { title: "Sigalo Avi Virulo - Meghasandhesam", src: "https://aac.saavncdn.com/288/9427545584099f74c02d267b74e5db97_160.mp4" },
+  { title: "Vaathapi - Instrumental", src: "https://aac.saavncdn.com/880/fdeab92e1ce9292a82394fed898bcdd4_160.mp4" },
+  { title: "Merise Meghamalika - Deeksha", src: "https://aac.saavncdn.com/288/d878a3b73c1df31d886c047c2491a304_160.mp4" },
+  { title: "Ethnic Rhythm (Instrumental)", src: "https://aac.saavncdn.com/325/106303357c4377107eb8f09829998c7f_160.mp4" },
+  { title: "Yentha Prema (Sitar Instrumental)", src: "https://aac.saavncdn.com/371/5d36bb7f100a585a7ac61468b0050fe2_160.mp4" },
+  { title: "Viduvani Devudavu (Instrumental)", src: "https://aac.saavncdn.com/232/bd8e7359f795a01a9d13968f321c4cbe_160.mp4" },
+  { title: "Leader Instrumental", src: "https://aac.saavncdn.com/033/dea5ede527e5f7036283f09116fb92ea_160.mp4" },
+  { title: "Peddanna Rampage (Instrumental)", src: "https://aac.saavncdn.com/325/3ea4563b6aecb68732ee3e0420e32511_160.mp4" },
+  { title: "Kalake Kalani Andamo", src: "https://aac.saavncdn.com/323/48acd8472da218a9a26c84d18c22535a_160.mp4" },
+  { title: "Mathurame - Instrumental", src: "https://aac.saavncdn.com/024/a2691f18d20d245b23d07bcb8ec48bfa_160.mp4" },
+  { title: "Instrumental", src: "https://aac.saavncdn.com/826/c50b6d83bda111f4184dcc93ed73203f_160.mp4" },
+  { title: "Vetrikkodi Kattu - Instrumental - Narasimbha", src: "https://aac.saavncdn.com/890/1b33a31198f07ac4dfc1a4369b859ca0_160.mp4" },
+  { title: "Bhale Manchi Roju - Jarigina Katha", src: "https://aac.saavncdn.com/288/9319b997df99c37401a17e4acb62b952_160.mp4" },
+  { title: "Aakasa Deshana - Meghasandhesam", src: "https://aac.saavncdn.com/288/a45f155eb794652fd530276ccc84c423_sar_160.mp4" },
+  { title: "Jayathi Siva Bhavani", src: "https://aac.saavncdn.com/796/b2cddc42f3dc95d91fc92c66f67c2b6a_160.mp4" },
+  { title: "Thellaaradhe (Instrumental)", src: "https://aac.saavncdn.com/325/c52e6f54b94b4eec43ed8b3fd64ab80e_160.mp4" },
+  { title: "Raagangal Pathinaaru - Instrumental", src: "https://aac.saavncdn.com/726/ed04b5206987f79312df1bfb3064c56b_160.mp4" },
+  { title: "Chinni Chinni Kannayya", src: "https://aac.saavncdn.com/323/f5dc9a35ab6bf9dff987394d88d784ea_160.mp4" },
+  { title: "Thirumalavasa (Instrumental)", src: "https://aac.saavncdn.com/831/c62a97cb62f60ddeebbeaa10686c50eb_160.mp4" },
+  { title: "Kalley Kalley (Instrumental)", src: "https://aac.saavncdn.com/486/fe77ddf83c299e8fca059566d1e49836_160.mp4" },
+  { title: "O Manasa (Instrumental)", src: "https://aac.saavncdn.com/193/0935ac54504d362e7e84fb8451e61ece_160.mp4" },
+  { title: "Enthanarugari - Instrumental", src: "https://aac.saavncdn.com/711/36ba9105b0ae4a9bc901ba14bf93e497_160.mp4" },
+  { title: "Yemi Cheyamanduve", src: "https://aac.saavncdn.com/323/258cf247552b8002ad67fba4f72c21fa_160.mp4" },
+  { title: "Kylaa - Instrumental", src: "https://aac.saavncdn.com/024/77e5e5f8734eee54b335b1446e156c19_160.mp4" },
+  { title: "Snehithuda", src: "https://aac.saavncdn.com/323/1cde5138653ab4029e78252e2fdd4755_160.mp4" },
+  { title: "Sirimalle Neeve - Panthulamma", src: "https://aac.saavncdn.com/288/13f80d0c6429379026f1e45350ae96e0_sar_160.mp4" },
+  { title: "Instrumental Tunes - Jalataru Jallammo", src: "https://aac.saavncdn.com/455/b89c0b795d38d20767dc06ec90615608_160.mp4" },
+  { title: "Koti Kavithale", src: "https://aac.saavncdn.com/323/6af87e1d5f9d308010dcb1de86cf83a3_160.mp4" },
+  { title: "Nuvvu Marosari (Instrumental)", src: "https://aac.saavncdn.com/650/ecedc5b1d97b5e8f4caf51248b6d7db1_160.mp4" },
+  { title: "Anti Pettukondana (Flute Instrumental)", src: "https://aac.saavncdn.com/831/728fa515cff698bde5f4ac88242932c2_160.mp4" },
+  { title: "Ramududbhavinchi Nadu", src: "https://aac.saavncdn.com/796/eb74a7a0b9a9c7cd5177316a7a0adf75_160.mp4" },
+  { title: "Celebration of Life (Instrumental)", src: "https://aac.saavncdn.com/131/767dd12417c601674cfaa64eca70590c_160.mp4" },
+  { title: "Yahova Na Mora (Instrumental)", src: "https://aac.saavncdn.com/916/9a1c158a52fcd7f599580f79e7709df6_160.mp4" },
+  { title: "Sundaramo Sumaduramo", src: "https://aac.saavncdn.com/323/c07e511f1f265ace0d15a87f6c711631_160.mp4" },
+  { title: "Nevoo Nenoo Odhalalo (Sridevi)", src: "https://aac.saavncdn.com/194/31f6138dc34e3268fe71762f462d7f9f_160.mp4" },
+  { title: "Ninnatidaka Silanaina - Meghasandhesam", src: "https://aac.saavncdn.com/288/beddf05f7acc5c573e40ec0f6bc4957b_160.mp4" },
+  { title: "Maya Mahal Instrumental", src: "https://aac.saavncdn.com/142/9060bd3ab6a51bd13d8dba8a8887ff36_160.mp4" },
+  { title: "Oru Iniya Manathu - Instrumental", src: "https://aac.saavncdn.com/726/a227847f57229f460b9c889101859cdd_sar_160.mp4" },
+  { title: "Gunna Maamidi - Balamithrula Katha", src: "https://aac.saavncdn.com/288/f13c42b249b6346b4420a134f0cd2532_160.mp4" },
+  { title: "The Believer (Instrumental)", src: "https://aac.saavncdn.com/683/b0a69cbb925f7e4f2eb92dcd0c902688_160.mp4" },
+  { title: "Yentha Prema (Flute Instrumental)", src: "https://aac.saavncdn.com/371/7b3caa2f1d651ff1deb213562c98e1e0_160.mp4" },
+  { title: "Ee Reyi Theeyanidhi - Chitti Chellelu", src: "https://aac.saavncdn.com/288/ee338f63a4a37bb2ebe70031f36cddf7_160.mp4" },
+  { title: "Bantureethi Kolu (Veena Instrumental)", src: "https://aac.saavncdn.com/589/209833c194e5c2c0e1c93346b2a1ba87_160.mp4" },
+  { title: "Yemanee Ne Neemahima", src: "https://aac.saavncdn.com/796/78097fbc8f6d3f1b7745b39fd8db25d1_160.mp4" },
+  { title: "Paridanamichithe", src: "https://aac.saavncdn.com/796/db5885f988db47f2d3ac5778b013639d_160.mp4" },
+  { title: "Agony Of Evil (Instrumental)", src: "https://aac.saavncdn.com/683/27dbefa2a6bcf3a130bb8e1b715e8852_160.mp4" },
+  { title: "Instrumental", src: "https://aac.saavncdn.com/498/4bb3b2542b1f5e55d43d8cb8fff77f9f_160.mp4" },
+  { title: "Shree Gayathri", src: "https://aac.saavncdn.com/796/3913eeb89677d62b65c2c5407dce1c43_160.mp4" },
+  { title: "Ilaage Ilaage", src: "https://aac.saavncdn.com/323/bf5e4b509d30d6384a637e65263a3ce9_160.mp4" },
+  { title: "Khwaja Ma Khwaja (Instrumental)", src: "https://aac.saavncdn.com/238/d60871a26b088b2bffa1e660f86bb1c0_160.mp4" },
+  { title: "Chakkanaina O Chirugali - Prema Saagaram", src: "https://aac.saavncdn.com/288/80320415c221acaa490a06dffeb321f1_160.mp4" },
+  { title: "Thanuvu Naadidigo (Instrumental)", src: "https://aac.saavncdn.com/916/9452839052e37992198ec9cd4dfffa73_160.mp4" },
+];
+const INST_EPOCH=1791072000000; // station sign-on: 2026-10-04 00:00 UTC
+const INST_DUR=[276,60,264,216,337,156,99,278,384,278,139,390,176,312,369,303,362,277,257,353,247,124,114,250,62,294,138,214,115,95,279,205,119,269,266,105,303,188,247,529,253,296,280,108,281,223,295,347,266,361,277,251,256,286,292,368,210,258,275,330,296,482,276,274,83,107,288,242,683,624,155,82,717,287,174,271,396];
+const INST_TOTAL=INST_DUR.reduce((a,b)=>a+b,0);
+function instNow(){let el=Math.floor((Date.now()-INST_EPOCH)/1000)%INST_TOTAL; if(el<0)el+=INST_TOTAL; let acc=0; for(let i=0;i<INST_DUR.length;i++){if(el<acc+INST_DUR[i])return{idx:i,off:el-acc}; acc+=INST_DUR[i];} return{idx:0,off:0};}
 const MEE_EPOCH=1791072000000; // station sign-on: 2026-10-04 00:00 UTC
 const MEE_DUR=[289,301,335,315,299,319,190,285,260,327,228,227,404,326,359,253,348,357,285,244,256,182,271,323,226,383,273,362,290,373,245,274,223,269,212,263,278,239,178,294,359,252,247,298,384,194,311,330,268,275,301,294,241,293,278,286,263,378,304,352,262,342,255,262,225,277,91,267,276,362,253,272,281,248,214,281,273,282,221,311,273,258,252,373,252,320,68,323,260,292,284,265,280,247,323,185,279,180,219,277,272,405,311,322,333,218,301,324,156,278,227,294,294,221,336,221,306,249,274,236,301,241,307,367,185,201,269,317,321,355,121,284,315,267,315,289,269,247,235,291,273,267,270,372,407,428,265,321,306,244,304,240,195,244,251,267,315,250,430,325,293,282,286,309,273,256,278,274,298,286,278,267,331,308,243,247,333,243,275,274,282,321,418,266,305,255,289,260,257,289,409,256,293,279,276,409,513,263,273,187,356,199,285,245,146,267,284,304,268,256,277,296,228,283,268,183,254,292,322,284,286,283,307,282,341,78,243,397,203,263,284,301,334,274,364,216,269,342,314,258,375,263,207,263,318,332,245,97,298,263,370,286,308,258,227,277,234,279,286,246,263,267,260,274,214,243,283,257,294,305,184,257,304,315,283,413,239,265,289,268,162,299,218,238,351,318,141,305,181,135,285,238,298,233,296,287,323,278,281,72,307,271,249,274,232,226,166,312,253,215,246,302,234,266,257,241,255,266,340,230,275,290,292,338,273,290,350,195,286,281,354,266,383,207,371,258,251,313,319,325,352,123,300,195,162,282,300,242,235,320,270,268,266,359,299,215,78,280,198,290,539,305,303,270,301,478,607,245,293,265,301,344,61,366,183,275,494,292,188,265,82,278,255,206,287,258,271,285,259,287,182,262,151,302,247,253,80,202,277,275,372,265,260,199,464,229,237,86,272,223,180,313,263,320,261,302,323,291,347,307,289,233,271,280,212,257,266,285,387,277,428,272,222,124,232,293,235,312,262,294,223,231,261,259,163,311,296,196,249,123,276,234,137,277,301,282,78,251,112,236,199,306,247,167,333,256,261,267,273,256,299,270,254,369,235,284,220,332,291,283,334,272,289,275,246,379,259,310,227,194,393,122,249,300,294,504,158,275,384,262,381,301,283,250,275,369,308,253,302,273,208,164,264,317,205,240,123,291,271,290,258,348,182,270,225,276,327,159,525,264,152,252,211,254,300,285,207,411,284,357,294,215,247,432,269,241,279,300,278,275,386,292,272,310,260,412,174,321,261,60,291,297,263,236,281,62,208,309,301,168,297,263,266,227,283,310,331,309,343,299,284,284,281,211,302,312,309,252,271,240,246,256,335,312,260,282,250,264,249,278,239,209,281,271,197,347,256,539,182,315,271,267,251,218,263,306,357,299,236,295,106,261,251,201,182,793,399,196,282,211,296,354,257,320,268,313,204,276,219,317,249,305,271,286,311,276,198,339,366,273,284,365,132,311,254,295,251,255,186,166,216,361,273,193,287,248,180,270,322,293,222,455,233,295,335,283,288,268,251,252,278,266,233,283,262,310,271,237,241,270,309,267,232,297,265,278,323,154,187,434,249,309,285,420,360,254,278,276,139,196,238,362,328,270,267,289,237,329,276,267,242,340,288,251,347,364,268,356,305,247,260,320,302,319,317,91,304,314,248,253,241,280,242,191,297,210,282,268,302,260,279,299,239,278,365,360,390,248,315,308,366,161,188,324,174,355,291,197,280,267,261,192,225,267,279,299,253,259,279,295,246,162,356,199,289,285,192,287,389,300,89,275,288,293,234,307,185,297,374,311,305,297,63,234,334,289,314,202,261,362,272,240,194,269,221,242,263,278,254,301,325,252,249,302,377,264,292,324,352,60,286,230,219,344,142,274,256,94,273,209,285,243,265,353,261,306,396,248,235,279,228,264,362,204,259,268,291,285,181,573,321,422,246,279,254,245,144,249,310,240,298,294,308,302,266,267,294,244,282,271,277,286,316,271,295,272,266,165,273,246,280,203,280,303,283,283,181,294,295,186,251,287,268,208,541,277,283,272,336,301,296,270,330,235,275,306,105,269,298,279,325,278,254,379,240,210,292,326,280,226,294,264,340,291,265,263,391,138,274,261,267,286,285,200,603,267,337,266,229,288,256,435,327,260,242,293,232,209,240,210,266,284,269,385,248,282,258,199,246,113,282,291,246,264,317,396,197,257,298,418,308,304,269,236,300,241,302,236,251,214,265,186,265,279,304,266,313,337,241,330,283,199,240,248,359,241,351,268,313,281,255,262,169,289,285,260,231,226,675,258,350,303,275,296,382,280,221,276,64,283,230,284,288,303,212,287,301,297,328,289,268,205,229,307,244,278,251,279,277,386,337,252,273,272,308,267,136,310,233,261,307,286,310,374,347,516,404,326,219,299,253,282,286,281,245,243,251,379,213,237,296,261,318,400,373,279,275,237,203,301,152,253,108,286,238,373,278,356,383,374,267,306,216,293,320,364,277,252,247,297,273,240,266,209,277,351,292,327,363,295,271,375,187,252,282,290,403,258,272,310,274,63,353,260,288,319,290,344,194,306,194,276,342,239,293,227,263,251,262,256,189,353,267,322,277,195,278,298,306,257,281,321,331,312,261,262,249,265,311,249,273,264,256,188,213,259,67,339,305,251,304,306,234,95,188,187,297,289,267,122,293,290,277,251,287,331,308,260,343,274,268,268,282,293,280,576,270,266,250,299,229,105,302,257,257,297,317,209,273,227,270,337,268,268,261,424,289,305,304,356,257,161,246,546,226,278,297,224,260,235,320,249,363,363,204,285,290,237,289,252,319,324,416,201,347,312,255,217,287,235,183,248,306,302,188,253,279,285,209,301,132,270,405,230,276,390,357,242,275,283,281,149,382,378,180,230,288,225,251,265,228,283,311,299,261,115,294,267,198,294,151,326,239,193,291,243,254,407,262,262,271,268,276,292,297,287,232,467,235,267,191,297,302,283,187,251,300,271,266,320,254,195,269,255,284,313,283,308,237,304,306,298,272,297,223,296,265,330,248,273,280,121,217,310,276,105,291,306,337,301,318,230,219,239,150,235,304,343,277,270,429,279,287,210,244,372,404,260,177,357,206,333,253,292,310,272,258,133,195,275,295,363,233,237,184,326,285,250,284,349,271,275,417,326,160,98,329,269,313,486,302,339,319,254,292,275,60,67,194,252,285,333,294,217,291,255,243,263,276,263,212,263,211,254,344,310,369,258,183,299,361,305,418,63,360,259,256,351,267,349,321,278,248,268,383,421,298,102,161,298,251,409,304,278,255,556,239,303,267,302,266,241,316,331,259,333,265,319,169,272,304,101,311,280,398,60,212,268,365,310,280,218,306,164,115,200,307,288,60,290,293,244,254,277,208,234,264,235,256,248,241,215,300,427,277,253,261,250,289,363,166,257,281,315,292,251,198,430,584,288,303,245,284,433,312,244,258,204,328,271,238,292,322,311,214,288,210,281,232,117,287,378,266,324,75,543,287,210,229,241,311,240,262,284,261,253,286,180,170,339,292,211,276,303,340,363,294,411,296,269,99,308,246,178,273,215,161,250,269,267,268,276,284,422,339,371,295,350,241,299,60,361,328,332];
 const MEE_TOTAL=MEE_DUR.reduce((a,b)=>a+b,0);
@@ -4298,8 +4803,10 @@ const BANDS = [
   { id:'mss',        label:'ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు', cassette:'MSS', songs: MSS_SONGS },
   { id:'meeradio',   label:'MEE RADIO',  cassette:'MEE RADIO', songs: MEE_RADIO_SONGS },
   { id:'hero',       label:'HERO OF THE DAY', cassette:'HERO', songs: [] },
+  { id:'chants',     label:'CHANTS', cassette:'CHANTS', songs: CHANTS_SONGS },
+  { id:'instrumental', label:'INSTRUMENTAL', cassette:'INSTRUMENTAL', songs: INSTRUMENTAL_SONGS },
 ];
-const isLiveBand=id=>id==='meeradio'||id==='hero';
+const isLiveBand=id=>id==='meeradio'||id==='hero'||id==='chants'||id==='instrumental';
 let bandIdx=0, playBandIdx=0; // knob position vs band actually playing
 function songs(){ return BANDS[playBandIdx].songs; }
 // Option B: a licensed internet-radio stream URL (takes priority over the bands)
@@ -4441,6 +4948,18 @@ function nextTrack(){ const s=songs(); if(!s.length) return; let idx, off=0;
   else if(BANDS[playBandIdx].id==='hero'&&currentHero){
     // Hero live station: same idea, per-hero loop and clock.
     const pos=heroNow(currentHero); idx=pos.idx; off=pos.off;
+    if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
+    lastEndedIdx=-1;
+  }
+  else if(BANDS[playBandIdx].id==='chants'){
+    // Chants live station: seeded-shuffled loop + station clock.
+    const pos=chantsNow(); idx=pos.idx; off=pos.off;
+    if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
+    lastEndedIdx=-1;
+  }
+  else if(BANDS[playBandIdx].id==='instrumental'){
+    // Instrumental live station: seeded-shuffled loop + station clock.
+    const pos=instNow(); idx=pos.idx; off=pos.off;
     if(idx===lastEndedIdx){ idx=(idx+1)%s.length; off=0; }
     lastEndedIdx=-1;
   }
@@ -4702,11 +5221,12 @@ bandKeys.forEach(btn=>btn.addEventListener('click',()=>{
   paintBandKeys(bi);
   tuneTo(bi);
 }));
-/* Integrated bat toggles for CHANTS and INSTRU (flanking the LIVE lamp).
-   Mechanical only for now: flipping a switch flips the bat, lights the jewel
-   lamp, plays the old switch clack, and releases the other switch. Thej will
-   push the songs later, so no audio is tuned here. Pressing any piano key
-   (or spinning a hero) releases both toggles. */
+/* Integrated bat toggles for CHANTS and INSTRU (flanking the LIVE lamp on
+   desktop; in the bar below the radio on small screens). Flipping a switch ON
+   tunes its live station and starts it playing right away; flipping it OFF
+   stops the music immediately — no PLAY/STOP presses needed. Flipping one
+   releases the other; piano keys and the hero spin release both. */
+const EXT_IDX={chants:4,instrumental:5};
 let extActive=null;
 function extPaint(){
   const c=extActive==='chants', i=extActive==='instrumental';
@@ -4717,12 +5237,30 @@ function extPaint(){
 }
 function extSelect(which){
   bandSwitchSound();
-  extActive=(which===extActive)?null:which;
+  if(which===extActive){
+    extActive=null; extPaint();
+    if(audio) audio.muted=true; setPlaying(false); // stop right away
+    return;
+  }
+  extActive=which;
   extPaint();
+  paintBandKeys(EXT_IDX[which]);
+  tuneTo(EXT_IDX[which]); // cassette theatre, then the station starts playing
 }
 function extReset(){ if(extActive){ extActive=null; extPaint(); } }
 document.getElementById('extSwChants').addEventListener('click',()=>extSelect('chants'));
 document.getElementById('extSwInst').addEventListener('click',()=>extSelect('instrumental'));
+/* Small screens: the Chants/Instru switches live in the slim bar below the
+   radio so the zoomed mobile player keeps its clean compact dimensions. */
+(function(){
+  const bar=document.getElementById('mobileAux'), row=document.querySelector('.aux-row'),
+        live=document.getElementById('liveTag'),
+        cw=document.getElementById('extSwChantsWrap'), iw=document.getElementById('extSwInstWrap');
+  if(!bar||!row||!live||!cw||!iw) return;
+  const mq=window.matchMedia('(max-width:640px)');
+  function place(){ if(mq.matches){ bar.append(cw,iw); } else { row.insertBefore(cw,live); row.append(iw); } }
+  mq.addEventListener('change',place); place();
+})();
 /* HERO OF THE DAY: slot-machine hero picker; each hero runs his own live
    station (seeded-shuffled loop + station clock, like MEE RADIO). */
 const HEROES=["Chiranjeevi","Nagarjuna Akkineni","Venkatesh Daggubati","Nandamuri Balakrishna","Mohan Babu","Krishna","Rajendra Prasad","Rajasekhar","Jagapathi Babu","Sobhan Babu"];
