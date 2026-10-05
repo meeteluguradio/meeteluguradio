@@ -333,8 +333,8 @@ body.region-tamil .hero-row{display:none}
 
 /* Feedback tab, top left — same parchment styling as the tribute scroll */
 .feedback-wrap{position:fixed;top:12px;left:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-start}
-/* Mee Radio logo under the feedback tab: rotating sunburst + coffee steam */
-.mee-logo{position:relative;width:110px;margin-top:10px;pointer-events:none}
+/* Mee Radio logo at top-left of page (scrolls with page, not fixed) */
+.mee-logo{position:relative;width:110px;margin-top:4px;align-self:flex-start;pointer-events:none}
 .mee-logo .logo-rays{position:absolute;inset:0;z-index:1}
 .mee-logo .logo-rays img{width:100%;height:100%;display:block;animation:logoSpin 24s linear infinite}
 @keyframes logoSpin{to{transform:rotate(360deg)}}
@@ -417,11 +417,6 @@ body.region-tamil .hero-row{display:none}
 
 <div class="feedback-wrap">
   <button class="feedback-tab" id="feedbackTab" aria-expanded="false" aria-controls="feedbackScroll">LIKED IT? FEEDBACK</button>
-  <div class="mee-logo" aria-hidden="true">
-    <div class="logo-rays"><img src="chars/logo-rays.png" alt=""></div>
-    <img class="logo-char" src="chars/logo-char.png" alt="">
-    <div class="logo-steam"><span></span><span></span><span></span></div>
-  </div>
   <div class="feedback-scroll" id="feedbackScroll" aria-hidden="true">
     <div class="feedback-paper">
       <button class="feedback-x" id="feedbackX" aria-label="Close feedback">×</button>
@@ -451,6 +446,11 @@ body.region-tamil .hero-row{display:none}
 </div>
 
 <main>
+  <div class="mee-logo" aria-hidden="true">
+    <div class="logo-rays"><img src="chars/logo-rays.png" alt=""></div>
+    <img class="logo-char" src="chars/logo-char.png" alt="">
+    <div class="logo-steam"><span></span><span></span><span></span></div>
+  </div>
   <header class="marquee">
     <div class="bulbs" aria-hidden="true"></div>
     <p class="eyebrow">80s · 90s Telugu Golden Hits</p>
