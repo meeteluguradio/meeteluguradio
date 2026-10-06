@@ -1,4 +1,6 @@
-<!doctype html><html><head><meta charset=utf8><!-- deploy 2026-10-04b --><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><!-- deploy 2026-10-04b --><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}.tg-listeners{font-size:11px;color:#ffe9a8;margin-left:6px;white-space:nowrap}
+.tg-listeners b{font-weight:700;margin-left:2px}
+</style></head><body>
 <title>Paata Paatalu Radio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -494,7 +496,7 @@ body.region-tamil .hero-row{display:none}
           <div class="tuner-glass" aria-hidden="true">
             <span class="tg-station" id="tgStation">DEVOTIONAL</span>
             <div class="hero-reel tg-reel" id="heroReel" aria-hidden="true" hidden><div class="hero-reel-track" id="heroReelTrack"></div></div>
-            <span class="tg-live" id="tgLive"><span class="tg-live-text">LIVE</span><span class="tg-lamp"></span></span>
+            <span class="tg-live" id="tgLive"><span class="tg-live-text">LIVE</span><span class="tg-lamp"></span><span class="tg-listeners" title="Listeners now">👥<b id="listenerCount">–</b></span></span>
           </div>
           <div class="top-row">
             <div class="grille" aria-hidden="true"></div>
@@ -6548,6 +6550,97 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+/* Firebase: mee-radio-6540e — listener presence + voting */
+(function(){
+  try{
+    const firebaseConfig={
+      apiKey:"AIzaSyD7VCXCcsWHtpwsYsSwpNx6TEy_KkIYZAo",
+      authDomain:"mee-radio-6540e.firebaseapp.com",
+      databaseURL:"https://mee-radio-6540e-default-rtdb.firebaseio.com",
+      projectId:"mee-radio-6540e",
+      storageBucket:"mee-radio-6540e.firebasestorage.app",
+      messagingSenderId:"63240762090",
+      appId:"1:63240762090:web:3fc74dcc7fbcb557a91d93",
+      measurementId:"G-JWC0SGDWGV"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db=firebase.database();
+    /* anonymous auth */
+    firebase.auth().signInAnonymously().catch(()=>{});
+    firebase.auth().onAuthStateChanged(function(user){
+      if(!user) return;
+      const uid=user.uid;
+      const ref=db.ref('listeners/'+uid);
+      /* presence: heartbeat every 30s, remove on disconnect */
+      function beat(){ ref.set({t:Date.now()}).catch(()=>{}); }
+      beat();
+      setInterval(beat,30000);
+      ref.onDisconnect().remove().catch(()=>{});
+      /* count listeners with timestamp < 90s old */
+      db.ref('listeners').on('value',function(snap){
+        const now=Date.now();
+        let n=0;
+        snap.forEach(function(ch){
+          const v=ch.val();
+          if(v && v.t && (now-v.t)<90000) n++;
+        });
+        const el=document.getElementById('listenerCount');
+        if(el) el.textContent=n;
+      });
+    });
+    /* voting: one vote per browser */
+    const voteKey='mee_vote';
+    function sendVote(kind){
+      try{
+        if(localStorage.getItem(voteKey)) return false;
+        firebase.auth().currentUser;
+        fetch('https://ipapi.co/json/').then(r=>r.json()).then(loc=>{
+          db.ref('votes').push({
+            kind:kind,
+            city:loc.city||'', region:loc.region||'', country:loc.country_name||'',
+            t:Date.now()
+          }).catch(()=>{});
+        }).catch(()=>{
+          db.ref('votes').push({kind:kind,t:Date.now()}).catch(()=>{});
+        });
+        localStorage.setItem(voteKey,kind);
+        return true;
+      }catch(e){ return false; }
+    }
+    window.meeVote=sendVote;
+    window.meeVoted=function(){ try{ return localStorage.getItem(voteKey); }catch(e){ return null; } };
+    /* wire vote buttons */
+    function wireVotes(){
+      const like=document.getElementById('voteLike');
+      const dislike=document.getElementById('voteDislike');
+      const pop=document.getElementById('votePop');
+      const popImg=document.getElementById('votePopImg');
+      if(!like||!dislike) return;
+      /* restore voted state */
+      const v=window.meeVoted();
+      if(v==='like') like.classList.add('voted');
+      if(v==='dislike') dislike.classList.add('voted');
+      function doVote(kind,btn,img){
+        if(window.meeVoted()) return;
+        if(!window.meeVote(kind)) return;
+        btn.classList.add('voted');
+        if(pop&&popImg){
+          popImg.src=img;
+          pop.classList.remove('like','dislike','show');
+          void pop.offsetWidth;
+          pop.classList.add('show',kind);
+          setTimeout(()=>pop.classList.remove('show'),2200);
+        }
+      }
+      like.addEventListener('click',()=>doVote('like',like,'chars/like.png'));
+      dislike.addEventListener('click',()=>doVote('dislike',dislike,'chars/dislike.png'));
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireVotes);
+    else wireVotes();
+  }catch(e){}
+})();
+</script>
 
 <script>
 /* Fireworks: white rocket streaks launch fast from bottom, dense confetti bursts */
