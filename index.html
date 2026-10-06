@@ -210,10 +210,13 @@ body.region-tamil .uncle{display:block}
     box-shadow:0 6px 0 #2c190a,0 6px 0 4px #100903,inset 0 2px 0 rgba(255,220,160,.3)}
 }
 @media (max-width:380px){ .deck{zoom:.62} }
-/* Desktop: logo below FEEDBACK button (left side) */
+/* Desktop: logo below FEEDBACK button (right side, under READ TRIBUTE stack) */
 @media (min-width:641px){
-  .mee-logo{left:14px !important;transform:none !important;top:56px !important;width:92px}
+  .mee-logo{left:auto !important;right:14px !important;transform:none !important;top:102px !important;width:92px}
 }
+/* Kannada channel: 80% font size for the Kannada texts */
+body.region-kannada .marquee h1{font-size:clamp(45px,12vw,96px)}
+body.region-kannada .marquee .tag{font-size:clamp(14px,3.7vw,21px)}
 @media (pointer:coarse){
   .deck{perspective:none}
   .deck-inner{transform:none}
@@ -351,7 +354,11 @@ body.region-tamil .hero-row{display:none}
 .tribute-x:hover{background:#4a2c12;color:#f9eed4}
 
 /* Feedback tab, top left — same parchment styling as the tribute scroll */
-.feedback-wrap{position:absolute;top:12px;left:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-start}
+/* Feedback tab under READ TRIBUTE (right side); opened panel overlaps the other tab */
+.feedback-wrap{position:absolute;top:56px;left:auto;right:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-end}
+@media (max-width:640px){
+  .feedback-wrap{top:46px}
+}
 /* Mee Radio logo at top-center between Feedback and Tribute tabs (scrolls with page) */
 .mee-logo{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:60;width:100px;pointer-events:none}
 .mee-logo .logo-rays{position:absolute;inset:0;z-index:1}
@@ -6415,6 +6422,7 @@ function applyRegionUI(){
   const tamilUI=region!=='telugu'; /* Kannada stays on the Tamil page for now */
   const isTamil=region==='tamil', isKannada=region==='kannada';
   document.body.classList.toggle('region-tamil',tamilUI);
+  document.body.classList.toggle('region-kannada',isKannada);
   const T=isKannada?KANNADA_TXT:(tamilUI?TAMIL_TXT:TELUGU_TXT);
   const langCode=isKannada?'kn':(tamilUI?'ta':'te');
   eyebrowEl.textContent=T.eyebrow;
@@ -6525,8 +6533,10 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
   const tab=document.getElementById('tributeTab'), sc=document.getElementById('tributeScroll'), x=document.getElementById('tributeX');
   if(!tab||!sc) return;
   let t=null;
-  const close=()=>{ sc.classList.remove('open'); sc.setAttribute('aria-hidden','true'); tab.setAttribute('aria-expanded','false'); if(t){clearTimeout(t);t=null;} };
-  const open=()=>{ sc.classList.add('open'); sc.setAttribute('aria-hidden','false'); tab.setAttribute('aria-expanded','true'); if(t)clearTimeout(t); t=setTimeout(close,10000); };
+  const close=()=>{ sc.classList.remove('open'); sc.setAttribute('aria-hidden','true'); tab.setAttribute('aria-expanded','false'); if(t){clearTimeout(t);t=null;}
+    document.querySelector('.tribute-wrap').style.zIndex=''; };
+  const open=()=>{ sc.classList.add('open'); sc.setAttribute('aria-hidden','false'); tab.setAttribute('aria-expanded','true'); if(t)clearTimeout(t); t=setTimeout(close,10000);
+    document.querySelector('.tribute-wrap').style.zIndex='61'; };
   tab.addEventListener('click',()=>{ sc.classList.contains('open')?close():open(); });
   if(x) x.addEventListener('click',close);
 })();
@@ -6536,8 +6546,10 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
 (function(){
   const tab=document.getElementById('feedbackTab'), sc=document.getElementById('feedbackScroll'), x=document.getElementById('feedbackX');
   if(!tab||!sc) return;
-  const close=()=>{ sc.classList.remove('open'); sc.setAttribute('aria-hidden','true'); tab.setAttribute('aria-expanded','false'); };
-  const open=()=>{ sc.classList.add('open'); sc.setAttribute('aria-hidden','false'); tab.setAttribute('aria-expanded','true'); };
+  const close=()=>{ sc.classList.remove('open'); sc.setAttribute('aria-hidden','true'); tab.setAttribute('aria-expanded','false');
+    document.querySelector('.feedback-wrap').style.zIndex=''; };
+  const open=()=>{ sc.classList.add('open'); sc.setAttribute('aria-hidden','false'); tab.setAttribute('aria-expanded','true');
+    document.querySelector('.feedback-wrap').style.zIndex='61'; };
   tab.addEventListener('click',()=>{ sc.classList.contains('open')?close():open(); });
   if(x) x.addEventListener('click',close);
   const form=document.getElementById('fbForm'), status=document.getElementById('fbStatus'), submit=document.getElementById('fbSubmit');
