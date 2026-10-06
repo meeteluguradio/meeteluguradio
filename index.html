@@ -6549,5 +6549,105 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 
+<script>
+/* Fireworks: white rocket streaks launch fast from bottom, dense confetti bursts */
+(function(){
+  try{
+    const c=document.createElement('canvas');
+    c.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9998;image-rendering:pixelated;';
+    document.body.appendChild(c);
+    const ctx=c.getContext('2d');
+    function size(){ c.width=innerWidth; c.height=innerHeight; }
+    size(); addEventListener('resize',size);
+    let actx=null;
+    function pop(){
+      try{
+        if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+        if(actx.state!=='running') return;
+        const t=actx.currentTime, dur=0.2;
+        const buf=actx.createBuffer(1,actx.sampleRate*dur|0,actx.sampleRate);
+        const d=buf.getChannelData(0);
+        for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.2);
+        const src=actx.createBufferSource(); src.buffer=buf;
+        const f=actx.createBiquadFilter(); f.type='bandpass';
+        f.frequency.value=1500+Math.random()*2500; f.Q.value=0.8;
+        const g=actx.createGain();
+        g.gain.setValueAtTime(0.10,t);
+        g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+        src.connect(f); f.connect(g); g.connect(actx.destination); src.start(t);
+      }catch(e){}
+    }
+    const resume=()=>{ try{ if(actx&&actx.state==='suspended') actx.resume(); }catch(e){} };
+    document.addEventListener('pointerdown',resume,{once:false});
+    let rockets=[], parts=[];
+    const t0=Date.now();
+    let lastLaunch=0;
+    function launch(){
+      const x=c.width*0.1+Math.random()*c.width*0.8;
+      const ty=c.height*0.12+Math.random()*c.height*0.35;
+      rockets.push({x:x,y:c.height+20,ty:ty,vy:-(10+Math.random()*5)});
+    }
+    function boom(x,y){
+      /* dense: 160-220 colorful confetti squares */
+      const n=160+Math.random()*60|0;
+      const cols=['#ffd700','#ffd700','#ff44ff','#c44dff','#4488ff','#ff3b3b','#ffffff','#ffaa00','#ff7a1a'];
+      for(let i=0;i<n;i++){
+        const a=Math.random()*Math.PI*2;
+        const r=Math.pow(Math.random(),0.5);
+        const sp=0.8+r*6.5;
+        parts.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.5,life:1,
+          decay:0.004+Math.random()*0.007,
+          col:cols[Math.random()*cols.length|0],
+          sz:2.5+Math.random()*4.5,rot:Math.random()*Math.PI,vr:(Math.random()-0.5)*0.25});
+      }
+      pop();
+    }
+    (function tick(){
+      const el=Date.now()-t0;
+      /* launch every ~700ms for first 5s */
+      if(el<5000 && el-lastLaunch>700){ launch(); lastLaunch=el; }
+      ctx.clearRect(0,0,c.width,c.height);
+      /* rockets: bright white streaks shooting up fast */
+      for(const r of rockets){
+        r.y+=r.vy;
+        /* white trail */
+        for(let k=0;k<3;k++){
+          parts.push({x:r.x+(Math.random()-0.5)*6,y:r.y+Math.random()*18,
+            vx:(Math.random()-0.5)*0.8,vy:1.5+Math.random(),
+            life:0.5,decay:0.035,col:'#ffffff',sz:2,rot:0,vr:0});
+        }
+        /* elongated bright head */
+        ctx.globalAlpha=1;
+        ctx.fillStyle='#ffffff';
+        ctx.fillRect(r.x-2,r.y-14,4,18);
+        ctx.fillStyle='#fff8dd';
+        ctx.fillRect(r.x-1,r.y-10,2,10);
+        if(r.y<=r.ty) boom(r.x,r.y);
+      }
+      rockets=rockets.filter(r=>r.y>r.ty);
+      /* confetti: slow fall, gentle sway, spin */
+      parts=parts.filter(p=>p.life>0);
+      for(const p of parts){
+        p.x+=p.vx+Math.sin(Date.now()*0.004+p.rot)*0.4;
+        p.y+=p.vy;
+        p.vy+=0.035; /* light gravity like falling confetti */
+        p.vx*=0.985; p.vy*=0.992;
+        p.life-=p.decay; p.rot+=p.vr;
+        ctx.globalAlpha=p.life>0.3?1:Math.max(0,p.life*3.3);
+        ctx.fillStyle=p.col;
+        const s=Math.max(1.5,p.sz);
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.rot);
+        ctx.fillRect(-s/2,-s/2,s,s);
+        ctx.restore();
+      }
+      ctx.globalAlpha=1;
+      if(el<7500||parts.length||rockets.length) requestAnimationFrame(tick);
+      else c.remove();
+    })();
+  }catch(e){}
+})();
+</script>
 
 </body></html>
