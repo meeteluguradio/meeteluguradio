@@ -6693,6 +6693,18 @@ window.addEventListener('error',function(e){
   d.textContent='JS ERROR: '+e.message+' at '+e.filename+':'+e.lineno+':'+e.colno;
   document.body.appendChild(d);
 });
+/* TEMP DEBUG: visual click indicator on region buttons */
+window.addEventListener('load',function(){
+  document.querySelectorAll('.rk-lab').forEach(function(b){
+    b.addEventListener('click',function(){
+      b.style.background='#0f0';
+      var d=document.createElement('div');
+      d.style.cssText='position:fixed;top:50px;left:0;right:0;background:#0a0;color:#fff;padding:10px;z-index:99999;font:14px monospace;';
+      d.textContent='CLICKED: '+b.dataset.region;
+      document.body.appendChild(d);
+    });
+  });
+});
 </script>
 <script>
 /* Rolling tribute scroll: unfurls on click, rolls back after 10s, × closes */
