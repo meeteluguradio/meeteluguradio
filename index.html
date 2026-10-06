@@ -312,7 +312,7 @@ body.region-tamil .hero-row{display:none}
 .foot{font-size:12px;color:var(--cream);opacity:.8;text-align:center;max-width:42ch;text-shadow:1px 1px 0 var(--ink);margin:0}
 
 /* Rolling tribute scroll, top right */
-.tribute-wrap{position:fixed;top:12px;right:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-end}
+.tribute-wrap{position:absolute;top:12px;right:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-end}
 .feedback-wrap,.tribute-wrap{pointer-events:none}
 .feedback-tab,.tribute-tab{pointer-events:auto}
 .feedback-scroll.open,.tribute-scroll.open{pointer-events:auto}
@@ -337,9 +337,9 @@ body.region-tamil .hero-row{display:none}
 .tribute-x:hover{background:#4a2c12;color:#f9eed4}
 
 /* Feedback tab, top left — same parchment styling as the tribute scroll */
-.feedback-wrap{position:fixed;top:12px;left:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-start}
-/* Mee Radio logo fixed at top-center between Feedback and Tribute tabs (mobile + all 3 channels) */
-.mee-logo{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:60;width:100px;pointer-events:none}
+.feedback-wrap{position:absolute;top:12px;left:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-start}
+/* Mee Radio logo at top-center between Feedback and Tribute tabs (scrolls with page) */
+.mee-logo{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:60;width:100px;pointer-events:none}
 .mee-logo .logo-rays{position:absolute;inset:0;z-index:1}
 .mee-logo .logo-rays img{width:100%;height:100%;display:block}
 /* Rays stay static per Thej's request — no rotation */
