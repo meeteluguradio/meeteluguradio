@@ -6337,6 +6337,12 @@ const TAMIL_TXT={
   tag:'நாள் முழுதும் நில்லாமல் உங்கள் விருப்பமான TAMIL பாடல்கள்',
   cassette:'பழைய பாடல்கள்'
 };
+const KANNADA_TXT={
+  eyebrow:"80's · 90's Kannada Golden Hits",
+  h1:'ನಿಮ್ಮದು, ನಮ್ಮದು EVERGREEN ಹಾಡುಗಳು Radio',
+  tag:'ಯಾವಾಗಲೂ, ನಿರಂತರವಾಗಿ ನಿಮ್ಮ ಕನ್ನಡ ಮೆಲೊಡೀಸ್',
+  cassette:''
+};
 /* Radio static burst (WebAudio, no audio file needed) */
 let actx=null;
 function radioStatic(dur){
@@ -6409,11 +6415,18 @@ function applyRegionUI(){
   const tamilUI=region!=='telugu'; /* Kannada stays on the Tamil page for now */
   const isTamil=region==='tamil', isKannada=region==='kannada';
   document.body.classList.toggle('region-tamil',tamilUI);
-  const T=tamilUI?TAMIL_TXT:TELUGU_TXT;
+  const T=isKannada?KANNADA_TXT:(tamilUI?TAMIL_TXT:TELUGU_TXT);
+  const langCode=isKannada?'kn':(tamilUI?'ta':'te');
   eyebrowEl.textContent=T.eyebrow;
-  h1El.innerHTML=T.h1; h1El.setAttribute('lang',tamilUI?'ta':'te');
-  tagEl.textContent=T.tag; tagEl.setAttribute('lang',tamilUI?'ta':'te');
-  cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',tamilUI?'ta':'te');
+  h1El.innerHTML=T.h1; h1El.setAttribute('lang',langCode);
+  tagEl.textContent=T.tag; tagEl.setAttribute('lang',langCode);
+  cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',langCode);
+  /* uncle dialogue bubble per region */
+  const uncleBubble=document.querySelector('#uncle .uncle-bubble');
+  if(uncleBubble){
+    if(isKannada) uncleBubble.innerHTML='<b>ಕಣೋ</b><span>We will be Live soon</span>';
+    else uncleBubble.innerHTML="<b>Thambi!</b><span>It's LIVE Kanna</span>";
+  }
   const key2=document.querySelector('.band-key[data-band="2"]');
   const cs=document.getElementById('cassetteSide');
   const tgLive=document.getElementById('tgLive');
@@ -6438,17 +6451,17 @@ function applyRegionUI(){
     tamilLive=false;
     extReset();
     if(playing) pause();
-    BANDS[2].label='உங்கள் Radio'; BANDS[2].cassette='உங்கள் Radio';
-    key2.textContent='உங்கள் Radio'; key2.setAttribute('lang','ta');
+    BANDS[2].label='ನಿಮ್ಮ Radio'; BANDS[2].cassette='ನಿಮ್ಮ Radio';
+    key2.textContent='ನಿಮ್ಮ Radio'; key2.setAttribute('lang','kn');
     bandIdx=2; playBandIdx=2; paintBandKeys(2);
     if(tgLive) tgLive.classList.remove('on');
-    if(cs) cs.textContent='SIDE A · உங்கள் Radio';
+    if(cs) cs.textContent='SIDE A · ನಿಮ್ಮ Radio';
     if(!nowTitleEl.dataset.orig) nowTitleEl.dataset.orig=nowTitleEl.textContent;
     nowTitleEl.textContent='STAY TUNED';
     nowTitleEl.classList.add('staytuned');
     const tp1k=document.getElementById('tributeP1');
     if(tp1k){ if(!tp1k.dataset.orig) tp1k.dataset.orig=tp1k.textContent;
-      tp1k.textContent=tp1k.dataset.orig.replace(/Telugu cinema/g,'Tamil cinema'); }
+      tp1k.textContent=tp1k.dataset.orig.replace(/Telugu cinema/g,'Kannada cinema'); }
   }else{
     /* Back to Telugu: restore the original bands exactly. */
     tamilLive=false;
