@@ -6521,6 +6521,10 @@ function setRegion(r){
     if(audio) audio.volume=oldVol;
     tuning=false;
     applyRegionUI();
+    if(region==='telugu'){
+      /* pick up the Telugu channel's songs at once — don't keep playing Tamil */
+      playBand(playBandIdx);
+    }
   },3060);
 }
 regionKnob.addEventListener('click',()=>setRegion(REGIONS[(REGIONS.indexOf(region)+1)%3]));
