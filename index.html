@@ -6620,7 +6620,7 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
 })();
 </script>
 <script>
-/* Fireworks on page open: pixelated retro bursts exactly like the reference */
+/* Fireworks: rockets launch from bottom, then blast into pixelated bursts */
 (function(){
   try{
     const c=document.createElement('canvas');
@@ -6628,7 +6628,6 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
     document.body.appendChild(c);
     const ctx=c.getContext('2d');
     c.width=innerWidth; c.height=innerHeight;
-    /* soft cracker pop, not loud */
     let actx=null;
     function pop(){
       try{
@@ -6649,15 +6648,19 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
     }
     const resume=()=>{ try{ if(actx&&actx.state==='suspended') actx.resume(); }catch(e){} };
     document.addEventListener('pointerdown',resume,{once:false});
-    let parts=[];
+    let rockets=[], parts=[];
     const t0=Date.now();
-    function boom(){
-      const x=c.width*0.12+Math.random()*c.width*0.76, y=c.height*0.08+Math.random()*c.height*0.42;
-      /* dense core: bright orange/red/yellow squares, tightly packed */
+    let lastLaunch=0;
+    function launch(){
+      const x=c.width*0.15+Math.random()*c.width*0.7;
+      const ty=c.height*0.1+Math.random()*c.height*0.35;
+      rockets.push({x:x,y:c.height+10,ty:ty,vy:-(7+Math.random()*4)});
+    }
+    function boom(x,y){
       const n=110+Math.random()*60|0;
       for(let i=0;i<n;i++){
         const a=Math.random()*Math.PI*2;
-        const r=Math.pow(Math.random(),0.6); /* denser in center */
+        const r=Math.pow(Math.random(),0.6);
         const sp=1+r*7;
         const cols=['#ff3b1f','#ff3b1f','#ff7a1a','#ffcc22','#ff2222','#ffaa00'];
         parts.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,
@@ -6665,7 +6668,6 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
           col:cols[Math.random()*cols.length|0],
           sz:3+Math.random()*5,plus:false});
       }
-      /* scattered plus-shaped sparkles like the reference (pink/blue) */
       const scat=['#ff44ff','#ff44ff','#c44dff','#4488ff','#4488ff'];
       for(let i=0;i<16;i++){
         parts.push({x:Math.random()*c.width,y:Math.random()*c.height*0.75,
@@ -6678,17 +6680,30 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
     }
     (function tick(){
       const el=Date.now()-t0;
-      if(el<5000 && Math.random()<0.5) boom();
+      /* fewer: launch about one rocket every 900ms for 5s */
+      if(el<5000 && el-lastLaunch>900){ launch(); lastLaunch=el; }
       ctx.clearRect(0,0,c.width,c.height);
+      /* rockets rise from bottom with a bright trail */
+      rockets=rockets.filter(r=>r.y>r.ty);
+      for(const r of rockets){
+        r.y+=r.vy;
+        /* trail spark */
+        parts.push({x:r.x+(Math.random()-0.5)*4,y:r.y,vx:(Math.random()-0.5)*1,vy:1+Math.random(),
+          life:0.6,decay:0.03,col:'#ffcc66',sz:2.5,plus:false});
+        /* rocket head */
+        ctx.globalAlpha=1; ctx.fillStyle='#fff8dd';
+        ctx.fillRect(r.x-2.5,r.y-2.5,5,5);
+        if(r.y<=r.ty){ boom(r.x,r.y); }
+      }
+      rockets=rockets.filter(r=>r.y>r.ty);
+      /* burst particles */
       parts=parts.filter(p=>p.life>0);
       for(const p of parts){
         p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.vx*=0.987; p.vy*=0.987; p.life-=p.decay;
-        /* hard pixel look: full opacity until near end, then quick pop out */
         ctx.globalAlpha=p.life>0.25?1:Math.max(0,p.life*4);
         ctx.fillStyle=p.col;
         const s=Math.max(2,p.sz);
         if(p.plus){
-          /* plus shape */
           const a=s/3;
           ctx.fillRect(p.x-a/2,p.y-s/2,a,s);
           ctx.fillRect(p.x-s/2,p.y-a/2,s,a);
@@ -6697,7 +6712,7 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
         }
       }
       ctx.globalAlpha=1;
-      if(el<6500||parts.length) requestAnimationFrame(tick);
+      if(el<7000||parts.length||rockets.length) requestAnimationFrame(tick);
       else c.remove();
     })();
   }catch(e){}
