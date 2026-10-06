@@ -6686,6 +6686,15 @@ regionKnob.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.pre
 document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();setRegion(b.dataset.region);}));
 </script>
 <script>
+/* TEMP DEBUG: catch JS errors */
+window.addEventListener('error',function(e){
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;top:0;left:0;right:0;background:#c00;color:#fff;padding:10px;z-index:99999;font:14px monospace;white-space:pre-wrap;';
+  d.textContent='JS ERROR: '+e.message+' at '+e.filename+':'+e.lineno+':'+e.colno;
+  document.body.appendChild(d);
+});
+</script>
+<script>
 /* Rolling tribute scroll: unfurls on click, rolls back after 10s, × closes */
 (function(){
   const tab=document.getElementById('tributeTab'), sc=document.getElementById('tributeScroll'), x=document.getElementById('tributeX');
