@@ -6427,6 +6427,9 @@ function applyRegionUI(){
     if(isKannada) uncleBubble.innerHTML='<b>ಕಣೋ</b><span>We will be Live soon</span>';
     else uncleBubble.innerHTML="<b>Thambi!</b><span>It's LIVE Kanna</span>";
   }
+  /* no plane/banner in Kannada mode ("We will be Live soon") */
+  const plane=document.querySelector('.plane-flyby');
+  if(plane) plane.style.display=isKannada?'none':'';
   const key2=document.querySelector('.band-key[data-band="2"]');
   const cs=document.getElementById('cassetteSide');
   const tgLive=document.getElementById('tgLive');
