@@ -210,9 +210,9 @@ body.region-tamil .uncle{display:block}
     box-shadow:0 6px 0 #2c190a,0 6px 0 4px #100903,inset 0 2px 0 rgba(255,220,160,.3)}
 }
 @media (max-width:380px){ .deck{zoom:.62} }
-/* Desktop: logo below FEEDBACK button (right side, under READ TRIBUTE stack) */
+/* Desktop: logo at left top; FEEDBACK + READ TRIBUTE stacked on the right */
 @media (min-width:641px){
-  .mee-logo{left:auto !important;right:14px !important;transform:none !important;top:102px !important;width:92px}
+  .mee-logo{left:14px !important;right:auto !important;transform:none !important;top:12px !important;width:92px}
 }
 /* Kannada channel: 80% font size for the Kannada texts */
 body.region-kannada .marquee h1{font-size:clamp(45px,12vw,96px)}
@@ -357,7 +357,8 @@ body.region-tamil .hero-row{display:none}
 /* Feedback tab under READ TRIBUTE (right side); opened panel overlaps the other tab */
 .feedback-wrap{position:absolute;top:56px;left:auto;right:12px;z-index:60;display:flex;flex-direction:column;align-items:flex-end}
 @media (max-width:640px){
-  .feedback-wrap{top:46px}
+  /* Mobile: FEEDBACK back on the left like before */
+  .feedback-wrap{top:12px;left:12px;right:auto;align-items:flex-start}
 }
 /* Mee Radio logo at top-center between Feedback and Tribute tabs (scrolls with page) */
 .mee-logo{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:60;width:100px;pointer-events:none}
@@ -6153,7 +6154,10 @@ function tuneTo(bi){
     return;
   }
   if(bi===playBandIdx&&playing) return; // already tuned in
-  swapCassette(band.cassette||band.label).then(()=>playBand(bi));
+  /* Start the new channel's songs immediately — no PLAY press needed.
+     The cassette swap theatre runs as a visual in parallel. */
+  playBand(bi);
+  try{ swapCassette(band.cassette||band.label); }catch(e){}
 }
 /* Cassette swap theatre: door opens, old cassette ejects, label swaps to the
    channel name, new cassette drops in, door closes. Contained in the slot. */
