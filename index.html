@@ -6491,7 +6491,7 @@ const h1El=document.querySelector('.marquee h1');
 const tagEl=document.querySelector('.marquee .tag');
 const cassetteTe=document.querySelector('.cassette .label .te');
 const nowTitleEl=document.getElementById('nowTitle');
-const TELUGU_TXT={eyebrow:eyebrowEl.textContent,h1:h1El.innerHTML,tag:tagEl.textContent,cassette:cassetteTe.textContent};
+const TELUGU_TXT={eyebrow:eyebrowEl.textContent,h1:h1El.innerHTML,tag:tagEl.textContent,cassette:cassetteTe?cassetteTe.textContent:''};
 const TAMIL_TXT={
   eyebrow:"80's · 90's Tamil Golden Hits",
   h1:'உங்கள், நமது, Evergreen Tamil vintage பாடல்கள் Radio',
@@ -6582,7 +6582,7 @@ function applyRegionUI(){
   eyebrowEl.textContent=T.eyebrow;
   h1El.innerHTML=T.h1; h1El.setAttribute('lang',langCode);
   tagEl.textContent=T.tag; tagEl.setAttribute('lang',langCode);
-  cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',langCode);
+  if(cassetteTe){ cassetteTe.textContent=T.cassette; cassetteTe.setAttribute('lang',langCode); }
   /* uncle dialogue bubble per region */
   const uncleBubble=document.querySelector('#uncle .uncle-bubble');
   if(uncleBubble){
