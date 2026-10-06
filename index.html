@@ -6547,6 +6547,97 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+/* Firebase: mee-radio (original on-air project) — listener presence + voting */
+(function(){
+  try{
+    const firebaseConfig={
+      apiKey:"AIzaSyDfK0XitzmSMyZackJTI2W-UAwPaGJ5qYo",
+      authDomain:"mee-radio.firebaseapp.com",
+      databaseURL:"https://mee-radio-default-rtdb.firebaseio.com",
+      projectId:"mee-radio",
+      storageBucket:"mee-radio.firebasestorage.app",
+      messagingSenderId:"25079320447",
+      appId:"1:25079320447:web:792169bd5ee50f16acd44a",
+      measurementId:"G-DNXXZ0NZJ2"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db=firebase.database();
+    /* anonymous auth */
+    firebase.auth().signInAnonymously().catch(()=>{});
+    firebase.auth().onAuthStateChanged(function(user){
+      if(!user) return;
+      const uid=user.uid;
+      const ref=db.ref('listeners/'+uid);
+      /* presence: heartbeat every 30s, remove on disconnect */
+      function beat(){ ref.set({t:Date.now()}).catch(()=>{}); }
+      beat();
+      setInterval(beat,30000);
+      ref.onDisconnect().remove().catch(()=>{});
+      /* count listeners with timestamp < 90s old */
+      db.ref('listeners').on('value',function(snap){
+        const now=Date.now();
+        let n=0;
+        snap.forEach(function(ch){
+          const v=ch.val();
+          if(v && v.t && (now-v.t)<90000) n++;
+        });
+        const el=document.getElementById('liveCount');
+        if(el) el.textContent=n;
+      });
+    });
+    /* voting: one vote per browser */
+    const voteKey='mee_vote';
+    function sendVote(kind){
+      try{
+        if(localStorage.getItem(voteKey)) return false;
+        firebase.auth().currentUser;
+        fetch('https://ipapi.co/json/').then(r=>r.json()).then(loc=>{
+          db.ref('votes').push({
+            kind:kind,
+            city:loc.city||'', region:loc.region||'', country:loc.country_name||'',
+            t:Date.now()
+          }).catch(()=>{});
+        }).catch(()=>{
+          db.ref('votes').push({kind:kind,t:Date.now()}).catch(()=>{});
+        });
+        localStorage.setItem(voteKey,kind);
+        return true;
+      }catch(e){ return false; }
+    }
+    window.meeVote=sendVote;
+    window.meeVoted=function(){ try{ return localStorage.getItem(voteKey); }catch(e){ return null; } };
+    /* wire vote buttons */
+    function wireVotes(){
+      const like=document.getElementById('voteLike');
+      const dislike=document.getElementById('voteDislike');
+      const pop=document.getElementById('votePop');
+      const popImg=document.getElementById('votePopImg');
+      if(!like||!dislike) return;
+      /* restore voted state */
+      const v=window.meeVoted();
+      if(v==='like') like.classList.add('voted');
+      if(v==='dislike') dislike.classList.add('voted');
+      function doVote(kind,btn,img){
+        if(window.meeVoted()) return;
+        if(!window.meeVote(kind)) return;
+        btn.classList.add('voted');
+        if(pop&&popImg){
+          popImg.src=img;
+          pop.classList.remove('like','dislike','show');
+          void pop.offsetWidth;
+          pop.classList.add('show',kind);
+          setTimeout(()=>pop.classList.remove('show'),2200);
+        }
+      }
+      like.addEventListener('click',()=>doVote('like',like,'chars/like.png'));
+      dislike.addEventListener('click',()=>doVote('dislike',dislike,'chars/dislike.png'));
+    }
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireVotes);
+    else wireVotes();
+  }catch(e){}
+})();
+</script>
 
 
 </body></html>
