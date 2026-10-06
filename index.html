@@ -1,5 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><!-- deploy 2026-10-04b --><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
-</style></head><body>
+<!doctype html><html><head><meta charset=utf8><!-- deploy 2026-10-04b --><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Paata Paatalu Radio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -211,11 +210,6 @@ body.region-tamil .uncle{display:block}
     box-shadow:0 6px 0 #2c190a,0 6px 0 4px #100903,inset 0 2px 0 rgba(255,220,160,.3)}
 }
 @media (max-width:380px){ .deck{zoom:.62} }
-/* Desktop: logo below FEEDBACK (left), no plane/banner */
-@media (min-width:641px){
-  .mee-logo{left:14px !important;transform:none !important;top:56px !important;width:92px}
-  .plane-flyby{display:none !important}
-}
 @media (pointer:coarse){
   .deck{perspective:none}
   .deck-inner{transform:none}
@@ -6550,192 +6544,120 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script>
-/* Firebase: mee-radio (original on-air project) — listener presence + voting */
+/* Live listener count: anonymous Firebase presence. Each open page registers
+   itself under /listeners and is removed automatically on disconnect.
+   Global count: one /listeners ref shared across Telugu, Tamil, Kannada. */
 (function(){
+  if(!window.firebase) return;
   try{
-    const firebaseConfig={
+    firebase.initializeApp({
       apiKey:"AIzaSyDfK0XitzmSMyZackJTI2W-UAwPaGJ5qYo",
       authDomain:"mee-radio.firebaseapp.com",
       databaseURL:"https://mee-radio-default-rtdb.firebaseio.com",
-      projectId:"mee-radio",
-      storageBucket:"mee-radio.firebasestorage.app",
-      messagingSenderId:"25079320447",
-      appId:"1:25079320447:web:792169bd5ee50f16acd44a",
-      measurementId:"G-DNXXZ0NZJ2"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db=firebase.database();
-    /* anonymous auth */
-    firebase.auth().signInAnonymously().catch(()=>{});
-    firebase.auth().onAuthStateChanged(function(user){
-      if(!user) return;
-      const uid=user.uid;
-      const ref=db.ref('listeners/'+uid);
-      /* presence: heartbeat every 30s, remove on disconnect */
-      function beat(){ ref.set({t:Date.now()}).catch(()=>{}); }
-      beat();
-      setInterval(beat,30000);
-      ref.onDisconnect().remove().catch(()=>{});
-      /* count listeners with timestamp < 90s old */
-      db.ref('listeners').on('value',function(snap){
-        const now=Date.now();
-        let n=0;
-        snap.forEach(function(ch){
-          const v=ch.val();
-          if(v && v.t && (now-v.t)<90000) n++;
-        });
-        const el=document.getElementById('liveCount');
-        if(el) el.textContent=n;
-      });
+      projectId:"mee-radio"
     });
-    /* voting: one vote per browser */
-    const voteKey='mee_vote';
-    function sendVote(kind){
-      try{
-        if(localStorage.getItem(voteKey)) return false;
-        firebase.auth().currentUser;
-        fetch('https://ipapi.co/json/').then(r=>r.json()).then(loc=>{
-          db.ref('votes').push({
-            kind:kind,
-            city:loc.city||'', region:loc.region||'', country:loc.country_name||'',
-            t:Date.now()
-          }).catch(()=>{});
-        }).catch(()=>{
-          db.ref('votes').push({kind:kind,t:Date.now()}).catch(()=>{});
-        });
-        localStorage.setItem(voteKey,kind);
-        return true;
-      }catch(e){ return false; }
-    }
-    window.meeVote=sendVote;
-    window.meeVoted=function(){ try{ return localStorage.getItem(voteKey); }catch(e){ return null; } };
-    /* wire vote buttons */
-    function wireVotes(){
-      const like=document.getElementById('voteLike');
-      const dislike=document.getElementById('voteDislike');
-      const pop=document.getElementById('votePop');
-      const popImg=document.getElementById('votePopImg');
-      if(!like||!dislike) return;
-      /* restore voted state */
-      const v=window.meeVoted();
-      if(v==='like') like.classList.add('voted');
-      if(v==='dislike') dislike.classList.add('voted');
-      function doVote(kind,btn,img){
-        if(window.meeVoted()) return;
-        if(!window.meeVote(kind)) return;
-        btn.classList.add('voted');
-        if(pop&&popImg){
-          popImg.src=img;
-          pop.classList.remove('like','dislike','show');
-          void pop.offsetWidth;
-          pop.classList.add('show',kind);
-          setTimeout(()=>pop.classList.remove('show'),2200);
-        }
-      }
-      like.addEventListener('click',()=>doVote('like',like,'chars/like.png'));
-      dislike.addEventListener('click',()=>doVote('dislike',dislike,'chars/dislike.png'));
-    }
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',wireVotes);
-    else wireVotes();
+    const db=firebase.database(), el=document.getElementById('liveCount');
+    /* Count only fresh heartbeats (last 90s); stale entries from crashed tabs are ignored. */
+    db.ref('listeners').on('value',s=>{ if(!el) return; const now=Date.now(); let n=0; s.forEach(c=>{ const v=c.val(); if(typeof v==='number'&&now-v<90000) n++; }); el.textContent=n; },()=>{});
+    const register=uid=>{
+      const me=db.ref('listeners/'+uid);
+      const beat=()=>{ me.set(firebase.database.ServerValue.TIMESTAMP).catch(()=>{}); };
+      db.ref('.info/connected').on('value',s=>{
+        if(s.val()===true){ me.onDisconnect().remove(); beat(); try{clearInterval(register._hb);}catch(e){} register._hb=setInterval(beat,30000); }
+      });
+    };
+    firebase.auth().signInAnonymously().then(
+      cred=>register(cred.user.uid),
+      ()=>{
+        let rid=''; try{ rid=sessionStorage.getItem('mrAnon')||''; }catch(e){}
+        if(!rid){ rid='anon-'+Math.random().toString(36).slice(2)+Date.now().toString(36);
+          try{ sessionStorage.setItem('mrAnon',rid); }catch(e){} }
+        register(rid);
+      });
   }catch(e){}
 })();
-</script>
 
+/* Thumbs voting: one vote per browser (switchable), stored under /votes with
+   city/region/country for the daily digest. A character pops above the buttons,
+   bouncing like a gif on like, wagging a finger on dislike. */
+(function(){
+  if(!window.firebase) return;
+  const likeBtn=document.getElementById('voteLike'), disBtn=document.getElementById('voteDislike'),
+        pop=document.getElementById('votePop'), popImg=document.getElementById('votePopImg');
+  if(!likeBtn||!disBtn||!pop) return;
+  let vid='';
+  try{ vid=localStorage.getItem('mee_vote_id')||'';
+    if(!vid){ vid='v'+Math.random().toString(36).slice(2)+Date.now().toString(36); localStorage.setItem('mee_vote_id',vid); }
+  }catch(e){ vid='v'+Math.random().toString(36).slice(2)+Date.now().toString(36); }
+  const loc={city:'',region:'',country:''};
+  fetch('https://ipapi.co/json/').then(r=>r.json()).then(j=>{
+    loc.city=j.city||''; loc.region=j.region||''; loc.country=j.country_name||'';
+  }).catch(()=>{});
+  let popT=null;
+  const showPop=kind=>{
+    popImg.src='chars/'+(kind==='like'?'like':'dislike')+'.png';
+    popImg.alt=kind==='like'?'Thank you for the thumbs up!':'Noted — no worries!';
+    pop.className='vote-pop show '+kind; pop.setAttribute('aria-hidden','false');
+    if(popT) clearTimeout(popT);
+    popT=setTimeout(()=>{ pop.classList.remove('show'); pop.setAttribute('aria-hidden','true'); },2600);
+  };
+  const mark=kind=>{ likeBtn.classList.toggle('voted',kind==='like'); disBtn.classList.toggle('voted',kind==='dislike'); };
+  const vote=kind=>{
+    showPop(kind); mark(kind);
+    try{
+      firebase.database().ref('votes/'+vid).set({
+        type:kind, ts:firebase.database.ServerValue.TIMESTAMP,
+        city:loc.city, region:loc.region, country:loc.country
+      }).catch(()=>{});
+    }catch(e){}
+  };
+  likeBtn.addEventListener('click',()=>vote('like'));
+  disBtn.addEventListener('click',()=>vote('dislike'));
+  /* restore this browser's earlier vote, once auth/connection is ready */
+  setTimeout(()=>{ try{
+    firebase.database().ref('votes/'+vid).once('value').then(s=>{ const v=s.val(); if(v&&v.type) mark(v.type); }).catch(()=>{});
+  }catch(e){} },3000);
+})();
+</script>
 <script>
-/* Fireworks: white rocket streaks launch fast from bottom, dense confetti bursts */
+/* Fireworks on page open: big realistic bursts, few colors, 5 seconds */
 (function(){
   try{
     const c=document.createElement('canvas');
-    c.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9998;image-rendering:pixelated;';
+    c.style.cssText='position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9998;';
     document.body.appendChild(c);
     const ctx=c.getContext('2d');
-    function size(){ c.width=innerWidth; c.height=innerHeight; }
-    size(); addEventListener('resize',size);
-    let actx=null;
-    function pop(){
-      try{
-        if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
-        if(actx.state!=='running') return;
-        const t=actx.currentTime, dur=0.2;
-        const buf=actx.createBuffer(1,actx.sampleRate*dur|0,actx.sampleRate);
-        const d=buf.getChannelData(0);
-        for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.2);
-        const src=actx.createBufferSource(); src.buffer=buf;
-        const f=actx.createBiquadFilter(); f.type='bandpass';
-        f.frequency.value=1500+Math.random()*2500; f.Q.value=0.8;
-        const g=actx.createGain();
-        g.gain.setValueAtTime(0.10,t);
-        g.gain.exponentialRampToValueAtTime(0.001,t+dur);
-        src.connect(f); f.connect(g); g.connect(actx.destination); src.start(t);
-      }catch(e){}
-    }
-    const resume=()=>{ try{ if(actx&&actx.state==='suspended') actx.resume(); }catch(e){} };
-    document.addEventListener('pointerdown',resume,{once:false});
-    let rockets=[], parts=[];
+    c.width=innerWidth; c.height=innerHeight;
+    const colors=['#ff2a2a','#ffcc33','#ffffff','#3a8cff'];
+    let parts=[];
     const t0=Date.now();
-    let lastLaunch=0;
-    function launch(){
-      const x=c.width*0.1+Math.random()*c.width*0.8;
-      const ty=c.height*0.12+Math.random()*c.height*0.35;
-      rockets.push({x:x,y:c.height+20,ty:ty,vy:-(10+Math.random()*5)});
-    }
-    function boom(x,y){
-      /* dense: 160-220 colorful confetti squares */
-      const n=160+Math.random()*60|0;
-      const cols=['#ffd700','#ffd700','#ff44ff','#c44dff','#4488ff','#ff3b3b','#ffffff','#ffaa00','#ff7a1a'];
+    function boom(){
+      const x=c.width*0.15+Math.random()*c.width*0.7, y=c.height*0.1+Math.random()*c.height*0.4;
+      const col=colors[Math.random()*colors.length|0];
+      const n=90+Math.random()*40|0;
       for(let i=0;i<n;i++){
-        const a=Math.random()*Math.PI*2;
-        const r=Math.pow(Math.random(),0.5);
-        const sp=0.8+r*6.5;
-        parts.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.5,life:1,
-          decay:0.004+Math.random()*0.007,
-          col:cols[Math.random()*cols.length|0],
-          sz:2.5+Math.random()*4.5,rot:Math.random()*Math.PI,vr:(Math.random()-0.5)*0.25});
+        const a=Math.random()*Math.PI*2, sp=2+Math.random()*7;
+        parts.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,decay:0.008+Math.random()*0.012,col:col,sz:2.5+Math.random()*2.5});
       }
-      pop();
+      /* bright core flash */
+      for(let i=0;i<12;i++){
+        const a=Math.random()*Math.PI*2, sp=Math.random()*2;
+        parts.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,decay:0.03,col:'#ffffff',sz:3.5});
+      }
     }
     (function tick(){
       const el=Date.now()-t0;
-      /* launch every ~700ms for first 5s */
-      if(el<5000 && el-lastLaunch>700){ launch(); lastLaunch=el; }
+      if(el<5000 && Math.random()<0.5) boom();
       ctx.clearRect(0,0,c.width,c.height);
-      /* rockets: bright white streaks shooting up fast */
-      for(const r of rockets){
-        r.y+=r.vy;
-        /* white trail */
-        for(let k=0;k<3;k++){
-          parts.push({x:r.x+(Math.random()-0.5)*6,y:r.y+Math.random()*18,
-            vx:(Math.random()-0.5)*0.8,vy:1.5+Math.random(),
-            life:0.5,decay:0.035,col:'#ffffff',sz:2,rot:0,vr:0});
-        }
-        /* elongated bright head */
-        ctx.globalAlpha=1;
-        ctx.fillStyle='#ffffff';
-        ctx.fillRect(r.x-2,r.y-14,4,18);
-        ctx.fillStyle='#fff8dd';
-        ctx.fillRect(r.x-1,r.y-10,2,10);
-        if(r.y<=r.ty) boom(r.x,r.y);
-      }
-      rockets=rockets.filter(r=>r.y>r.ty);
-      /* confetti: slow fall, gentle sway, spin */
       parts=parts.filter(p=>p.life>0);
       for(const p of parts){
-        p.x+=p.vx+Math.sin(Date.now()*0.004+p.rot)*0.4;
-        p.y+=p.vy;
-        p.vy+=0.035; /* light gravity like falling confetti */
-        p.vx*=0.985; p.vy*=0.992;
-        p.life-=p.decay; p.rot+=p.vr;
-        ctx.globalAlpha=p.life>0.3?1:Math.max(0,p.life*3.3);
+        p.x+=p.vx; p.y+=p.vy; p.vy+=0.045; p.vx*=0.985; p.vy*=0.985; p.life-=p.decay;
+        ctx.globalAlpha=Math.max(0,Math.min(1,p.life*1.4));
         ctx.fillStyle=p.col;
-        const s=Math.max(1.5,p.sz);
-        ctx.save();
-        ctx.translate(p.x,p.y);
-        ctx.rotate(p.rot);
-        ctx.fillRect(-s/2,-s/2,s,s);
-        ctx.restore();
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.sz*p.life+0.6,0,7); ctx.fill();
       }
       ctx.globalAlpha=1;
-      if(el<7500||parts.length||rockets.length) requestAnimationFrame(tick);
+      if(el<6500||parts.length) requestAnimationFrame(tick);
       else c.remove();
     })();
   }catch(e){}
