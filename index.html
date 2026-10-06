@@ -508,7 +508,7 @@ body.region-tamil .hero-row{display:none}
             <div class="cassette-slot">
               <div class="slot-head"><div class="slot-door" id="slotDoor"></div></div>
               <div class="cassette" id="cassetteEl" aria-hidden="true">
-              <div class="label"><span class="side" id="cassetteSide">SIDE A · DEVOTIONAL</span></div>
+              <div class="label"><span class="side" id="cassetteSide">SIDE A</span></div>
               <div class="window">
                 <svg class="reel" viewBox="0 0 100 100"><circle id="tapeL" cx="50" cy="50" r="44" fill="#5a3326"/><circle cx="50" cy="50" r="18" fill="#f7e7c4" stroke="#1d0a10" stroke-width="3"/><g stroke="#1d0a10" stroke-width="5" stroke-linecap="round"><line x1="50" y1="36" x2="50" y2="44"/><line x1="62" y1="57" x2="55" y2="53"/><line x1="38" y1="57" x2="45" y2="53"/></g><circle cx="50" cy="50" r="4" fill="#1d0a10"/></svg>
                 <svg class="reel" viewBox="0 0 100 100"><circle id="tapeR" cx="50" cy="50" r="22" fill="#5a3326"/><circle cx="50" cy="50" r="18" fill="#f7e7c4" stroke="#1d0a10" stroke-width="3"/><g stroke="#1d0a10" stroke-width="5" stroke-linecap="round"><line x1="50" y1="36" x2="50" y2="44"/><line x1="62" y1="57" x2="55" y2="53"/><line x1="38" y1="57" x2="45" y2="53"/></g><circle cx="50" cy="50" r="4" fill="#1d0a10"/></svg>
@@ -6322,7 +6322,7 @@ function swapCassette(channelLabel){
     setTimeout(()=>{ if(!alive()) return;
       cassetteEl.classList.add('eject');
       setTimeout(()=>{ if(!alive()) return;
-        cassetteSide.textContent='SIDE A · '+channelLabel;
+        cassetteSide.textContent='SIDE A';
         void cassetteEl.offsetWidth;
         cassetteEl.classList.remove('eject');
         setTimeout(()=>{ if(!alive()) return; thunkSoft(); },300);
@@ -6605,7 +6605,7 @@ function applyRegionUI(){
     BANDS[5].id='tamilinst'; BANDS[5].songs=(typeof TAMIL_INST_SONGS!=='undefined')?TAMIL_INST_SONGS:[];
     key2.textContent='உங்கள் Radio'; key2.setAttribute('lang','ta');
     bandIdx=2; playBandIdx=2; paintBandKeys(2);
-    if(cs) cs.textContent='SIDE A · TAMIL';
+    if(cs) cs.textContent='SIDE A';
     tamilMarquee();
     const tp1=document.getElementById('tributeP1');
     if(tp1){ if(!tp1.dataset.orig) tp1.dataset.orig=tp1.textContent;
@@ -6620,7 +6620,7 @@ function applyRegionUI(){
     key2.textContent='ನಿಮ್ಮ Radio'; key2.setAttribute('lang','kn');
     bandIdx=2; playBandIdx=2; paintBandKeys(2);
     if(tgLive) tgLive.classList.remove('on');
-    if(cs) cs.textContent='SIDE A · ನಿಮ್ಮ Radio';
+    if(cs) cs.textContent='SIDE A';
     if(!nowTitleEl.dataset.orig) nowTitleEl.dataset.orig=nowTitleEl.textContent;
     nowTitleEl.textContent='STAY TUNED';
     nowTitleEl.classList.add('staytuned');
@@ -6634,7 +6634,7 @@ function applyRegionUI(){
     key2.textContent='MEE RADIO'; key2.removeAttribute('lang');
     if(prevBand!==null){ bandIdx=prevBand.b; playBandIdx=prevBand.p; prevBand=null; }
     paintBandKeys(bandIdx);
-    if(cs) cs.textContent='SIDE A · '+BANDS[bandIdx].cassette;
+    if(cs) cs.textContent='SIDE A';
     nowTitleEl.classList.remove('staytuned');
     /* restore the title for the current band */
     const s=songs(); if(s.length&&currentIdx>=0&&s[currentIdx]) setTitle(s[currentIdx].title||'Untitled');
