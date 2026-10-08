@@ -100,15 +100,15 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:#ffe9b8;opacity:.9;text-indent:.32em;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 /* Station Region knob */
 .region-wrap{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:9px}
-.region-plate{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0}
-.rk-row{display:flex;gap:10px;justify-content:center}
-.rk-lab{font-family:var(--f-type);font-size:10px;letter-spacing:.06em;color:#3a2412;min-width:62px;
-  background:linear-gradient(180deg,#f8efdb,#e9d6ab);border:2px solid #160c04;border-radius:8px;cursor:pointer;padding:5px 10px;
-  text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 3px 0 #4a3016,0 3px 0 4px #0d0703,inset 0 1px 0 rgba(255,255,255,.6)}
+.region-plate{display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0}
+.rk-row{display:flex;gap:18px;justify-content:center}
+.rk-lab{font-family:var(--f-type);font-size:20px;letter-spacing:.06em;color:#3a2412;min-width:120px;
+  background:linear-gradient(180deg,#f8efdb,#e9d6ab);border:3px solid #160c04;border-radius:14px;cursor:pointer;padding:10px 20px;
+  text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 5px 0 #4a3016,0 5px 0 7px #0d0703,inset 0 2px 0 rgba(255,255,255,.6)}
 .rk-lab.on{color:#c81e1e;font-weight:bold;border-color:#5e0d0d;
-  text-shadow:0 0 9px rgba(255,46,46,.9),0 1px 0 rgba(255,255,255,.4);
-  box-shadow:0 3px 0 #4a3016,0 3px 0 4px #0d0703,0 0 20px 7px rgba(255,70,60,.6),inset 0 1px 0 rgba(255,255,255,.6)}
-@media (min-width:641px){.rk-lab{font-size:12px;min-width:70px}}
+  text-shadow:0 0 14px rgba(255,46,46,.9),0 1px 0 rgba(255,255,255,.4);
+  box-shadow:0 5px 0 #4a3016,0 5px 0 7px #0d0703,0 0 32px 12px rgba(255,70,60,.6),inset 0 2px 0 rgba(255,255,255,.6)}
+@media (min-width:641px){.rk-lab{font-size:24px;min-width:140px}}
 /* Integrated AUX bat toggles: Chants and Instru flank the LIVE lamp on the
    wooden radio body, mounted like real radio hardware. Mechanical only for
    now (bat flip + jewel lamp + switch clack); Thej will push the songs
@@ -5915,19 +5915,71 @@ const STREAM_URL = "";
 
 /* ---------- Painted poster background ---------- */
 const cv=document.getElementById('poster'), g=cv.getContext('2d');
-const posterImg=new Image(); posterImg.src='chars/sunset-bg.jpg';
 function paint(){
-  /* Sunset artwork background (Thej's poster): cover-fit the canvas. */
   const dpr=Math.min(window.devicePixelRatio||1,2), W=innerWidth, H=innerHeight;
   cv.width=W*dpr; cv.height=H*dpr; g.setTransform(dpr,0,0,dpr,0,0);
-  g.fillStyle='#2a0b19'; g.fillRect(0,0,W,H);
-  if(posterImg.complete&&posterImg.naturalWidth){
-    const iw=posterImg.naturalWidth, ih=posterImg.naturalHeight;
-    const s=Math.max(W/iw,H/ih), dw=iw*s, dh=ih*s;
-    g.drawImage(posterImg,(W-dw)/2,(H-dh)/2,dw,dh);
-  }
+  const sky=g.createLinearGradient(0,0,0,H);
+  sky.addColorStop(0,'#2a0b19'); sky.addColorStop(.35,'#7d1d2d'); sky.addColorStop(.6,'#d65f2a'); sky.addColorStop(.72,'#f5bf4f');
+  g.fillStyle=sky; g.fillRect(0,0,W,H);
+  const cx=W/2, cy=H*.46, R=Math.min(W,H)*.3;
+  // poster rays
+  g.save(); g.translate(cx,cy);
+  for(let i=0;i<28;i++){g.rotate(Math.PI*2/28); if(i%2) continue; g.beginPath(); g.moveTo(0,0); g.lineTo(Math.max(W,H),-Math.max(W,H)*.06); g.lineTo(Math.max(W,H),Math.max(W,H)*.06); g.closePath(); g.fillStyle='rgba(255,214,130,.07)'; g.fill();}
+  g.restore();
+  // stars
+  let seed=7; const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647);
+  g.fillStyle='rgba(255,241,191,.8)';
+  for(let i=0;i<70;i++){const x=rnd()*W,y=rnd()*H*.3; g.beginPath(); g.arc(x,y,rnd()*1.4+.3,0,7); g.fill();}
+  // striped retro sun
+  const sg=g.createLinearGradient(0,cy-R,0,cy+R); sg.addColorStop(0,'#ffe08a'); sg.addColorStop(1,'#ee7b2c');
+  g.save(); g.beginPath(); g.arc(cx,cy,R,0,7); g.clip(); g.fillStyle=sg; g.fillRect(cx-R,cy-R,R*2,R*2);
+  g.fillStyle='rgba(125,29,45,.85)';
+  for(let k=0;k<7;k++){const y=cy+R*(.05+k*.14), h=R*(.02+k*.018); g.fillRect(cx-R,y,R*2,h);}
+  g.restore();
+  // halftone
+  for(let y=0;y<H*.42;y+=12){for(let x=(y/12%2)*6;x<W;x+=12){const r=1.6*(1-y/(H*.42)); if(r<.2)continue; g.fillStyle='rgba(29,10,16,.35)'; g.beginPath(); g.arc(x,y,r,0,7); g.fill();}}
+  const ink='#1d0a10', gy=H*.66;
+  // hills
+  g.fillStyle='#2a0a16'; g.beginPath(); g.moveTo(0,H);
+  g.lineTo(0,gy+H*.02); g.quadraticCurveTo(W*.2,gy-H*.05,W*.42,gy+H*.01); g.quadraticCurveTo(W*.7,gy+H*.05,W,gy-H*.03); g.lineTo(W,H); g.fill();
+  // temple gopuram (left)
+  const gx=W*.13, gw=Math.min(W*.16,H*.12), gh=H*.3, base=gy+H*.01;
+  g.fillStyle=ink; let tiers=6;
+  for(let t=0;t<tiers;t++){const w=gw*(1-t*.13), h=gh/tiers; g.fillRect(gx-w/2,base-h*(t+1),w,h+1);}
+  g.beginPath(); g.ellipse(gx,base-gh,gw*.22,gh*.05,0,0,7); g.fill();
+  for(let i=-1;i<=1;i++){g.beginPath(); g.arc(gx+i*gw*.12,base-gh-gh*.07,gw*.035,0,7); g.fill();}
+  // palms (right)
+  function palm(x,y,h,lean){g.strokeStyle=ink; g.lineWidth=Math.max(3,h*.04); g.lineCap='round';
+    g.beginPath(); g.moveTo(x,y); g.quadraticCurveTo(x+lean*.5,y-h*.5,x+lean,y-h); g.stroke();
+    const tx=x+lean, ty=y-h; g.fillStyle=ink;
+    for(let a=0;a<7;a++){const ang=-Math.PI+a*Math.PI/6, L=h*.42; g.beginPath(); g.moveTo(tx,ty);
+      g.quadraticCurveTo(tx+Math.cos(ang)*L*.6,ty+Math.sin(ang)*L*.6-h*.12,tx+Math.cos(ang)*L,ty+Math.sin(ang)*L*.5+h*.08);
+      g.quadraticCurveTo(tx+Math.cos(ang)*L*.5,ty+Math.sin(ang)*L*.4-h*.04,tx,ty); g.fill();}}
+  palm(W*.86,gy+H*.02,H*.3,W*.04); palm(W*.94,gy+H*.03,H*.22,-W*.02);
+  // dancing silhouettes — original generic figures, poster style
+  const fh=Math.min(H*.2,W*.36), lw=fh*.075; g.strokeStyle=ink; g.fillStyle=ink; g.lineCap='round'; g.lineJoin='round';
+  // hero: bell-bottoms, one arm to the sky
+  let hx=W*.34, hy=gy-fh*.02; g.lineWidth=lw;
+  g.beginPath(); g.moveTo(hx,hy-fh*.48); g.lineTo(hx-fh*.02,hy-fh*.8); g.stroke();
+  g.beginPath(); g.arc(hx-fh*.02,hy-fh*.9,fh*.075,0,7); g.fill();
+  g.beginPath(); g.moveTo(hx-fh*.05,hy-fh*.98); g.quadraticCurveTo(hx+fh*.06,hy-fh*1.04,hx+fh*.07,hy-fh*.93); g.lineTo(hx-fh*.02,hy-fh*.9); g.fill();
+  g.beginPath(); g.moveTo(hx-fh*.02,hy-fh*.74); g.lineTo(hx+fh*.14,hy-fh*.94); g.lineTo(hx+fh*.22,hy-fh*1.12); g.stroke();
+  g.beginPath(); g.moveTo(hx-fh*.02,hy-fh*.74); g.lineTo(hx-fh*.16,hy-fh*.62); g.lineTo(hx-fh*.04,hy-fh*.54); g.stroke();
+  g.beginPath(); g.moveTo(hx,hy-fh*.48); g.lineTo(hx-fh*.14,hy-fh*.08); g.moveTo(hx,hy-fh*.48); g.lineTo(hx+fh*.12,hy-fh*.08); g.stroke();
+  g.beginPath(); g.moveTo(hx-fh*.17,hy-fh*.12); g.lineTo(hx-fh*.26,hy); g.lineTo(hx-fh*.08,hy); g.closePath(); g.fill();
+  g.beginPath(); g.moveTo(hx+fh*.09,hy-fh*.12); g.lineTo(hx+fh*.02,hy); g.lineTo(hx+fh*.22,hy); g.closePath(); g.fill();
+  // heroine: saree flare, arms up in a dance pose, flowing pallu
+  let sx=W*.66, sy=gy+fh*.01;
+  g.beginPath(); g.arc(sx,sy-fh*.9,fh*.07,0,7); g.fill();
+  g.beginPath(); g.arc(sx-fh*.07,sy-fh*.93,fh*.04,0,7); g.fill();
+  g.beginPath(); g.moveTo(sx,sy-fh*.82); g.lineTo(sx+fh*.01,sy-fh*.55); g.stroke();
+  g.beginPath(); g.moveTo(sx+fh*.005,sy-fh*.6); g.quadraticCurveTo(sx-fh*.22,sy-fh*.25,sx-fh*.2,sy); g.lineTo(sx+fh*.24,sy); g.quadraticCurveTo(sx+fh*.16,sy-fh*.3,sx+fh*.005,sy-fh*.6); g.fill();
+  g.beginPath(); g.moveTo(sx,sy-fh*.76); g.lineTo(sx-fh*.14,sy-fh*.9); g.lineTo(sx-fh*.06,sy-fh*1.06); g.stroke();
+  g.beginPath(); g.moveTo(sx,sy-fh*.76); g.lineTo(sx+fh*.15,sy-fh*.86); g.lineTo(sx+fh*.1,sy-fh*1.04); g.stroke();
+  g.lineWidth=lw*.5; g.beginPath(); g.moveTo(sx+fh*.02,sy-fh*.78); g.bezierCurveTo(sx+fh*.25,sy-fh*.78,sx+fh*.3,sy-fh*.5,sx+fh*.45,sy-fh*.62); g.stroke();
+  // ground haze
+  const hz=g.createLinearGradient(0,gy,0,H); hz.addColorStop(0,'rgba(58,15,30,0)'); hz.addColorStop(1,'rgba(29,10,16,.9)'); g.fillStyle=hz; g.fillRect(0,gy,W,H-gy);
 }
-posterImg.addEventListener('load',paint);
 let rT; addEventListener('resize',()=>{clearTimeout(rT); rT=setTimeout(paint,120);}); paint();
 // film grain texture
 (()=>{const c=document.createElement('canvas'); c.width=c.height=140; const x=c.getContext('2d'), d=x.createImageData(140,140);
