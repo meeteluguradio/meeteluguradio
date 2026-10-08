@@ -100,27 +100,15 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 .knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:#ffe9b8;opacity:.9;text-indent:.32em;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 /* Station Region knob */
 .region-wrap{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:9px}
-.region-plate{position:relative;width:200px;height:124px}
-.rk-lab{position:absolute;font-family:var(--f-type);font-size:11px;letter-spacing:.06em;color:#3a2412;
-  background:linear-gradient(180deg,#f8efdb,#e9d6ab);border:2px solid #160c04;border-radius:8px;cursor:pointer;padding:6px 10px;z-index:2;
+.region-plate{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px 0}
+.rk-row{display:flex;gap:10px;justify-content:center}
+.rk-lab{font-family:var(--f-type);font-size:10px;letter-spacing:.06em;color:#3a2412;min-width:62px;
+  background:linear-gradient(180deg,#f8efdb,#e9d6ab);border:2px solid #160c04;border-radius:8px;cursor:pointer;padding:5px 10px;
   text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 3px 0 #4a3016,0 3px 0 4px #0d0703,inset 0 1px 0 rgba(255,255,255,.6)}
 .rk-lab.on{color:#c81e1e;font-weight:bold;border-color:#5e0d0d;
   text-shadow:0 0 9px rgba(255,46,46,.9),0 1px 0 rgba(255,255,255,.4);
-  box-shadow:0 3px 0 #4a3016,0 3px 0 4px #0d0703,0 0 22px 8px rgba(255,70,60,.6),inset 0 1px 0 rgba(255,255,255,.6)}
-.lab-telugu{left:4px;top:54px}
-.lab-kannada{left:50%;top:0;transform:translateX(-50%)}
-.lab-tamil{right:4px;top:54px}
-@media (min-width:641px){.rk-lab{font-size:13px}}
-.rk-knob{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;
-  background:radial-gradient(circle at 34% 30%,#96754f,#4a3220 58%,#241708);
-  border:3px solid #0d0703;box-shadow:0 5px 9px rgba(0,0,0,.5),inset 0 2px 4px rgba(255,255,255,.35);cursor:pointer;z-index:1}
-.rk-knob::before{content:"";position:absolute;inset:7px;border-radius:50%;
-  background:repeating-conic-gradient(rgba(0,0,0,.28) 0 7deg,transparent 7deg 14deg)}
-.rk-knob::after{content:"";position:absolute;inset:16px;border-radius:50%;
-  background:radial-gradient(circle at 40% 32%,#6b4f33,#3a2817 70%);box-shadow:inset 0 2px 5px rgba(0,0,0,.55)}
-.rk-inner{position:absolute;inset:0;transform:rotate(-55deg);transition:transform .5s cubic-bezier(.55,-.15,.3,1.25);z-index:1}
-.rk-pointer{position:absolute;left:calc(50% - 3px);top:9px;width:6px;height:24px;background:#ffe9b8;border-radius:3px;
-  box-shadow:0 0 6px rgba(0,0,0,.75),0 0 3px rgba(255,233,184,.8)}
+  box-shadow:0 3px 0 #4a3016,0 3px 0 4px #0d0703,0 0 20px 7px rgba(255,70,60,.6),inset 0 1px 0 rgba(255,255,255,.6)}
+@media (min-width:641px){.rk-lab{font-size:12px;min-width:70px}}
 /* Integrated AUX bat toggles: Chants and Instru flank the LIVE lamp on the
    wooden radio body, mounted like real radio hardware. Mechanical only for
    now (bat flip + jewel lamp + switch clack); Thej will push the songs
@@ -263,7 +251,11 @@ body.region-kannada .marquee .tag{font-size:clamp(14px,3.7vw,21px);margin-top:12
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 #liveCount{min-width:3ch;font-weight:bold;color:#0d0d0d}
 /* Blinking red LIVE tag + pilot lamp under the MEE RADIO key */
-.live-red{color:#ff2e2e;font-weight:bold;letter-spacing:.08em;text-shadow:0 0 10px rgba(255,46,46,.85)}
+/* Glowing red LIVE RADIO key label */
+.live-glow{color:#ff2e2e;font-weight:bold;letter-spacing:.14em;
+  text-shadow:0 0 10px rgba(255,46,46,.9),0 0 28px rgba(255,46,46,.45);
+  animation:livePulse 2.2s ease-in-out infinite}
+@keyframes livePulse{0%,100%{text-shadow:0 0 10px rgba(255,46,46,.9),0 0 28px rgba(255,46,46,.45)}50%{text-shadow:0 0 16px rgba(255,90,90,1),0 0 44px rgba(255,46,46,.7)}}
 .band-key{white-space:nowrap}
 .live-tag{display:flex;flex-direction:column;align-items:center;gap:5px}
 .live-text{font-family:var(--f-type);font-size:11px;letter-spacing:.3em;text-indent:.3em;color:#ff3838;text-shadow:0 0 9px rgba(255,56,56,.95);animation:blink 1.1s ease-in-out infinite}
@@ -542,7 +534,7 @@ body.region-tamil .hero-row{display:none}
              </div>
              <button class="key band-key" data-band="0" aria-pressed="true">DEVOTIONAL</button>
              <button class="key band-key" data-band="1" aria-pressed="false">ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు</button>
-             <button class="key band-key" data-band="2" aria-pressed="false">MEE <span class="live-red">LIVE</span> RADIO</button>
+             <button class="key band-key" data-band="2" aria-pressed="false"><span class="live-glow">LIVE RADIO</span></button>
              <div class="aux-row">
               <div class="ext-sw" id="extSwChantsWrap">
                 <span class="ext-lamp amber" id="extLampChants"></span>
@@ -562,10 +554,13 @@ body.region-tamil .hero-row{display:none}
             </div>
              <div class="region-wrap">
                <div class="region-plate" role="group" aria-label="Station region">
-                 <button class="rk-lab lab-telugu on" data-region="telugu" lang="te">తెలుగు</button>
-                 <button class="rk-lab lab-kannada" data-region="kannada" lang="kn">ಕನ್ನಡ</button>
-                 <button class="rk-lab lab-tamil" data-region="tamil" lang="ta">தமிழ்</button>
-                 <div class="rk-knob" id="regionKnob" role="button" tabindex="0" aria-label="Station region knob: Telugu"><span class="rk-inner"><span class="rk-pointer"></span></span></div>
+                 <div class="rk-row">
+                   <button class="rk-lab on" data-region="telugu" lang="te">తెలుగు</button>
+                   <button class="rk-lab" data-region="kannada" lang="kn">ಕನ್ನಡ</button>
+                 </div>
+                 <div class="rk-row">
+                   <button class="rk-lab" data-region="tamil" lang="ta">தமிழ்</button>
+                 </div>
                </div>
                <div class="knob-caption">STATION REGION</div>
              </div>
@@ -5905,7 +5900,7 @@ function tamilInstNow(){let el=Math.floor((Date.now()-TAMIL_INST_EPOCH)/1000)%TA
 const BANDS = [
   { id:'devotional', label:'DEVOTIONAL', cassette:'DEVOTIONAL', songs: DEVOTIONAL_SONGS },
   { id:'mss',        label:'ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు', cassette:'MSS', songs: MSS_SONGS },
-  { id:'meeradio',   label:'MEE RADIO',  cassette:'MEE RADIO', songs: MEE_RADIO_SONGS },
+  { id:'meeradio',   label:'LIVE RADIO',  cassette:'MEE RADIO', songs: MEE_RADIO_SONGS },
   { id:'hero',       label:'HERO OF THE DAY', cassette:'HERO', songs: [] },
   { id:'chants',     label:'CHANTS', cassette:'CHANTS', songs: CHANTS_SONGS },
   { id:'instrumental', label:'INSTRUMENTAL', cassette:'INSTRUMENTAL', songs: INSTRUMENTAL_SONGS },
@@ -6428,12 +6423,9 @@ setInterval(()=>{if(playing){secs++;}},1000);
   requestAnimationFrame(loop);
 })();
 
-/* ---------- Station Region knob: Telugu / Kannada / Tamil ---------- */
+/* ---------- Station Region tabs: Telugu / Kannada / Tamil ---------- */
 const REGIONS=['telugu','kannada','tamil'];
-const RK_ROT={telugu:-55,kannada:0,tamil:55};
 let region='telugu', tuning=false;
-const regionKnob=document.getElementById('regionKnob');
-const rkInner=regionKnob.querySelector('.rk-inner');
 const dialNeedle=document.querySelector('.dial-needle');
 const eyebrowEl=document.querySelector('.marquee .eyebrow');
 const h1El=document.querySelector('.marquee h1');
@@ -6497,8 +6489,8 @@ function sweepNeedle(dur){
 }
 function paintRegionKnob(){
   document.querySelectorAll('.rk-lab').forEach(b=>b.classList.toggle('on',b.dataset.region===region));
-  rkInner.style.transform='rotate('+RK_ROT[region]+'deg)';
-  regionKnob.setAttribute('aria-label','Station region knob: '+region.charAt(0).toUpperCase()+region.slice(1));
+  const rp=document.querySelector('.region-plate');
+  if(rp) rp.setAttribute('aria-label','Station region: '+region.charAt(0).toUpperCase()+region.slice(1));
 }
 let prevBand=null; /* band to restore when leaving the Tamil page */
 let tamilLive=false; /* true while the Tamil live station owns the deck */
@@ -6549,10 +6541,10 @@ function applyRegionUI(){
     if(prevBand===null) prevBand={b:bandIdx,p:playBandIdx};
     tamilLive=true;
     extReset();
-    BANDS[2].id='tamil'; BANDS[2].label='உங்கள் Radio'; BANDS[2].cassette='TAMIL'; BANDS[2].songs=TAMIL_SONGS;
+    BANDS[2].id='tamil'; BANDS[2].label='LIVE RADIO'; BANDS[2].cassette='TAMIL'; BANDS[2].songs=TAMIL_SONGS;
     BANDS[4].id='tamilchants'; BANDS[4].songs=(typeof TAMIL_CHANTS_SONGS!=='undefined')?TAMIL_CHANTS_SONGS:[];
     BANDS[5].id='tamilinst'; BANDS[5].songs=(typeof TAMIL_INST_SONGS!=='undefined')?TAMIL_INST_SONGS:[];
-    key2.innerHTML='உங்கள் <span class="live-red">LIVE</span> Radio'; key2.setAttribute('lang','ta');
+    key2.innerHTML='<span class="live-glow">LIVE RADIO</span>'; key2.removeAttribute('lang');
     bandIdx=2; playBandIdx=2; paintBandKeys(2);
     if(cs) cs.textContent='SIDE A';
     tamilMarquee();
@@ -6565,8 +6557,8 @@ function applyRegionUI(){
     tamilLive=false;
     extReset();
     if(playing) pause();
-    BANDS[2].label='ನಿಮ್ಮ Radio'; BANDS[2].cassette='ನಿಮ್ಮ Radio';
-    key2.innerHTML='ನಿಮ್ಮ <span class="live-red">LIVE</span> Radio'; key2.setAttribute('lang','kn');
+    BANDS[2].label='LIVE RADIO'; BANDS[2].cassette='ನಿಮ್ಮ Radio';
+    key2.innerHTML='<span class="live-glow">LIVE RADIO</span>'; key2.removeAttribute('lang');
     bandIdx=2; playBandIdx=2; paintBandKeys(2);
     if(tgLive) tgLive.classList.remove('on');
     if(cs) cs.textContent='SIDE A';
@@ -6580,7 +6572,7 @@ function applyRegionUI(){
     /* Back to Telugu: restore the original bands exactly. */
     tamilLive=false;
     for(const k of [2,4,5]){ BANDS[k].id=ORIG_BANDS[k].id; BANDS[k].label=ORIG_BANDS[k].label; BANDS[k].cassette=ORIG_BANDS[k].cassette; BANDS[k].songs=ORIG_BANDS[k].songs; }
-    key2.innerHTML='MEE <span class="live-red">LIVE</span> RADIO'; key2.removeAttribute('lang');
+    key2.innerHTML='<span class="live-glow">LIVE RADIO</span>'; key2.removeAttribute('lang');
     if(prevBand!==null){ bandIdx=prevBand.b; playBandIdx=prevBand.p; prevBand=null; }
     paintBandKeys(bandIdx);
     if(cs) cs.textContent='SIDE A';
@@ -6630,8 +6622,6 @@ function setRegion(r){
     }
   },3060);
 }
-regionKnob.addEventListener('click',()=>setRegion(REGIONS[(REGIONS.indexOf(region)+1)%3]));
-regionKnob.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();regionKnob.click();}});
 document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();setRegion(b.dataset.region);}));
 </script>
 <script>
