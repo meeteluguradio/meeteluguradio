@@ -6867,11 +6867,18 @@ document.querySelectorAll('.rk-lab').forEach(b=>b.addEventListener('click',ev=>{
       if(!user) return;
       const uid=user.uid;
       const ref=db.ref('listeners/'+uid);
-      /* presence: heartbeat every 30s, remove on disconnect */
-      function beat(){ ref.set({t:Date.now()}).catch(()=>{}); }
+      /* presence: heartbeat every 30s, but ONLY while actually playing —
+         an idle open tab must not count as a listener */
+      function beat(){
+        try{
+          if(typeof playing!=='undefined'&&playing){ ref.set({t:Date.now()}).catch(()=>{}); }
+          else { ref.remove().catch(()=>{}); }
+        }catch(e){ /* playing not yet initialized: stay uncounted */ }
+      }
       beat();
       setInterval(beat,30000);
       ref.onDisconnect().remove().catch(()=>{});
+      window.addEventListener('pagehide',function(){ try{ref.remove();}catch(e){} });
       /* count listeners with timestamp < 90s old */
       db.ref('listeners').on('value',function(snap){
         const now=Date.now();
