@@ -1,4 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><!-- deploy 2026-10-04b --><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Vintage South Indian Songs</title><meta property="og:type" content="website"><meta property="og:url" content="https://meeradio.com/"><meta property="og:title" content="Vintage South Indian Songs"><meta property="og:image" content="https://meeradio.com/chars/logo-char.png"><meta property="og:image:width" content="802"><meta property="og:image:height" content="754"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Vintage South Indian Songs"><meta name="twitter:image" content="https://meeradio.com/chars/logo-char.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<div class="village-base" aria-hidden="true"></div>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ravi+Prakash&family=Hind+Guntur:wght@400;600&family=Special+Elite&family=Noto+Sans+Telugu:wght@600&display=swap">
@@ -22,7 +23,9 @@ body{background:radial-gradient(ellipse at 50% 36%,#fdf7e6 0%,#f7ebd0 52%,#eedca
 @keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
 .vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,transparent 45%,rgba(20,4,10,.78))}
 
-main{position:relative;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:24px;padding-inline:16px;padding-block:clamp(16px,4vh,40px) clamp(14px,3vh,28px)}
+main{position:relative;z-index:1;min-height:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:24px;padding-inline:16px;padding-block:clamp(16px,4vh,40px) clamp(14px,3vh,28px)}
+/* 2026-10-14 village silhouette base: fixed panorama at the page bottom, behind everything */
+.village-base{position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;height:clamp(150px,24vw,300px);background:url(chars/village-base.png) no-repeat bottom center/cover;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 32%);mask-image:linear-gradient(180deg,transparent 0,#000 32%)}
 
 /* Marquee title */
 .marquee{text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 4px;position:relative;overflow:hidden}
