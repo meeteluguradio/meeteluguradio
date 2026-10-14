@@ -1,7 +1,7 @@
 <!doctype html><html><head><meta charset=utf8><!-- deploy 2026-10-04b --><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Vintage South Indian Songs</title><meta property="og:type" content="website"><meta property="og:url" content="https://meeradio.com/"><meta property="og:title" content="Vintage South Indian Songs"><meta property="og:image" content="https://meeradio.com/chars/logo-char.png"><meta property="og:image:width" content="802"><meta property="og:image:height" content="754"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Vintage South Indian Songs"><meta name="twitter:image" content="https://meeradio.com/chars/logo-char.png"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ravi+Prakash&family=Hind+Guntur:wght@400;600&family=Special+Elite&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ravi+Prakash&family=Hind+Guntur:wght@400;600&family=Special+Elite&family=Noto+Sans+Telugu:wght@600&display=swap">
 <style>
 /* Layout: full-bleed hand-painted 90s cinema poster, bulb-lit marquee title up top, cartoon tape deck anchored at the bottom */
 :root{
@@ -11,6 +11,7 @@
   --f-te:"Ravi Prakash","Hind Guntur","Noto Sans Telugu",serif;
   --f-body:"Hind Guntur","Noto Sans Telugu",system-ui,sans-serif;
   --f-type:"Special Elite","Courier New",monospace;
+  --f-key:"Helvetica Neue",Helvetica,Arial,"Noto Sans Telugu",sans-serif;
   color-scheme: light;
 }
 html,body{height:100%}
@@ -96,22 +97,22 @@ h1{margin:0;font-family:var(--f-te);font-weight:400;font-size:clamp(56px,15vw,12
 /* 3D band tuner knob */
 /* Vintage preset channel buttons */
 .band-switch{display:flex;flex-direction:column;gap:10px;width:100%}
-.band-key{font-family:var(--f-type);font-size:11px;letter-spacing:.1em;padding:11px 6px;color:#2a1a0c;text-align:center;
+.band-key{font-family:var(--f-type);font-size:9px;letter-spacing:.1em;padding:8px 5px;color:#2a1a0c;text-align:center;
   background:linear-gradient(180deg,#fbf5e6,#e8d2a4);box-shadow:0 6px 0 #8a6a3a,0 6px 0 3px #0d0703}
 .knob-caption{font:10px var(--f-type);letter-spacing:.32em;color:#ffe9b8;opacity:.9;text-indent:.32em;text-shadow:0 1px 2px rgba(0,0,0,.7)}
 /* Station Region knob */
 .region-wrap{margin-top:6px;display:flex;flex-direction:column;align-items:center;gap:9px}
 .region-plate{display:flex;flex-direction:column;align-items:center;gap:14px;padding:6px 0}
 .rk-row{display:flex;gap:18px;justify-content:center}
-.rk-lab{font-family:var(--f-type);font-size:20px;letter-spacing:.06em;color:#3a2412;min-width:120px;
-  background:linear-gradient(180deg,#fdf8e9,#efdcb0);border:3px solid #160c04;border-radius:14px;cursor:pointer;padding:10px 20px;
+.rk-lab{font-family:var(--f-type);font-size:16px;letter-spacing:.06em;color:#3a2412;min-width:96px;
+  background:linear-gradient(180deg,#fdf8e9,#efdcb0);border:3px solid #160c04;border-radius:14px;cursor:pointer;padding:8px 16px;
   text-shadow:0 1px 0 rgba(255,255,255,.55);box-shadow:0 5px 0 #8a6a3a,0 5px 0 7px #0d0703,inset 0 2px 0 rgba(255,255,255,.65)}
 .rk-lab.on{color:#c81e1e;font-weight:bold;border-color:#5e0d0d;
   text-shadow:0 0 14px rgba(255,46,46,.9),0 1px 0 rgba(255,255,255,.4);
   box-shadow:0 5px 0 #8a6a3a,0 5px 0 7px #0d0703,0 0 32px 12px rgba(255,70,60,.65),inset 0 2px 0 rgba(255,255,255,.6);
   animation:slowTabGlow 1.6s ease-in-out infinite}
 @keyframes slowTabGlow{0%,100%{box-shadow:0 5px 0 #8a6a3a,0 5px 0 7px #0d0703,0 0 38px 15px rgba(255,70,60,.75),inset 0 2px 0 rgba(255,255,255,.6)}50%{box-shadow:0 5px 0 #8a6a3a,0 5px 0 7px #0d0703,0 0 12px 4px rgba(255,70,60,.28),inset 0 2px 0 rgba(255,255,255,.6)}}
-@media (min-width:641px){.rk-lab{font-size:24px;min-width:140px}}
+@media (min-width:641px){.rk-lab{font-size:19px;min-width:112px}}
 /* Integrated AUX bat toggles: Chants and Instru flank the LIVE lamp on the
    wooden radio body, mounted like real radio hardware. Mechanical only for
    now (bat flip + jewel lamp + switch clack); Thej will push the songs
@@ -274,9 +275,9 @@ body.region-kannada .marquee .tag{font-size:clamp(14px,3.7vw,21px);margin-top:12
 .now-label{display:block;font:10px var(--f-type);letter-spacing:.16em;color:var(--saffron)}
 #nowTitle{display:block;font-family:var(--f-type);font-size:17px;color:#9ff0c8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(159,240,200,.6)}
 .keys{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
-.key{appearance:none;cursor:pointer;border:4px solid #160c04;border-radius:14px;padding:12px 10px 10px;font-family:var(--f-te);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink);
+.key{appearance:none;cursor:pointer;border:3px solid #160c04;border-radius:14px;padding:9px 8px 8px;font-family:var(--f-te);font-size:17px;line-height:1;display:flex;align-items:center;justify-content:center;gap:10px;color:var(--ink);
   transition:transform .08s,box-shadow .08s;transform:translateY(0)}
-.key .sym{font-family:var(--f-body);font-size:20px}
+.key .sym{font-family:var(--f-body);font-size:16px}
 .key .en{font-family:var(--f-body);letter-spacing:.06em}
 .key.play{background:linear-gradient(180deg,#a5e8c0,#4f9f7a);box-shadow:0 8px 0 #1e4a38,0 8px 0 4px #160c04}
 .key.pause{background:linear-gradient(180deg,#f7b37e,#d96a26);box-shadow:0 8px 0 #6e2f0e,0 8px 0 4px #160c04}
@@ -284,10 +285,10 @@ body.region-kannada .marquee .tag{font-size:clamp(14px,3.7vw,21px);margin-top:12
 .key.shuffle svg{display:block}
 .key.shuffle.cooling{opacity:.45;cursor:not-allowed}
 .ps-col{display:flex;flex-direction:column;gap:12px;min-width:0}
-.ps-col .key{font-size:17px}
-.ps-col .key .sym{font-size:15px}
+.ps-col .key{font-size:13px}
+.ps-col .key .sym{font-size:12px}
 .key.shuffle.square{flex-direction:column;justify-content:center;gap:10px;padding:12px 10px}
-.key.shuffle.square svg{width:34px;height:34px}
+.key.shuffle.square svg{width:27px;height:27px}
 .key.shuffle.square .st-mini{width:100%;box-sizing:border-box}
 .st-mini{position:relative;background:var(--ink);border-radius:7px;box-shadow:inset 0 0 0 2px #3a2a2c;padding:6px 4px 8px;overflow:hidden;text-align:center}
 .st-mini-digits{font:13px var(--f-type);font-variant-numeric:tabular-nums;color:var(--marigold);text-shadow:0 0 8px rgba(245,191,79,.55);letter-spacing:.08em}
@@ -316,12 +317,12 @@ body.region-kannada .marquee .tag{font-size:clamp(14px,3.7vw,21px);margin-top:12
 .tg-reel{height:22px;flex:1 1 auto;min-width:0;overflow:hidden}
 .hero-reel-track{display:flex;flex-direction:column;will-change:transform}
 .hero-reel-track div{height:22px;line-height:22px;font-family:var(--f-type);font-size:14px;letter-spacing:.14em;color:#8fff9f;text-shadow:0 0 10px rgba(120,255,140,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hero-lever{position:relative;flex:0 0 54px;border:4px solid #160c04;border-radius:12px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+.hero-lever{position:relative;flex:0 0 46px;border:4px solid #160c04;border-radius:12px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
   background:linear-gradient(180deg,#8a6a45,#5e4526);box-shadow:inset 0 2px 6px rgba(0,0,0,.5),0 4px 0 #2a1a0c}
 .hero-lever:active{cursor:grabbing}
 .lever-track{position:absolute;left:50%;top:8px;bottom:8px;width:8px;transform:translateX(-50%);background:#0d0703;border-radius:4px;box-shadow:inset 0 1px 3px #000}
 .lever-arm{position:absolute;left:50%;top:4px;transform:translateX(-50%);will-change:transform}
-.lever-knob{width:30px;height:30px;border-radius:50%;border:3px solid #160c04;
+.lever-knob{width:26px;height:26px;border-radius:50%;border:3px solid #160c04;
   background:radial-gradient(circle at 35% 30%,#ff8a7a,#d42a1e 60%,#7a130c);
   box-shadow:0 3px 6px rgba(0,0,0,.5),inset 0 -3px 5px rgba(0,0,0,.35)}
 body.region-tamil .hero-row{display:none}
@@ -425,6 +426,37 @@ body.region-tamil .hero-row{display:none}
 .vote-btn:hover{transform:scale(1.08)}
 .vote-btn:active{transform:scale(.94)}
 .vote-btn.voted{box-shadow:0 0 0 3px #8fff9f,0 5px 12px rgba(0,0,0,.5)}
+
+/* 2026-10-13 refinement: one uniform clean sans on every player key and label.
+   Placed after all base rules so it wins by source order (no !important). */
+.key,.key .en,.band-key,.rk-lab,.ext-tag,.ext-name,.onair,.knob-caption,
+.tg-station,.tg-live-text,.live-text,.live-glow,.now-label,#nowTitle,
+.hero-reel-track div,.st-mini-digits,.grille::before,.label .side{
+  font-family:var(--f-key);font-weight:600}
+.key,.band-key,.rk-lab,.ext-name,.knob-caption,.now-label,.tg-station{
+  text-transform:uppercase;letter-spacing:.06em}
+/* 2026-10-13 refinement (desktop only): narrow single vertical column, pushed
+   right — matches the tall player reference. DOM untouched; display:contents
+   lets the two column wrappers' children interleave in one ordered stack. */
+@media (min-width:641px){
+  .radio-row{justify-content:flex-end}
+  .deck{width:min(360px,100%);margin-right:clamp(20px,5vw,64px)}
+  .body{flex-direction:column;gap:12px}
+  .main-col,.tuner-col,.band-switch{display:contents}
+  .tuner-glass{order:1}
+  .onair{order:2}
+  .top-row{order:3;grid-template-columns:1fr}
+  .mid-row{order:4}
+  .keys{order:5}
+  .dial-strip{order:6;margin-top:0}
+  .eq-row{order:7}
+  .hero-row{order:8}
+  .band-key[data-band="0"]{order:9}
+  .band-key[data-band="1"]{order:10}
+  .band-key[data-band="2"]{order:11}
+  .region-wrap{order:12}
+  .aux-row{order:13}
+}
 
 @media (prefers-reduced-motion: reduce){
   .grain,.bulbs,.deck.playing .deck-inner{animation:none}
@@ -540,7 +572,7 @@ body.region-tamil .hero-row{display:none}
                </div>
              </div>
              <button class="key band-key" data-band="0" aria-pressed="true">DEVOTIONAL</button>
-             <button class="key band-key" data-band="1" aria-pressed="false">ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు</button>
+             <button class="key band-key" data-band="1" aria-pressed="false">ఎం.స్ . సుబ్బలక్ష్మి</button>
              <button class="key band-key" data-band="2" aria-pressed="false"><span class="live-glow">LIVE RADIO</span></button>
              <div class="aux-row">
               <div class="ext-sw" id="extSwChantsWrap">
@@ -6027,7 +6059,7 @@ function tamilInstNow(){let el=Math.floor((Date.now()-TAMIL_INST_EPOCH)/1000)%TA
 // Band tuner: each knob position maps to a song list. Add songs to a band to light it up.
 const BANDS = [
   { id:'devotional', label:'DEVOTIONAL', cassette:'DEVOTIONAL', songs: DEVOTIONAL_SONGS },
-  { id:'mss',        label:'ఎం.స్ . సుబ్బలక్ష్మి గారి పాటలు', cassette:'MSS', songs: MSS_SONGS },
+  { id:'mss',        label:'ఎం.స్ . సుబ్బలక్ష్మి', cassette:'MSS', songs: MSS_SONGS },
   { id:'meeradio',   label:'LIVE RADIO',  cassette:'MEE RADIO', songs: MEE_RADIO_SONGS },
   { id:'hero',       label:'HERO OF THE DAY', cassette:'HERO', songs: [] },
   { id:'chants',     label:'CHANTS', cassette:'CHANTS', songs: CHANTS_SONGS },
