@@ -435,28 +435,6 @@ body.region-tamil .hero-row{display:none}
   font-family:var(--f-key);font-weight:600}
 .key,.band-key,.rk-lab,.ext-name,.knob-caption,.now-label,.tg-station{
   text-transform:uppercase;letter-spacing:.06em}
-/* 2026-10-13 refinement (desktop only): narrow single vertical column, pushed
-   right — matches the tall player reference. DOM untouched; display:contents
-   lets the two column wrappers' children interleave in one ordered stack. */
-@media (min-width:641px){
-  .radio-row{justify-content:flex-end}
-  .deck{width:min(360px,100%);margin-right:clamp(20px,5vw,64px)}
-  .body{flex-direction:column;gap:12px}
-  .main-col,.tuner-col,.band-switch{display:contents}
-  .tuner-glass{order:1}
-  .onair{order:2}
-  .top-row{order:3;grid-template-columns:1fr}
-  .mid-row{order:4}
-  .keys{order:5}
-  .dial-strip{order:6;margin-top:0}
-  .eq-row{order:7}
-  .hero-row{order:8}
-  .band-key[data-band="0"]{order:9}
-  .band-key[data-band="1"]{order:10}
-  .band-key[data-band="2"]{order:11}
-  .region-wrap{order:12}
-  .aux-row{order:13}
-}
 
 @media (prefers-reduced-motion: reduce){
   .grain,.bulbs,.deck.playing .deck-inner{animation:none}
